@@ -1,0 +1,80 @@
+.root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.root > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2em;
+  font-size: 1.3em;
+  padding-left: 1em;
+  box-shadow: 0 0 4px 1px #aaa;
+  background-color: #fafafa;
+  z-index: 50; /* .blocklyFlyoutScrollbar = 30 */
+}
+
+.menu {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: stretch;
+}
+.menu > li > a {
+  display: block;
+  border: none;
+  padding: 8px 1em 4px 1em;
+  border-bottom: 4px solid transparent;
+}
+.menu > li > a:hover {
+  background-color: #eee;
+}
+.menu > li > a.selected {
+  border-color: #ddd;
+}
+
+.root > main {
+  flex-grow: 1;
+  position: relative;
+}
+.root > main > div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+}
+.root > main > div.visible {
+  z-index: 40; /* .blocklyFlyoutScrollbar = 30 */
+}
+
+.top {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+  padding: 5em;
+}
+.top > a {
+  color: inherit;
+  padding: 1em;
+  border: 1px solid #ddd;
+  width: 30em;
+  max-width: 100%;
+}
+.top > a:hover {
+  box-shadow: 0 0 5px #ddd;
+}
+.top > a > header {
+  font-size: 1.5em;
+}
+.top > a > p {
+  margin: 0.5em 0;
+}
+
