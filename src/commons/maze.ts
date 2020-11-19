@@ -81,7 +81,7 @@ export function createMaze(width: number, height: number): Maze {
     while (true) {
       visitedCells.add(currentCell);
       const nextOptions = MazeDirections.flatMap(
-        // eslint-disable-next-line no-loop-func
+        // eslint-disable-next-line @typescript-eslint/no-loop-func
         (direction) => {
           const nextCell = moveInMaze(maze, currentCell, direction);
           return nextCell && !visitedCells.has(nextCell)

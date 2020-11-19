@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 
-export const firestore = window.firebase?.firestore();
+export const firestore = window.firebase?.default.firestore();
 
 export type FirestoreData = {
   [P in string]?: { workspace: string; clientId: number };
