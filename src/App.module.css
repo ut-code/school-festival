@@ -24,16 +24,19 @@
   display: flex;
   align-items: stretch;
 }
-.menu > li > a {
+.menu > li > * {
   display: block;
   border: none;
   padding: 8px 1em 4px 1em;
   border-bottom: 4px solid transparent;
+  background-color: transparent;
+  cursor: pointer;
+  color: #0af;
 }
-.menu > li > a:hover {
+.menu > li > :hover {
   background-color: #eee;
 }
-.menu > li > a.selected {
+.menu > li > .selected {
   border-color: #ddd;
 }
 

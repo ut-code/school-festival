@@ -19,6 +19,7 @@
     "prefer-destructuring": "off",
     "max-classes-per-file": "off",
     "import/prefer-default-export": "off",
+    "jsx-a11y/media-has-caption": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/ban-types": "off",
     "@typescript-eslint/no-throw-literal": "off",

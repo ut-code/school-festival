@@ -1,0 +1,15 @@
+.ratio16x9 {
+  position: relative;
+}
+.ratio16x9::before {
+  content: "";
+  display: block;
+  padding-top: 56.25%;
+}
+.ratio16x9 > iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}

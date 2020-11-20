@@ -52,7 +52,9 @@ export class BlocklyEditor extends React.Component<BlocklyEditorProps> {
         '</xml>',
       ].join(''),
       grid: { spacing: 20, length: 3, colour: '#ccc', snap: true },
+      trashcan: true,
       renderer: 'thrasos',
+      move: { drag: true, scrollbars: true, wheel: true },
     });
     this.blocklyWorkspace.addChangeListener(() => {
       window.clearTimeout(this.persistTimerId);
@@ -72,9 +74,6 @@ export class BlocklyEditor extends React.Component<BlocklyEditorProps> {
           );
         this.lastPersistTimestamp = Date.now();
       }, Math.max(this.lastPersistTimestamp + 2000 - Date.now(), 0));
-    });
-    window.addEventListener('resize', () => {
-      Blockly.svgResize(this.blocklyWorkspace);
     });
   }
 

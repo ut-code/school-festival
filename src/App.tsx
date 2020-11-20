@@ -1,36 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
 import { Link, useLocation } from 'react-router-dom';
-import { GithubOutlined } from '@ant-design/icons';
+import { GithubOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Logo } from './components/Logo';
-import { MazeWorkspace } from './workspaces/maze';
-import { SortWorkspace } from './workspaces/sort';
 import styles from './App.module.css';
-
-const routes = [
-  {
-    path: '/maze',
-    label: '迷路の問題',
-    description: 'プログラムを書いて迷路を解こう！',
-    Component: MazeWorkspace,
-  },
-  {
-    path: '/sort',
-    label: '並び替えの問題',
-    description: '先生になりきって生徒を並ばせよう！',
-    Component: SortWorkspace,
-  },
-];
+import { HelpDialog } from './components/HelpDialog';
+import { routes } from './App.routes';
+import { TutorialDialog } from './components/TutorialDialog';
 
 export function App() {
   const breakpoint = useBreakpoint();
   const location = useLocation();
+  const isRoot = location.pathname === '/';
+  const [isHelpDialogVisible, setIsHelpDialogVisible] = useState(isRoot);
+  const currentRoute = routes.find((route) => route.path === location.pathname);
+  const [isTutorialDialogVisible, setIsTutorialDialogVisible] = useState(true);
 
   return (
     <div className={styles.root}>
       <header>
         <Logo />
-        {breakpoint.lg && <div>第93回五月祭 はじめてのアルゴリズム</div>}
+        {breakpoint.lg && <div>第71回駒場祭 はじめてのアルゴリズム</div>}
         <ul className={styles.menu}>
           {routes.map((route) => (
             <li key={route.path}>
@@ -44,6 +34,28 @@ export function App() {
               </Link>
             </li>
           ))}
+          {!isRoot && (
+            <li>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsTutorialDialogVisible(true);
+                }}
+              >
+                ヒント
+              </button>
+            </li>
+          )}
+          <li>
+            <button
+              type="button"
+              onClick={() => {
+                setIsHelpDialogVisible(true);
+              }}
+            >
+              <QuestionCircleOutlined />
+            </button>
+          </li>
           <li>
             <a
               target="_blank"
@@ -81,6 +93,22 @@ export function App() {
           ))}
         </div>
       </main>
+      <HelpDialog
+        onClose={() => {
+          setIsHelpDialogVisible(false);
+        }}
+        visible={isHelpDialogVisible}
+      />
+      {currentRoute && (
+        <TutorialDialog
+          onClose={() => {
+            setIsTutorialDialogVisible(false);
+          }}
+          title={currentRoute.label}
+          steps={currentRoute.tutorialSteps}
+          visible={isTutorialDialogVisible}
+        />
+      )}
     </div>
   );
 }
