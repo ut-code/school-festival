@@ -1,4 +1,6 @@
-@import '~antd/dist/antd.css';
+html {
+  overflow: hidden;
+}
 
 html, body, #root {
   width: 100%;

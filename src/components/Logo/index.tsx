@@ -1,6 +1,11 @@
-import React from 'react';
-import logoSvg from './logo.svg';
+import { Image } from "@chakra-ui/react";
 
-export function Logo() {
-  return <img alt="ut.code();のロゴ" height="25" src={logoSvg} />;
+const logoSvg = new URL("logo.svg", import.meta.url).toString();
+
+export function Logo(): JSX.Element {
+  return (
+    <a href="https://utcode.net/" target="_blank" rel="noreferrer">
+      <Image alt="ut.code();のロゴ" h={8} src={logoSvg} />
+    </a>
+  );
 }

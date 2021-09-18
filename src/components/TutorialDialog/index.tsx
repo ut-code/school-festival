@@ -1,7 +1,17 @@
-import { Modal, Steps } from 'antd';
-import React, { useState } from 'react';
-import SwipeableViews from 'react-swipeable-views';
-import styles from './style.module.css';
+import { Fragment, useState } from "react";
+import { RiArrowRightSLine } from "react-icons/ri";
+import SwipeableViews from "react-swipeable-views";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Button,
+  Icon,
+} from "@chakra-ui/react";
 
 export type TutorialDialogProps = {
   title: string;
@@ -12,32 +22,50 @@ export type TutorialDialogProps = {
 
 export type TutorialDialogPropsStep = { title: string; content: JSX.Element };
 
-export const TutorialDialog = (props: TutorialDialogProps) => {
-  const [index, setIndex] = useState(0);
+export function TutorialDialog(props: TutorialDialogProps): JSX.Element {
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   return (
-    <Modal
-      width="700px"
-      title={props.title}
-      bodyStyle={{ padding: 0 }}
-      footer={
-        <Steps current={index} onChange={setIndex}>
-          {props.steps.map((step) => (
-            <Steps.Step key={step.title} title={step.title} />
+    <Modal size="4xl" isOpen onClose={props.onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>{props.title}</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody display="flex" alignItems="center">
+          {props.steps.map((step, i) => (
+            <Fragment key={step.title}>
+              {i > 0 && <Icon mx={2} w={5} h={5} as={RiArrowRightSLine} />}
+              <Button
+                key={step.title}
+                colorScheme="blue"
+                variant={i === selectedIndex ? "solid" : "ghost"}
+                disabled={i === selectedIndex}
+                flexGrow={1}
+                flexBasis={0}
+                onClick={() => {
+                  setSelectedIndex(i);
+                }}
+              >
+                {step.title}
+              </Button>
+            </Fragment>
           ))}
-        </Steps>
-      }
-      visible={props.visible}
-      onCancel={props.onClose}
-      centered
-    >
-      <SwipeableViews index={index} onChangeIndex={setIndex} enableMouseEvents>
-        {props.steps.map((step) => (
-          <div key={step.title} className={styles.swipablePanel}>
-            {step.content}
-          </div>
-        ))}
-      </SwipeableViews>
+        </ModalBody>
+        <SwipeableViews
+          index={selectedIndex}
+          onChangeIndex={setSelectedIndex}
+          enableMouseEvents
+        >
+          {props.steps.map((step) => (
+            <ModalBody key={step.title}>{step.content}</ModalBody>
+          ))}
+        </SwipeableViews>
+        <ModalFooter>
+          <Button colorScheme="blue" onClick={props.onClose}>
+            はじめる
+          </Button>
+        </ModalFooter>
+      </ModalContent>
     </Modal>
   );
-};
+}

@@ -1,24 +1,22 @@
-# ut.code(); 第93回五月祭・第71回駒場祭企画「はじめてのプログラミング」内「はじめてのアルゴリズム」
-
-React (Create React App) SPA on Firebase
+# ut.code(); 五月祭・駒場祭企画「はじめてのプログラミング教室」
 
 ## 初期設定
 
 ```
-yarn
+npm ci
 ```
 
 ## 開発
 
 ```
-yarn start
+npm run dev
 ```
 
 ## デプロイ
 
 ```
-yarn build
-yarn deploy
+npm run build
+npm run deploy
 ```
 
 ## ライセンス

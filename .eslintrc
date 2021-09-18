@@ -1,32 +1,9 @@
 {
   "root": true,
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "project": "./tsconfig.json",
-  },
-  "plugins": ["prettier", "@typescript-eslint/eslint-plugin"],
-  "ignorePatterns": "build/*",
-  "extends": [
-    "airbnb-typescript",
-    "airbnb/hooks",
-    "plugin:@typescript-eslint/recommended",
-    "prettier",
-    "prettier/react",
-    "prettier/@typescript-eslint"
-  ],
+  "extends": "airbnb-typescript-prettier",
   "rules": {
-    "prettier/prettier": "error",
-    "prefer-destructuring": "off",
-    "max-classes-per-file": "off",
     "import/prefer-default-export": "off",
-    "jsx-a11y/media-has-caption": "off",
-    "@typescript-eslint/explicit-module-boundary-types": "off",
-    "@typescript-eslint/ban-types": "off",
-    "@typescript-eslint/no-throw-literal": "off",
-    "react/prop-types": "off",
-    "react/state-in-constructor": "off",
-    "react/no-access-state-in-setstate": "off",
-    "react/destructuring-assignment": "off",
-    "react/require-default-props": "off"
+    "react/react-in-jsx-scope": "off",
+    "react/destructuring-assignment": "off"
   }
 }

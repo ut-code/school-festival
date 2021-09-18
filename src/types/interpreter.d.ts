@@ -1,7 +1,17 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable no-underscore-dangle */
-declare module 'js-interpreter' {
+/* eslint-disable camelcase */
+/* eslint-disable max-classes-per-file */
+declare namespace ESTree {
+  type Program = any;
+  type Node = any;
+  type FunctionDeclaration = any;
+  type BaseNode = any;
+}
+
+declare module "js-interpreter" {
   /**
    * @license
    * JavaScript Interpreter
@@ -33,7 +43,7 @@ declare module 'js-interpreter' {
    *     global scope object.
    * @constructor
    */
-  declare class Interpreter {
+  class Interpreter {
     static acorn: Interpreter.Acorn;
 
     private nodeConstructor;
@@ -114,6 +124,7 @@ declare module 'js-interpreter' {
       code: string | ESTree.Program,
       opt_initFunc?: (i: Interpreter, scope: Interpreter.MyObject) => void,
     );
+
     /**
      * @const {!Object} Configuration used for all Acorn parsing.
      */
@@ -160,82 +171,98 @@ declare module 'js-interpreter' {
      * Since this is for atomic actions only, it can be a class property.
      */
     static toStringCycles_: any[];
+
     /**
      * Add more code to the interpreter.
      * @param {string|!Object} code Raw JavaScript text or AST.
      */
     appendCode(code: string | ESTree.Node): void;
+
     /**
      * Execute one step of the interpreter.
      * @return {boolean} True if a step was executed, false if no more instructions.
      */
     step(): boolean;
+
     /**
      * Execute the interpreter to program completion.  Vulnerable to infinite loops.
      * @return {boolean} True if a execution is asynchronously blocked,
      *     false if no more instructions.
      */
     run(): boolean;
+
     /**
      * Initialize the global scope with buitin properties and functions.
      * @param {!Interpreter.MyObject} scope Global scope.
      */
     initGlobalScope(scope: Interpreter.MyObject): void;
+
     /**
      * Initialize the Function class.
      * @param {!Interpreter.MyObject} scope Global scope.
      */
     initFunction(scope: Interpreter.MyObject): void;
+
     /**
      * Initialize the Object class.
      * @param {!Interpreter.MyObject} scope Global scope.
      */
     initObject(scope: Interpreter.MyObject): void;
+
     /**
      * Initialize the Array class.
      * @param {!Interpreter.MyObject} scope Global scope.
      */
     initArray(scope: Interpreter.MyObject): void;
+
     /**
      * Initialize the String class.
      * @param {!Interpreter.MyObject} scope Global scope.
      */
     initString(scope: Interpreter.MyObject): void;
+
     /**
      * Initialize the Boolean class.
      * @param {!Interpreter.MyObject} scope Global scope.
      */
     initBoolean(scope: Interpreter.MyObject): void;
+
     /**
      * Initialize the Number class.
      * @param {!Interpreter.MyObject} scope Global scope.
      */
     initNumber(scope: Interpreter.MyObject): void;
+
     /**
      * Initialize the Date class.
      * @param {!Interpreter.MyObject} scope Global scope.
      */
     initDate(scope: Interpreter.MyObject): void;
+
     /**
      * Initialize Regular Expression object.
      * @param {!Interpreter.MyObject} scope Global scope.
      */
     initRegExp(scope: Interpreter.MyObject): void;
+
     /**
      * Initialize the Error class.
      * @param {!Interpreter.MyObject} scope Global scope.
      */
     initError(scope: Interpreter.MyObject): void;
+
     /**
      * Initialize Math object.
      * @param {!Interpreter.MyObject} scope Global scope.
      */
     initMath(scope: Interpreter.MyObject): void;
+
     /**
      * Initialize JSON object.
      * @param {!Interpreter.MyObject} scope Global scope.
      */
     initJSON(scope: Interpreter.MyObject): void;
+
     /**
      * Is an object of a certain class?
      * @param {Interpreter.MyValue} child Object to check.
@@ -244,6 +271,7 @@ declare module 'js-interpreter' {
      *     False otherwise.
      */
     isa(child: Interpreter.MyValue, constructor: Interpreter.MyObject): boolean;
+
     /**
      * Is a value a legal integer for an array length?
      * @param {Interpreter.MyValue} x Value to check.
@@ -251,6 +279,7 @@ declare module 'js-interpreter' {
      *     converted to such.  NaN otherwise.
      */
     static legalArrayLength(x: Interpreter.MyValue): number;
+
     /**
      * Is a value a legal integer for an array index?
      * @param {Interpreter.MyValue} x Value to check.
@@ -258,6 +287,7 @@ declare module 'js-interpreter' {
      *     converted to such.  NaN otherwise.
      */
     static legalArrayIndex(x: Interpreter.MyValue): number;
+
     /**
      * Create a new data object based on a constructor's prototype.
      * @param {Interpreter.MyObject} constructor Parent constructor function,
@@ -265,12 +295,14 @@ declare module 'js-interpreter' {
      * @return {!Interpreter.MyObject} New data object.
      */
     createObject(constructor: Interpreter.MyObject): Interpreter.MyObject;
+
     /**
      * Create a new data object based on a prototype.
      * @param {Interpreter.MyObject} proto Prototype object.
      * @return {!Interpreter.MyObject} New data object.
      */
     createObjectProto(proto: Interpreter.MyObject): Interpreter.MyObject;
+
     /**
      * Initialize a pseudo regular expression object based on a native regular
      * expression object.
@@ -281,6 +313,7 @@ declare module 'js-interpreter' {
       pseudoRegexp: Interpreter.MyObject,
       nativeRegexp: RegExp,
     ): void;
+
     /**
      * Create a new function.
      * @param {!Object} node AST node defining the function.
@@ -291,6 +324,7 @@ declare module 'js-interpreter' {
       node: ESTree.FunctionDeclaration,
       scope: Interpreter.MyObject,
     ): Interpreter.MyObject;
+
     /**
      * Create a new native function.
      * @param {!Function} nativeFunc JavaScript function.
@@ -304,12 +338,14 @@ declare module 'js-interpreter' {
       nativeFunc: Interpreter.NativeFunction,
       opt_constructor?: boolean,
     ): Interpreter.MyObject;
+
     /**
      * Create a new native asynchronous function.
      * @param {!Function} asyncFunc JavaScript function.
      * @return {!Interpreter.MyObject} New function.
      */
     createAsyncFunction(asyncFunc: any): Interpreter.MyObject;
+
     /**
      * Converts from a native JS object or value to a JS interpreter object.
      * Can handle JSON-style values.
@@ -317,6 +353,7 @@ declare module 'js-interpreter' {
      * @return {Interpreter.MyValue} The equivalent JS interpreter object.
      */
     nativeToPseudo(nativeObj: any): Interpreter.MyValue;
+
     /**
      * Converts from a JS interpreter object to native JS object.
      * Can handle JSON-style values, plus cycles.
@@ -329,12 +366,14 @@ declare module 'js-interpreter' {
       pseudoObj: Interpreter.MyValue,
       opt_cycles?: Interpreter.MyValueTable,
     ): any;
+
     /**
      * Look up the prototype for this value.
      * @param {Interpreter.MyValue} value Data object.
      * @return {Interpreter.MyObject} Prototype object, null if none.
      */
     getPrototype(value: Interpreter.MyValue): Interpreter.MyObject;
+
     /**
      * Fetch a property value from a data object.
      * @param {Interpreter.MyValue} obj Data object.
@@ -345,6 +384,7 @@ declare module 'js-interpreter' {
       obj: Interpreter.MyValue,
       name: Interpreter.MyValue,
     ): Interpreter.MyValue;
+
     /**
      * Does the named property exist on a data object.
      * @param {Interpreter.MyValue} obj Data object.
@@ -352,6 +392,7 @@ declare module 'js-interpreter' {
      * @return {boolean} True if property exists.
      */
     hasProperty(obj: Interpreter.MyValue, name: Interpreter.MyValue): boolean;
+
     /**
      * Set a property value on a data object.
      * @param {!Interpreter.MyObject} obj Data object.
@@ -368,6 +409,7 @@ declare module 'js-interpreter' {
       value: Interpreter.MyValue | ReferenceErrorConstructor,
       opt_descriptor?: any,
     ): Interpreter.MyObject;
+
     /**
      * Convenience method for adding a native function as a non-enumerable property
      * onto an object's prototype.
@@ -376,11 +418,13 @@ declare module 'js-interpreter' {
      * @param {!Function} wrapper Function object.
      */
     private setNativeFunctionPrototype(obj, name, wrapper);
+
     /**
      * Returns the current scope from the stateStack.
      * @return {!Interpreter.MyObject} Current scope dictionary.
      */
     getScope(): Interpreter.MyObject;
+
     /**
      * Create a new scope dictionary.
      * @param {!Object} node AST node defining the scope container
@@ -392,6 +436,7 @@ declare module 'js-interpreter' {
       node: ESTree.Node,
       parentScope: Interpreter.MyObject,
     ): Interpreter.MyObject;
+
     /**
      * Create a new special scope dictionary. Similar to createScope(), but
      * doesn't assume that the scope is for a function body.
@@ -405,6 +450,7 @@ declare module 'js-interpreter' {
       parentScope: Interpreter.MyObject,
       opt_scope?: Interpreter.MyObject,
     ): Interpreter.MyObject;
+
     /**
      * Retrieves a value from the scope chain.
      * @param {string} name Name of variable.
@@ -413,6 +459,7 @@ declare module 'js-interpreter' {
      *   (rather than being the value of the property).
      */
     getValueFromScope(name: string): Interpreter.MyValue;
+
     /**
      * Sets a value to the current scope.
      * @param {string} name Name of variable.
@@ -424,6 +471,7 @@ declare module 'js-interpreter' {
       name: string,
       value: Interpreter.MyValue,
     ): Interpreter.MyObject;
+
     /**
      * Create a new scope for the given node.
      * @param {!Object} node AST node (program or function).
@@ -431,6 +479,7 @@ declare module 'js-interpreter' {
      * @private
      */
     populateScope_(node: ESTree.Node, scope: Interpreter.MyObject): void;
+
     /**
      * Remove start and end values from AST, or set start and end values to a
      * constant value.  Used to remove highlighting from polyfills and to set
@@ -441,11 +490,13 @@ declare module 'js-interpreter' {
      * @private
      */
     private stripLocations_(node, start, end);
+
     /**
      * Is the current state directly being called with as a construction with 'new'.
      * @return {boolean} True if 'new foo()', false if 'foo()'.
      */
     calledWithNew(): boolean;
+
     /**
      * Gets a value from the scope chain or from an object property.
      * @param {!Array} ref Name of variable or object/propname tuple.
@@ -454,6 +505,7 @@ declare module 'js-interpreter' {
      *   (rather than being the value of the property).
      */
     getValue(ref: any): Interpreter.MyValue;
+
     /**
      * Sets a value to the scope chain or to an object property.
      * @param {!Array} ref Name of variable or object/propname tuple.
@@ -468,6 +520,7 @@ declare module 'js-interpreter' {
       },
       value: Interpreter.MyValue,
     ): Interpreter.MyObject;
+
     /**
      * Throw an exception in the interpreter that can be handled by an
      * interpreter try/catch statement.  If unhandled, a real exception will
@@ -481,6 +534,7 @@ declare module 'js-interpreter' {
       errorClass: Interpreter.MyObject,
       opt_message?: string,
     ): void;
+
     /**
      * Throw an exception in the interpreter that can be handled by a
      * interpreter try/catch statement.  If unhandled, a real exception will
@@ -488,6 +542,7 @@ declare module 'js-interpreter' {
      * @param {!Interpreter.MyObject} error Error object to execute.
      */
     executeException(error: Interpreter.MyObject): void;
+
     /**
      * Create a call to a getter function.
      * @param {!Interpreter.MyObject} func Function to execute.
@@ -499,6 +554,7 @@ declare module 'js-interpreter' {
       func: Interpreter.MyObject,
       left: Interpreter.MyObject | Array<Interpreter.MyObject>,
     ): Interpreter.MyState;
+
     /**
      * Create a call to a setter function.
      * @param {!Interpreter.MyObject} func Function to execute.
@@ -512,46 +568,84 @@ declare module 'js-interpreter' {
       left: Interpreter.MyObject | Array<Interpreter.MyObject>,
       value: Interpreter.MyValue,
     ): Interpreter.MyState;
+
     private stepArrayExpression(stack, state, node);
+
     private stepAssignmentExpression(stack, state, node);
+
     private stepBinaryExpression(stack, state, node);
+
     private stepBlockStatement(stack, state, node);
+
     private stepBreakStatement(stack, state, node);
+
     private stepCallExpression(stack, state, node);
+
     private stepCatchClause(stack, state, node);
+
     private stepConditionalExpression(stack, state, node);
+
     private stepContinueStatement(stack, state, node);
+
     private stepDebuggerStatement(stack, state, node);
+
     private stepDoWhileStatement(stack, state, node);
+
     private stepEmptyStatement(stack, state, node);
+
     private stepEvalProgram_(stack, state, node);
+
     private stepExpressionStatement(stack, state, node);
+
     private stepForInStatement(stack, state, node);
+
     private stepForStatement(stack, state, node);
+
     private stepFunctionDeclaration(stack, state, node);
+
     private stepFunctionExpression(stack, state, node);
+
     private stepIdentifier(stack, state, node);
+
     private stepIfStatement(stack, state, node);
+
     private stepLabeledStatement(stack, state, node);
+
     private stepLiteral(stack, state, node);
+
     private stepLogicalExpression(stack, state, node);
+
     private stepMemberExpression(stack, state, node);
+
     private stepNewExpression(stack, state, node);
+
     private stepObjectExpression(stack, state, node);
+
     private stepProgram(stack, state, node);
+
     private stepReturnStatement(stack, state, node);
+
     private stepSequenceExpression(stack, state, node);
+
     private stepSwitchStatement(stack, state, node);
+
     private stepThisExpression(stack, state, node);
+
     private stepThrowStatement(stack, state, node);
+
     private stepTryStatement(stack, state, node);
+
     private stepUnaryExpression(stack, state, node);
+
     private stepUpdateExpression(stack, state, node);
+
     private stepVariableDeclaration(stack, state, node);
+
     private stepWithStatement(stack, state, node);
+
     private stepWhileStatement(stack, state, node);
   }
-  declare namespace Interpreter {
+  namespace Interpreter {
     /**
      * Class for an object.
      * @param {Interpreter.MyObject} proto Prototype object or null.
@@ -567,6 +661,7 @@ declare module 'js-interpreter' {
       properties: any;
 
       constructor(proto: any);
+
       /** @type {Interpreter.MyObject} */
       proto: Interpreter.MyObject;
 
@@ -578,12 +673,14 @@ declare module 'js-interpreter' {
 
       /** @type {Date|RegExp|boolean|number|string|undefined|null} */
       data: Date | RegExp | boolean | number | string | undefined | null;
+
       /**
        * Convert this object into a string.
        * @return {string} String value.
        * @override
        */
       toString(): string;
+
       /**
        * Return the object's value.
        * @return {Interpreter.MyValue} Value.
@@ -608,6 +705,7 @@ declare module 'js-interpreter' {
       node: ESTree.BaseNode;
 
       scope: Interpreter.MyObject;
+
       constructor(node: ESTree.BaseNode, scope: Interpreter.MyObject);
     }
     interface MyValueTable {

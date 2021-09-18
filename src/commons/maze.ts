@@ -1,4 +1,4 @@
-import { randInt } from './random';
+import { randInt } from "./random";
 
 export type MazeCell = {
   location: { x: number; y: number };
@@ -7,10 +7,10 @@ export type MazeCell = {
 export type Maze = MazeCell[][];
 
 export const MazeDirectionMap = {
-  TOP: 'top',
-  RIGHT: 'right',
-  BOTTOM: 'bottom',
-  LEFT: 'left',
+  TOP: "top",
+  RIGHT: "right",
+  BOTTOM: "bottom",
+  LEFT: "left",
 } as const;
 export type MazeDirection = typeof MazeDirectionMap extends Record<
   string,
@@ -48,7 +48,7 @@ export function moveInMaze(
 export function rotateDirection(
   direction1: MazeDirection,
   direction2: MazeDirection,
-) {
+): MazeDirection {
   return MazeDirections[
     (MazeDirections.indexOf(direction1) + MazeDirections.indexOf(direction2)) %
       MazeDirections.length
@@ -81,7 +81,7 @@ export function createMaze(width: number, height: number): Maze {
     while (true) {
       visitedCells.add(currentCell);
       const nextOptions = MazeDirections.flatMap(
-        // eslint-disable-next-line @typescript-eslint/no-loop-func
+        // eslint-disable-next-line no-loop-func
         (direction) => {
           const nextCell = moveInMaze(maze, currentCell, direction);
           return nextCell && !visitedCells.has(nextCell)

@@ -1,6 +1,16 @@
-import React from 'react';
-import { Alert, Button } from 'antd';
-import { ReloadOutlined } from '@ant-design/icons';
+import { useRef, useState } from "react";
+import { useGetSet } from "react-use";
+import {
+  Box,
+  Divider,
+  Grid,
+  Alert,
+  AlertIcon,
+  AlertDescription,
+  Button,
+  Icon,
+} from "@chakra-ui/react";
+import { RiRestartLine } from "react-icons/ri";
 import {
   createMaze,
   Maze,
@@ -8,116 +18,155 @@ import {
   MazeDirectionMap,
   moveInMaze,
   rotateDirection,
-} from '../../commons/maze';
-import { BlocklyWorkspace } from '../../components/BlocklyWorkspace';
+} from "../../commons/maze";
 import {
   CUSTOM_MAZE_STEPFORWARD,
   CUSTOM_MAZE_TURN,
   CUSTOM_MAZE_CHECKWALL,
-} from './blocks';
+} from "./blocks";
 import {
   CUSTOM_COMMON_IF,
   CUSTOM_COMMON_IF_ELSE,
   CUSTOM_COMMON_WHILE_TRUE,
   CUSTOM_COMMON_WHILE,
   CUSTOM_COMMON_DO_UNTIL,
-} from '../../config/blockly.blocks';
-import { MazeRenderer } from './components/MazeRenderer';
-import styles from './style.module.css';
-import { BlocklyEditorMessage } from '../../components/BlocklyEditor';
+} from "../../config/blockly.blocks";
+import { MazeRenderer } from "./MazeRenderer";
+import {
+  BlocklyEditorMessage,
+  useBlocklyInterpreter,
+} from "../../commons/interpreter";
+import { ExecutionManager } from "../../components/ExecutionManager";
+import { useBlocklyWorkspace } from "../../commons/blockly";
 
-export type MazeWorkspaceState = {
-  maze: Maze;
+type MazeWorkspaceStateSelf = {
   location: { x: number; y: number };
   direction: MazeDirection;
 };
 
-export class MazeWorkspace extends React.Component<{}, MazeWorkspaceState> {
-  static createDefaultState() {
-    return {
-      maze: createMaze(10, 10),
-      ...this.createDefaultMazeState(),
-    };
-  }
+type MazeWorkspaceState = {
+  maze: Maze;
+  self: MazeWorkspaceStateSelf;
+};
 
-  static createDefaultMazeState() {
-    return {
-      location: { x: 0, y: 0 },
-      direction: MazeDirectionMap.BOTTOM,
-    };
-  }
+const defaultSelf: MazeWorkspaceStateSelf = {
+  location: { x: 0, y: 0 },
+  direction: MazeDirectionMap.BOTTOM,
+};
 
-  state = MazeWorkspace.createDefaultState();
+function createDefaultState(): MazeWorkspaceState {
+  return {
+    maze: createMaze(10, 10),
+    self: defaultSelf,
+  };
+}
 
-  nativeFunctions = {
+const toolboxBlocks = [
+  CUSTOM_MAZE_STEPFORWARD,
+  CUSTOM_MAZE_TURN,
+  CUSTOM_MAZE_CHECKWALL,
+  CUSTOM_COMMON_IF,
+  CUSTOM_COMMON_IF_ELSE,
+  CUSTOM_COMMON_WHILE_TRUE,
+  CUSTOM_COMMON_WHILE,
+  CUSTOM_COMMON_DO_UNTIL,
+];
+
+export function MazeWorkspace(): JSX.Element {
+  const [getState, setState] = useGetSet(createDefaultState());
+
+  const globalFunctions = useRef({
     [CUSTOM_MAZE_STEPFORWARD]: () => {
+      const state = getState();
+      const currentCell =
+        state.maze[state.self.location.y][state.self.location.x];
       const nextCell = moveInMaze(
-        this.state.maze,
-        this.currentCell,
-        this.state.direction,
+        state.maze,
+        currentCell,
+        state.self.direction,
       );
-      if (!nextCell || this.currentCell.walls[this.state.direction])
-        throw new Error('壁があるため、進むことができません。');
-      this.setState({ location: nextCell.location });
+      if (!nextCell || currentCell.walls[state.self.direction])
+        throw new Error("壁があるため、進むことができません。");
+      setState({
+        ...state,
+        self: { ...state.self, location: nextCell.location },
+      });
       if (nextCell.location.x === 9 && nextCell.location.y === 9) {
-        throw new BlocklyEditorMessage('迷路をクリアしました！');
+        throw new BlocklyEditorMessage("迷路をクリアしました！");
       }
     },
-    [CUSTOM_MAZE_CHECKWALL]: (direction: MazeDirection) =>
-      this.currentCell.walls[rotateDirection(this.state.direction, direction)],
+    [CUSTOM_MAZE_CHECKWALL]: (direction: MazeDirection) => {
+      const state = getState();
+      return state.maze[state.self.location.y][state.self.location.x].walls[
+        rotateDirection(state.self.direction, direction)
+      ];
+    },
     [CUSTOM_MAZE_TURN]: (to: MazeDirection) => {
-      this.setState({
-        direction: rotateDirection(this.state.direction, to),
+      const state = getState();
+      setState({
+        ...state,
+        self: {
+          ...state.self,
+          direction: rotateDirection(state.self.direction, to),
+        },
       });
     },
-  };
+  }).current;
 
-  get currentCell() {
-    return this.state.maze[this.state.location.y][this.state.location.x];
-  }
+  const [interval, setInterval] = useState(500);
 
-  render() {
-    return (
-      <BlocklyWorkspace
-        type="maze"
-        toolboxBlocks={[
-          CUSTOM_MAZE_STEPFORWARD,
-          CUSTOM_MAZE_TURN,
-          CUSTOM_MAZE_CHECKWALL,
-          CUSTOM_COMMON_IF,
-          CUSTOM_COMMON_IF_ELSE,
-          CUSTOM_COMMON_WHILE_TRUE,
-          CUSTOM_COMMON_WHILE,
-          CUSTOM_COMMON_DO_UNTIL,
-        ]}
-        nativeFunctions={this.nativeFunctions}
-        onReset={() => {
-          this.setState(MazeWorkspace.createDefaultMazeState());
-        }}
-      >
-        <Alert
-          message="迷路の中のアイコンを、ゴールまで導きましょう。"
-          type="info"
-          className={styles.section}
-        />
-        <section className={styles.section}>
-          <MazeRenderer
-            maze={this.state.maze}
-            location={this.state.location}
-            direction={this.state.direction}
+  const { workspaceAreaRef, highlightBlock, code } = useBlocklyWorkspace({
+    type: "maze",
+    toolboxBlocks,
+  });
+  const interpreter = useBlocklyInterpreter({
+    globalFunctions,
+    executionInterval: interval,
+    onStep: highlightBlock,
+  });
+
+  return (
+    <Grid h="100%" templateColumns="1fr 25rem">
+      <div ref={workspaceAreaRef} />
+      <Box>
+        <Box p={4}>
+          <ExecutionManager
+            interpreter={interpreter}
+            interval={interval}
+            setInterval={setInterval}
+            onStart={() => {
+              interpreter.startExecution(code);
+            }}
+            onReset={() => {
+              setState({ ...getState(), self: defaultSelf });
+            }}
           />
-        </section>
-        <section className={styles.section}>
+        </Box>
+        <Divider my={3} />
+        <Box p={4}>
+          <Alert mb={5}>
+            <AlertIcon />
+            <AlertDescription>
+              迷路の中のアイコンを、ゴールまで導きましょう。
+            </AlertDescription>
+          </Alert>
+          <Box mb={5}>
+            <MazeRenderer
+              maze={getState().maze}
+              location={getState().self.location}
+              direction={getState().self.direction}
+            />
+          </Box>
           <Button
-            icon={<ReloadOutlined />}
+            leftIcon={<Icon as={RiRestartLine} />}
             onClick={() => {
-              this.setState(MazeWorkspace.createDefaultState());
+              setState(createDefaultState());
             }}
           >
             新しい迷路にする
           </Button>
-        </section>
-      </BlocklyWorkspace>
-    );
-  }
+        </Box>
+      </Box>
+    </Grid>
+  );
 }

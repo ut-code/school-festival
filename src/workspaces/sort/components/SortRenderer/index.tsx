@@ -1,5 +1,5 @@
-import React from 'react';
-import styles from './style.module.css';
+import React from "react";
+import styles from "./style.module.css";
 
 const SORT_HEIGHT_UNIT = 0.2;
 
@@ -15,19 +15,19 @@ export const SortRenderer: React.FC<{
         0,
         props.heights.length,
         props.heights.length * SORT_HEIGHT_UNIT + 0.7 + 1,
-      ].join(' ')}
+      ].join(" ")}
     >
       {props.heights.map((height, i) => (
         <g
           className={styles.person}
           key={height}
           transform={[
-            'translate(',
+            "translate(",
             i + 0.5,
-            ',',
+            ",",
             props.heights.length * SORT_HEIGHT_UNIT + 0.7,
-            ')',
-          ].join('')}
+            ")",
+          ].join("")}
           fill="#888"
         >
           <path
@@ -35,9 +35,9 @@ export const SortRenderer: React.FC<{
               `M -0.4 0`,
               `V -${height * SORT_HEIGHT_UNIT}`,
               `a 0.4 0.3 0 0 1 0.8 0`,
-              'V 0',
-              'Z',
-            ].join(' ')}
+              "V 0",
+              "Z",
+            ].join(" ")}
           />
           <circle r="0.3" cx="0" cy={-(height * SORT_HEIGHT_UNIT + 0.4)} />
         </g>
@@ -45,13 +45,13 @@ export const SortRenderer: React.FC<{
       <g
         className={styles.me}
         transform={[
-          'translate(',
+          "translate(",
           props.teachersLocation,
-          ',',
+          ",",
           props.heights.length * SORT_HEIGHT_UNIT + 0.7,
-          ')',
+          ")",
           `scale(${1 / 512})`,
-        ].join('')}
+        ].join("")}
       >
         {/* https://www.svgrepo.com/svg/118730/whistle */}
         <rect
