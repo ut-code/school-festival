@@ -39,9 +39,9 @@ export const cellularAutomatonTutorialSteps: TutorialDialogPropsStep[] = [
             このライフゲームでは、生命が存在するセルを黒色で、存在しないセルを白色で表現します。
           </Text>
           <Text mb={2}>
-            ライフゲームのルールは単純です。隣接するセルのなかの生命が存在するセルの個数により、次世代にそのセルに生命が存在するか否かが決まります。
+            ライフゲームのルールは単純です。あるセルの次の世代における生命の存在は、現在の世代での隣接セルに存在する生命の数によって決まります。具体的には下の通りです。
           </Text>
-          <UnorderedList>
+          <UnorderedList mb={2}>
             <ListItem>
               生命が存在しないセル
               <UnorderedList>
@@ -50,13 +50,16 @@ export const cellularAutomatonTutorialSteps: TutorialDialogPropsStep[] = [
               </UnorderedList>
             </ListItem>
             <ListItem>
-              生命が存在するセる
+              生命が存在するセル
               <UnorderedList>
                 <ListItem>隣接する生命が2つまたは3つ → 生存</ListItem>
                 <ListItem>それ以外 → 死滅</ListItem>
               </UnorderedList>
             </ListItem>
           </UnorderedList>
+          <Text mb={2}>
+            ライフゲームのアルゴリズムをプログラミングして、実際にシミュレーションを行ってみましょう。
+          </Text>
         </Box>
         <video
           src={new URL("./life-game.mp4", import.meta.url).toString()}

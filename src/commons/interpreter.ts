@@ -86,9 +86,16 @@ export function useBlocklyInterpreter({
   const resumeExecution = useCallback(() => {
     setExecutionState("running");
   }, []);
+  const finishExecution = useCallback(() => {
+    onStep?.(null);
+    highlightedBlockIdRef.current = undefined;
+    setExecutionState("finished");
+  }, [onStep]);
   const stopExecution = useCallback(() => {
+    onStep?.(null);
+    highlightedBlockIdRef.current = undefined;
     setExecutionState("stopped");
-  }, []);
+  }, [onStep]);
 
   const stepExecution = useCallback(() => {
     const interpreter = interpreterRef.current;
@@ -98,11 +105,10 @@ export function useBlocklyInterpreter({
       // eslint-disable-next-line no-constant-condition
       while (true) {
         if (!interpreter.step()) {
-          setExecutionState("finished");
+          finishExecution();
           return;
         }
         if (highlightedBlockIdRef.current) {
-          onStep?.(null);
           highlightedBlockIdRef.current = undefined;
           loopTrap = 0;
           return;
@@ -119,6 +125,8 @@ export function useBlocklyInterpreter({
           status: "error",
           description: e.message,
         });
+        stopExecution();
+        return;
       }
       if (e instanceof BlocklyEditorMessage) {
         toast({
@@ -126,10 +134,16 @@ export function useBlocklyInterpreter({
           status: "info",
           description: e.message,
         });
+        finishExecution();
+        return;
       }
-      setExecutionState("finished");
+      toast({
+        title: "原因不明のエラーが発生しました",
+        status: "error",
+      });
+      stopExecution();
     }
-  }, [onStep, toast]);
+  }, [toast, stopExecution, finishExecution]);
 
   useEffect(() => {
     if (executionState !== "running") return undefined;

@@ -1,6 +1,3 @@
-import React from "react";
-import styles from "./style.module.css";
-
 const SORT_HEIGHT_UNIT = 0.2;
 
 export const SortRenderer: React.FC<{
@@ -19,7 +16,7 @@ export const SortRenderer: React.FC<{
     >
       {props.heights.map((height, i) => (
         <g
-          className={styles.person}
+          style={{ transition: "0.1s ease" }}
           key={height}
           transform={[
             "translate(",
@@ -43,7 +40,7 @@ export const SortRenderer: React.FC<{
         </g>
       ))}
       <g
-        className={styles.me}
+        style={{ transition: "0.1s ease" }}
         transform={[
           "translate(",
           props.teachersLocation,

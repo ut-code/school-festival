@@ -128,7 +128,7 @@ export function MazeWorkspace(): JSX.Element {
   return (
     <Grid h="100%" templateColumns="1fr 25rem">
       <div ref={workspaceAreaRef} />
-      <Box>
+      <Box overflow="auto">
         <Box p={4}>
           <ExecutionManager
             interpreter={interpreter}
