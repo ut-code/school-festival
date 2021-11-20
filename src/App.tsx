@@ -14,7 +14,10 @@ export function App(): JSX.Element {
   const isRoot = location.pathname === "/";
   const [isHelpDialogVisible, setIsHelpDialogVisible] = useState(isRoot);
   const currentRoute = routes.find((route) => route.path === location.pathname);
-  const [isTutorialDialogVisible, setIsTutorialDialogVisible] = useState(true);
+  const [tutorialFinishedRoutePathSet, setTutorialFinishedRoutePathSet] =
+    useState(new Set<string>());
+  const [isTutorialDialogOpenedByUser, setIsTutorialDialogOpenedByUser] =
+    useState(false);
 
   return (
     <>
@@ -54,7 +57,7 @@ export function App(): JSX.Element {
                 transition="color 0.2s"
                 _hover={{ color: "blue.300" }}
                 onClick={() => {
-                  setIsTutorialDialogVisible(true);
+                  setIsTutorialDialogOpenedByUser(true);
                 }}
               >
                 ヒント
@@ -108,16 +111,22 @@ export function App(): JSX.Element {
         }}
         visible={isHelpDialogVisible}
       />
-      {currentRoute && isTutorialDialogVisible && (
-        <TutorialDialog
-          onClose={() => {
-            setIsTutorialDialogVisible(false);
-          }}
-          title={currentRoute.label}
-          steps={currentRoute.tutorialSteps}
-          visible={isTutorialDialogVisible}
-        />
-      )}
+      {currentRoute &&
+        (isTutorialDialogOpenedByUser ||
+          !tutorialFinishedRoutePathSet.has(currentRoute.path)) && (
+          <TutorialDialog
+            isFirstView={!tutorialFinishedRoutePathSet.has(currentRoute.path)}
+            onClose={() => {
+              setIsTutorialDialogOpenedByUser(false);
+              setTutorialFinishedRoutePathSet(
+                new Set(tutorialFinishedRoutePathSet).add(currentRoute.path),
+              );
+            }}
+            title={currentRoute.label}
+            steps={currentRoute.tutorialSteps}
+            visible={isTutorialDialogOpenedByUser}
+          />
+        )}
     </>
   );
 }

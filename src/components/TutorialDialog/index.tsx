@@ -11,11 +11,13 @@ import {
   ModalCloseButton,
   Button,
   Icon,
+  HStack,
 } from "@chakra-ui/react";
 
 export type TutorialDialogProps = {
   title: string;
   visible: boolean;
+  isFirstView: boolean;
   steps: TutorialDialogPropsStep[];
   onClose(): void;
 };
@@ -61,9 +63,31 @@ export function TutorialDialog(props: TutorialDialogProps): JSX.Element {
           ))}
         </SwipeableViews>
         <ModalFooter>
-          <Button colorScheme="blue" onClick={props.onClose}>
-            はじめる
-          </Button>
+          <HStack spacing={2}>
+            <Button
+              disabled={selectedIndex === 0}
+              onClick={() => {
+                setSelectedIndex(selectedIndex - 1);
+              }}
+            >
+              前へ
+            </Button>
+            <Button
+              disabled={selectedIndex === props.steps.length - 1}
+              onClick={() => {
+                setSelectedIndex(selectedIndex + 1);
+              }}
+              colorScheme={props.isFirstView ? "blue" : undefined}
+            >
+              次へ
+            </Button>
+            {(!props.isFirstView ||
+              selectedIndex === props.steps.length - 1) && (
+              <Button colorScheme="blue" onClick={props.onClose}>
+                はじめる
+              </Button>
+            )}
+          </HStack>
         </ModalFooter>
       </ModalContent>
     </Modal>

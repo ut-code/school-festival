@@ -1,7 +1,6 @@
 import {
   Grid,
   Box,
-  CircularProgress,
   Icon,
   Text,
   Button,
@@ -15,8 +14,8 @@ import {
   PopoverCloseButton,
   VStack,
   useDisclosure,
+  Tooltip,
 } from "@chakra-ui/react";
-import Interpreter from "js-interpreter";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   RiPlayFill,
@@ -24,7 +23,6 @@ import {
   RiSkipForwardFill,
   RiStopFill,
 } from "react-icons/ri";
-import { useDebounce } from "use-debounce";
 import { useBlocklyWorkspace } from "../../commons/blockly";
 import {
   BUILTIN_LOGIC_COMPARE,
@@ -60,53 +58,78 @@ function createRandomCells(): boolean[][] {
   return Array.from({ length: CELLULAR_AUTOMATON_WORLD_SIZE }, () =>
     Array.from(
       { length: CELLULAR_AUTOMATON_WORLD_SIZE },
-      () => Math.random() > 0.5,
+      () => Math.random() < 0.3,
     ),
   );
 }
 
+const presets = {
+  glider: Array.from({ length: CELLULAR_AUTOMATON_WORLD_SIZE }, (_1, y) =>
+    Array.from({ length: CELLULAR_AUTOMATON_WORLD_SIZE }, (_2, x) =>
+      [
+        [2, 1],
+        [3, 2],
+        [3, 3],
+        [2, 3],
+        [1, 3],
+      ].some(([X, Y]) => X === x && Y === y),
+    ),
+  ),
+  spaceship: Array.from({ length: CELLULAR_AUTOMATON_WORLD_SIZE }, (_1, y) =>
+    Array.from({ length: CELLULAR_AUTOMATON_WORLD_SIZE }, (_2, x) =>
+      [
+        [5, 1],
+        [6, 2],
+        [1, 3],
+        [6, 3],
+        [2, 4],
+        [3, 4],
+        [4, 4],
+        [5, 4],
+        [6, 4],
+      ].some(([X, Y]) => X === x && Y === y),
+    ),
+  ),
+};
+
 export function CellularAutomatonWorkspace(): JSX.Element {
+  const worker = useMemo(
+    () => new Worker(new URL("worker.ts", import.meta.url), { type: "module" }),
+    [],
+  );
+  const [isComputing, setIsComputing] = useState(false);
   const [cells, setCells] = useState(createRandomCells);
+  const [nextCells, setNextCells] = useState(cells);
 
   const { code, workspaceAreaRef } = useBlocklyWorkspace({
     type: "cellular-automaton",
     toolboxBlocks,
   });
 
-  const [{ throttledCode, throttledCells }, { isPending }] = useDebounce(
-    useMemo(
-      () => ({ throttledCode: code, throttledCells: cells }),
-      [code, cells],
-    ),
-    200,
-  );
-  const nextCells = useMemo(() => {
-    let result: boolean[][] = [];
+  useEffect(() => {
     const formattedCode = `
-      var previous = ${JSON.stringify(throttledCells)};
-      var next = ${JSON.stringify(throttledCells)};
+      var previous = ${JSON.stringify(cells)};
+      var next = ${JSON.stringify(cells)};
       for (var y = 0; y < ${CELLULAR_AUTOMATON_WORLD_SIZE}; y++) {
         for (var x = 0; x < ${CELLULAR_AUTOMATON_WORLD_SIZE}; x++) {
-          ${throttledCode}
+          ${code}
         }
       }
-      result(JSON.stringify(next));
+      return next;
     `;
-    const interpreter = new Interpreter(
-      formattedCode,
-      (newInterpreter, globalScope) => {
-        newInterpreter.setProperty(
-          globalScope,
-          "result",
-          newInterpreter.createNativeFunction((json: string) => {
-            result = JSON.parse(json);
-          }),
-        );
-      },
-    );
-    interpreter.run();
-    return result;
-  }, [throttledCode, throttledCells]);
+    worker.postMessage(formattedCode);
+    setIsComputing(true);
+  }, [worker, code, cells]);
+
+  useEffect(() => {
+    worker.onmessage = (e) => {
+      setNextCells(e.data);
+      setIsComputing(false);
+    };
+    return () => {
+      worker.terminate();
+    };
+  }, [worker]);
 
   const nextTick = useCallback(() => {
     setCells(nextCells);
@@ -122,7 +145,7 @@ export function CellularAutomatonWorkspace(): JSX.Element {
     };
     timerId = window.setTimeout(timerCallback, 500);
     return () => {
-      clearTimeout(timerId);
+      window.clearTimeout(timerId);
     };
   }, [isPlaying, nextTick]);
 
@@ -134,31 +157,37 @@ export function CellularAutomatonWorkspace(): JSX.Element {
       <Box p={4} overflow="auto">
         <Grid gap={3} justifyContent="center" autoFlow="column" mb={4}>
           {!isPlaying ? (
-            <IconButton
-              aria-label="再生"
-              colorScheme="blue"
-              icon={<Icon as={RiPlayFill} />}
-              onClick={() => {
-                setIsPlaying(true);
-              }}
-            />
+            <Tooltip label="再生">
+              <IconButton
+                aria-label="再生"
+                colorScheme="blue"
+                icon={<Icon as={RiPlayFill} />}
+                onClick={() => {
+                  setIsPlaying(true);
+                }}
+              />
+            </Tooltip>
           ) : (
-            <IconButton
-              aria-label="停止"
-              colorScheme="blue"
-              icon={<Icon as={RiStopFill} />}
-              onClick={() => {
-                setIsPlaying(false);
-              }}
-            />
+            <Tooltip label="停止">
+              <IconButton
+                aria-label="停止"
+                colorScheme="blue"
+                icon={<Icon as={RiStopFill} />}
+                onClick={() => {
+                  setIsPlaying(false);
+                }}
+              />
+            </Tooltip>
           )}
-          <IconButton
-            aria-label="次へ"
-            colorScheme="blue"
-            disabled={isPending() || isPlaying}
-            onClick={nextTick}
-            icon={<Icon as={RiSkipForwardFill} />}
-          />
+          <Tooltip label="次のフレームへ">
+            <IconButton
+              aria-label="次へ"
+              colorScheme="blue"
+              disabled={isComputing || isPlaying}
+              onClick={nextTick}
+              icon={<Icon as={RiSkipForwardFill} />}
+            />
+          </Tooltip>
           <Popover isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
             <PopoverTrigger>
               <IconButton
@@ -181,6 +210,22 @@ export function CellularAutomatonWorkspace(): JSX.Element {
                     }}
                   >
                     ランダム
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setCells(presets.glider);
+                      onClose();
+                    }}
+                  >
+                    グライダー
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setCells(presets.spaceship);
+                      onClose();
+                    }}
+                  >
+                    宇宙船
                   </Button>
                 </VStack>
               </PopoverBody>
@@ -210,16 +255,8 @@ export function CellularAutomatonWorkspace(): JSX.Element {
         <Text fontSize="xl" mb={2}>
           次世代
         </Text>
-        <Box position="relative" mb={4}>
+        <Box mb={4}>
           <CellularAutomatonWorkspaceWorldRenderer cells={nextCells} />
-          {isPending() && (
-            <CircularProgress
-              position="absolute"
-              top={5}
-              right={5}
-              isIndeterminate
-            />
-          )}
         </Box>
       </Box>
     </Grid>

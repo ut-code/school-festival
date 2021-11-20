@@ -1,12 +1,8 @@
 import Blockly from "blockly";
 
 export const SortDirectionMap = { LEFT: "left", RIGHT: "right" } as const;
-export type SortDirection = typeof SortDirectionMap extends Record<
-  string,
-  infer U
->
-  ? U
-  : never;
+export type SortDirection =
+  typeof SortDirectionMap[keyof typeof SortDirectionMap];
 export const SortDirectionDiffMap = {
   [SortDirectionMap.LEFT]: -1,
   [SortDirectionMap.RIGHT]: 1,
