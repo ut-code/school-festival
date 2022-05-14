@@ -64,7 +64,7 @@ export const mazeTutorialSteps: TutorialDialogPropsStep[] = [
       <Grid templateColumns="4fr 3fr" gap={3}>
         <img
           width="100%"
-          src={new URL("./maze-method.svg", import.meta.url).toString()}
+          src={new URL("./maze-hint.svg", import.meta.url).toString()}
           alt="ヒント"
         />
         <Box>
