@@ -38,7 +38,7 @@ export const ReversedMazeDirectionMap: Record<MazeDirection, MazeDirection> = {
 export function moveInMaze(
   maze: Maze,
   cell: MazeCell,
-  direction: MazeDirection,
+  direction: MazeDirection
 ): MazeCell | undefined {
   return maze[cell.location.y + MazeDirectionVectorMap[direction].y]?.[
     cell.location.x + MazeDirectionVectorMap[direction].x
@@ -47,7 +47,7 @@ export function moveInMaze(
 
 export function rotateDirection(
   direction1: MazeDirection,
-  direction2: MazeDirection,
+  direction2: MazeDirection
 ): MazeDirection {
   return MazeDirections[
     (MazeDirections.indexOf(direction1) + MazeDirections.indexOf(direction2)) %
@@ -61,9 +61,9 @@ export function createMaze(width: number, height: number): Maze {
       location: { x, y },
       visited: false,
       walls: Object.fromEntries(
-        MazeDirections.map((direction) => [direction, true]),
+        MazeDirections.map((direction) => [direction, true])
       ) as Record<MazeDirection, boolean>,
-    })),
+    }))
   );
   const visitedCells = new Set<MazeCell>();
 
@@ -72,7 +72,7 @@ export function createMaze(width: number, height: number): Maze {
       MazeDirections.some((direction) => {
         const nextCell = moveInMaze(maze, cell, direction);
         return nextCell && !visitedCells.has(nextCell);
-      }),
+      })
     );
     let currentCell =
       firstCellOptions[randInt(firstCellOptions.length)] ??
@@ -87,7 +87,7 @@ export function createMaze(width: number, height: number): Maze {
           return nextCell && !visitedCells.has(nextCell)
             ? { nextCell, direction }
             : [];
-        },
+        }
       );
       if (!nextOptions.length) break;
       const nextOption = nextOptions[randInt(nextOptions.length)];

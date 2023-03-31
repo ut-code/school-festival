@@ -1,4 +1,5 @@
 import Blockly from "blockly";
+import { javascriptGenerator } from "../../config/blockly";
 
 export const CELLULAR_AUTOMATON_WORLD_SIZE = 30;
 
@@ -21,7 +22,7 @@ Blockly.Blocks[CUSTOM_CELLULAR_AUTOMATON_FILL] = {
           ["黒", CellularAutomatonColourMap.BLACK],
           ["白", CellularAutomatonColourMap.WHITE],
         ]),
-        CUSTOM_CELLULAR_AUTOMATON_FIELD_COLOUR,
+        CUSTOM_CELLULAR_AUTOMATON_FIELD_COLOUR
       )
       .appendField("で塗る");
     this.setPreviousStatement(true, null);
@@ -30,9 +31,9 @@ Blockly.Blocks[CUSTOM_CELLULAR_AUTOMATON_FILL] = {
     this.setTooltip("次の時点でのセルの色を決定します。");
   },
 };
-Blockly.JavaScript[CUSTOM_CELLULAR_AUTOMATON_FILL] = (block) =>
+javascriptGenerator[CUSTOM_CELLULAR_AUTOMATON_FILL] = (block) =>
   `next[y][x] = ${String(
-    block.getFieldValue(CUSTOM_CELLULAR_AUTOMATON_FIELD_COLOUR) === "black",
+    block.getFieldValue(CUSTOM_CELLULAR_AUTOMATON_FIELD_COLOUR) === "black"
   )};`;
 
 export const CUSTOM_CELLULAR_AUTOMATON_SELF_IS_BLACK =
@@ -45,7 +46,7 @@ Blockly.Blocks[CUSTOM_CELLULAR_AUTOMATON_SELF_IS_BLACK] = {
     this.setTooltip("現在のセルが黒いかどうか");
   },
 };
-Blockly.JavaScript[CUSTOM_CELLULAR_AUTOMATON_SELF_IS_BLACK] = () => [
+javascriptGenerator[CUSTOM_CELLULAR_AUTOMATON_SELF_IS_BLACK] = () => [
   `previous[y][x]`,
   0,
 ];
@@ -60,7 +61,7 @@ Blockly.Blocks[CUSTOM_CELLULAR_AUTOMATON_SURROUNDINGS_COUNT] = {
     this.setTooltip("周囲8マスの中で、黒色で塗られているマスの数");
   },
 };
-Blockly.JavaScript[CUSTOM_CELLULAR_AUTOMATON_SURROUNDINGS_COUNT] = () => [
+javascriptGenerator[CUSTOM_CELLULAR_AUTOMATON_SURROUNDINGS_COUNT] = () => [
   `
   (function () {
     var count = 0;

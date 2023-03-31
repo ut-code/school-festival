@@ -122,7 +122,7 @@ declare module "js-interpreter" {
 
     constructor(
       code: string | ESTree.Program,
-      opt_initFunc?: (i: Interpreter, scope: Interpreter.MyObject) => void,
+      opt_initFunc?: (i: Interpreter, scope: Interpreter.MyObject) => void
     );
 
     /**
@@ -311,7 +311,7 @@ declare module "js-interpreter" {
      */
     populateRegExp(
       pseudoRegexp: Interpreter.MyObject,
-      nativeRegexp: RegExp,
+      nativeRegexp: RegExp
     ): void;
 
     /**
@@ -322,7 +322,7 @@ declare module "js-interpreter" {
      */
     createFunction(
       node: ESTree.FunctionDeclaration,
-      scope: Interpreter.MyObject,
+      scope: Interpreter.MyObject
     ): Interpreter.MyObject;
 
     /**
@@ -336,7 +336,7 @@ declare module "js-interpreter" {
      */
     createNativeFunction(
       nativeFunc: Interpreter.NativeFunction,
-      opt_constructor?: boolean,
+      opt_constructor?: boolean
     ): Interpreter.MyObject;
 
     /**
@@ -364,7 +364,7 @@ declare module "js-interpreter" {
      */
     pseudoToNative(
       pseudoObj: Interpreter.MyValue,
-      opt_cycles?: Interpreter.MyValueTable,
+      opt_cycles?: Interpreter.MyValueTable
     ): any;
 
     /**
@@ -382,7 +382,7 @@ declare module "js-interpreter" {
      */
     getProperty(
       obj: Interpreter.MyValue,
-      name: Interpreter.MyValue,
+      name: Interpreter.MyValue
     ): Interpreter.MyValue;
 
     /**
@@ -407,7 +407,7 @@ declare module "js-interpreter" {
       obj: Interpreter.MyObject,
       name: Interpreter.MyValue,
       value: Interpreter.MyValue | ReferenceErrorConstructor,
-      opt_descriptor?: any,
+      opt_descriptor?: any
     ): Interpreter.MyObject;
 
     /**
@@ -434,7 +434,7 @@ declare module "js-interpreter" {
      */
     createScope(
       node: ESTree.Node,
-      parentScope: Interpreter.MyObject,
+      parentScope: Interpreter.MyObject
     ): Interpreter.MyObject;
 
     /**
@@ -448,7 +448,7 @@ declare module "js-interpreter" {
      */
     createSpecialScope(
       parentScope: Interpreter.MyObject,
-      opt_scope?: Interpreter.MyObject,
+      opt_scope?: Interpreter.MyObject
     ): Interpreter.MyObject;
 
     /**
@@ -469,7 +469,7 @@ declare module "js-interpreter" {
      */
     setValueToScope(
       name: string,
-      value: Interpreter.MyValue,
+      value: Interpreter.MyValue
     ): Interpreter.MyObject;
 
     /**
@@ -518,7 +518,7 @@ declare module "js-interpreter" {
         0: Interpreter.MyObject;
         1: string;
       },
-      value: Interpreter.MyValue,
+      value: Interpreter.MyValue
     ): Interpreter.MyObject;
 
     /**
@@ -532,7 +532,7 @@ declare module "js-interpreter" {
      */
     throwException(
       errorClass: Interpreter.MyObject,
-      opt_message?: string,
+      opt_message?: string
     ): void;
 
     /**
@@ -552,7 +552,7 @@ declare module "js-interpreter" {
      */
     createGetter_(
       func: Interpreter.MyObject,
-      left: Interpreter.MyObject | Array<Interpreter.MyObject>,
+      left: Interpreter.MyObject | Array<Interpreter.MyObject>
     ): Interpreter.MyState;
 
     /**
@@ -566,7 +566,7 @@ declare module "js-interpreter" {
     createSetter_(
       func: Interpreter.MyObject,
       left: Interpreter.MyObject | Array<Interpreter.MyObject>,
-      value: Interpreter.MyValue,
+      value: Interpreter.MyValue
     ): Interpreter.MyState;
 
     private stepArrayExpression(stack, state, node);

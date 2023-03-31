@@ -1,17 +1,20 @@
-import Interpreter from "js-interpreter";
+import JSInterpreter from "js-interpreter";
 
 globalThis.addEventListener("message", (e) => {
   const code = `result(JSON.stringify((function () {${e.data}})()));`;
   let result: boolean[][] = [];
-  const interpreter = new Interpreter(code, (newInterpreter, globalScope) => {
-    newInterpreter.setProperty(
-      globalScope,
-      "result",
-      newInterpreter.createNativeFunction((json: string) => {
-        result = JSON.parse(json);
-      }),
-    );
-  });
-  interpreter.run();
+  const jsInterpreter = new JSInterpreter(
+    code,
+    (newInterpreter, globalScope) => {
+      newInterpreter.setProperty(
+        globalScope,
+        "result",
+        newInterpreter.createNativeFunction((json: string) => {
+          result = JSON.parse(json);
+        })
+      );
+    }
+  );
+  jsInterpreter.run();
   globalThis.postMessage(result);
 });

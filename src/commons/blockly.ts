@@ -1,27 +1,33 @@
 import { useCallback, useEffect, useRef } from "react";
 import Blockly from "blockly";
+import { javascriptGenerator } from "../config/blockly";
 
 export type UseBlocklyWorkspaceProps = {
-  type: string;
   toolboxBlocks: string[];
+  onCodeChange?: (code: string) => void;
 };
 
 export type UseBlocklyWorkspaceReturnValue = {
   workspaceAreaRef: React.MutableRefObject<HTMLDivElement | null>;
-  code: string;
   highlightBlock(id: string): void;
+  getCode(): string;
 };
 
-export function useBlocklyWorkspace(
-  props: UseBlocklyWorkspaceProps
-): UseBlocklyWorkspaceReturnValue {
+export function useBlocklyWorkspace({
+  toolboxBlocks,
+  onCodeChange,
+}: UseBlocklyWorkspaceProps): UseBlocklyWorkspaceReturnValue {
   const workspaceAreaRef = useRef<HTMLDivElement>(null);
   const workspaceRef = useRef<Blockly.WorkspaceSvg>();
-  const codeRef = useRef("");
 
   const highlightBlock = useCallback((id: string) => {
     workspaceRef.current?.highlightBlock(id);
   }, []);
+
+  const getCode = useCallback(
+    () => javascriptGenerator.workspaceToCode(workspaceRef.current),
+    []
+  );
 
   useEffect(() => {
     const workspaceArea = workspaceAreaRef.current;
@@ -29,7 +35,7 @@ export function useBlocklyWorkspace(
     const workspace = Blockly.inject(workspaceArea, {
       toolbox: [
         "<xml>",
-        ...props.toolboxBlocks.map(
+        ...toolboxBlocks.map(
           (toolboxBlock) => `<block type="${toolboxBlock}"></block>`
         ),
         "</xml>",
@@ -39,16 +45,26 @@ export function useBlocklyWorkspace(
       renderer: "thrasos",
       move: { drag: true, scrollbars: true, wheel: true },
     });
+    if (onCodeChange) {
+      let previousCode = "";
+      workspace.addChangeListener(() => {
+        const latestCode = getCode();
+        if (previousCode !== latestCode) {
+          previousCode = latestCode;
+          onCodeChange(latestCode);
+        }
+      });
+    }
     workspaceRef.current = workspace;
 
     return () => {
       workspace.dispose();
     };
-  }, [props.type, props.toolboxBlocks]);
+  }, [toolboxBlocks, onCodeChange, getCode]);
 
   return {
     workspaceAreaRef,
-    code: codeRef.current,
     highlightBlock,
+    getCode,
   };
 }

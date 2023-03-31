@@ -7,7 +7,7 @@ export type CellularAutomatonWorkspaceWorldRendererProps = {
 };
 
 export function CellularAutomatonWorkspaceWorldRenderer(
-  props: CellularAutomatonWorkspaceWorldRendererProps,
+  props: CellularAutomatonWorkspaceWorldRendererProps
 ): JSX.Element {
   return (
     <AspectRatio ratio={1}>

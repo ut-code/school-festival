@@ -58,8 +58,8 @@ function createRandomCells(): boolean[][] {
   return Array.from({ length: CELLULAR_AUTOMATON_WORLD_SIZE }, () =>
     Array.from(
       { length: CELLULAR_AUTOMATON_WORLD_SIZE },
-      () => Math.random() < 0.3,
-    ),
+      () => Math.random() < 0.3
+    )
   );
 }
 
@@ -72,8 +72,8 @@ const presets = {
         [3, 3],
         [2, 3],
         [1, 3],
-      ].some(([X, Y]) => X === x && Y === y),
-    ),
+      ].some(([X, Y]) => X === x && Y === y)
+    )
   ),
   spaceship: Array.from({ length: CELLULAR_AUTOMATON_WORLD_SIZE }, (_1, y) =>
     Array.from({ length: CELLULAR_AUTOMATON_WORLD_SIZE }, (_2, x) =>
@@ -87,23 +87,24 @@ const presets = {
         [4, 4],
         [5, 4],
         [6, 4],
-      ].some(([X, Y]) => X === x && Y === y),
-    ),
+      ].some(([X, Y]) => X === x && Y === y)
+    )
   ),
 };
 
 export function CellularAutomatonWorkspace(): JSX.Element {
   const worker = useMemo(
     () => new Worker(new URL("worker.ts", import.meta.url), { type: "module" }),
-    [],
+    []
   );
   const [isComputing, setIsComputing] = useState(false);
   const [cells, setCells] = useState(createRandomCells);
+  const [code, setCode] = useState("");
   const [nextCells, setNextCells] = useState(cells);
 
-  const { code, workspaceAreaRef } = useBlocklyWorkspace({
-    type: "cellular-automaton",
+  const { workspaceAreaRef } = useBlocklyWorkspace({
     toolboxBlocks,
+    onCodeChange: setCode,
   });
 
   useEffect(() => {
@@ -183,7 +184,7 @@ export function CellularAutomatonWorkspace(): JSX.Element {
             <IconButton
               aria-label="次へ"
               colorScheme="blue"
-              disabled={isComputing || isPlaying}
+              isDisabled={isComputing || isPlaying}
               onClick={nextTick}
               icon={<Icon as={RiSkipForwardFill} />}
             />
@@ -243,10 +244,10 @@ export function CellularAutomatonWorkspace(): JSX.Element {
                 cells.map((row, currentY) =>
                   currentY === y
                     ? row.map((cell, currentX) =>
-                        currentX === x ? !cell : cell,
+                        currentX === x ? !cell : cell
                       )
-                    : row,
-                ),
+                    : row
+                )
               );
             }}
             cells={cells}

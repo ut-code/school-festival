@@ -12,12 +12,12 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { RiPauseFill, RiPlayFill, RiPlayLine } from "react-icons/ri";
-import { UseBlocklyInterpreterReturnValue } from "../../commons/interpreter";
+import { BlocklyInterpreter } from "../../commons/interpreter";
 
 export type ExecutionManagerProps = {
   interval: number;
   setInterval(interval: number): void;
-  interpreter: UseBlocklyInterpreterReturnValue;
+  interpreter: BlocklyInterpreter;
   onStart(): void;
   onReset(): void;
 };
@@ -33,18 +33,18 @@ export function ExecutionManager(props: ExecutionManagerProps): JSX.Element {
           <Button
             colorScheme="blue"
             variant="outline"
-            disabled={props.interpreter.executionState !== "stopped"}
+            isDisabled={props.interpreter.state !== "stopped"}
             leftIcon={<Icon as={RiPlayFill} />}
             onClick={props.onStart}
           >
             実行
           </Button>
-          {props.interpreter.executionState !== "paused" ? (
+          {props.interpreter.state !== "paused" ? (
             <Button
               variant="outline"
-              disabled={props.interpreter.executionState !== "running"}
+              isDisabled={props.interpreter.state !== "running"}
               leftIcon={<Icon as={RiPauseFill} />}
-              onClick={props.interpreter.pauseExecution}
+              onClick={props.interpreter.pause}
             >
               一時停止
             </Button>
@@ -52,18 +52,18 @@ export function ExecutionManager(props: ExecutionManagerProps): JSX.Element {
             <Button
               variant="outline"
               leftIcon={<Icon as={RiPlayLine} />}
-              onClick={props.interpreter.resumeExecution}
+              onClick={props.interpreter.resume}
             >
               再開
             </Button>
           )}
           <Button
             variant="outline"
-            icon={<Icon as={RiPauseFill} />}
-            disabled={props.interpreter.executionState === "stopped"}
+            leftIcon={<Icon as={RiPauseFill} />}
+            isDisabled={props.interpreter.state === "stopped"}
             onClick={() => {
               props.onReset();
-              props.interpreter.stopExecution();
+              props.interpreter.stop();
             }}
           >
             リセット
