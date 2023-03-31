@@ -5,6 +5,10 @@ import { mazeTutorialSteps } from "./workspaces/maze/tutorial";
 import { SortWorkspace } from "./workspaces/sort";
 import { sortTutorialSteps } from "./workspaces/sort/tutorial";
 
+// テンプレートがどのように動作するのか確認したい場合はコメントアウトを外してください。
+// import { TemplateWorkspace } from "./workspaces/template";
+// import { templateTutorialSteps } from "./workspaces/template/tutorial";
+
 export const routes = [
   {
     path: "/maze",
@@ -27,4 +31,11 @@ export const routes = [
     Component: CellularAutomatonWorkspace,
     tutorialSteps: cellularAutomatonTutorialSteps,
   },
+  // {
+  //   path: "/template",
+  //   label: "テンプレート",
+  //   description: "新しい課題を作るためのテンプレートです",
+  //   Component: TemplateWorkspace,
+  //   tutorialSteps: templateTutorialSteps,
+  // },
 ];

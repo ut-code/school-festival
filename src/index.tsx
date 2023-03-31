@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 
 import "./config/blockly";
 import "./config/blockly.blocks";
@@ -10,13 +10,15 @@ import { BrowserRouter } from "react-router-dom";
 import { ChakraProvider } from "@chakra-ui/react";
 import { App } from "./App";
 
-ReactDOM.render(
+const root = document.getElementById("root");
+if (!root) throw new Error("root 要素が見つかりません");
+
+createRoot(root).render(
   <React.StrictMode>
     <BrowserRouter>
       <ChakraProvider>
         <App />
       </ChakraProvider>
     </BrowserRouter>
-  </React.StrictMode>,
-  document.getElementById("root")
+  </React.StrictMode>
 );
