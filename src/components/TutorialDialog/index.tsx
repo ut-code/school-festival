@@ -1,6 +1,5 @@
 import { Fragment, useState } from "react";
 import { RiArrowRightSLine } from "react-icons/ri";
-import SwipeableViews from "react-swipeable-views";
 import {
   Modal,
   ModalOverlay,
@@ -16,7 +15,6 @@ import {
 
 export type TutorialDialogProps = {
   title: string;
-  visible: boolean;
   isFirstView: boolean;
   steps: TutorialDialogPropsStep[];
   onClose(): void;
@@ -41,7 +39,7 @@ export function TutorialDialog(props: TutorialDialogProps): JSX.Element {
                 key={step.title}
                 colorScheme="blue"
                 variant={i === selectedIndex ? "solid" : "ghost"}
-                disabled={i === selectedIndex}
+                isDisabled={i === selectedIndex}
                 flexGrow={1}
                 flexBasis={0}
                 onClick={() => {
@@ -53,19 +51,11 @@ export function TutorialDialog(props: TutorialDialogProps): JSX.Element {
             </Fragment>
           ))}
         </ModalBody>
-        <SwipeableViews
-          index={selectedIndex}
-          onChangeIndex={setSelectedIndex}
-          enableMouseEvents
-        >
-          {props.steps.map((step) => (
-            <ModalBody key={step.title}>{step.content}</ModalBody>
-          ))}
-        </SwipeableViews>
+        <ModalBody>{props.steps[selectedIndex].content}</ModalBody>
         <ModalFooter>
           <HStack spacing={2}>
             <Button
-              disabled={selectedIndex === 0}
+              isDisabled={selectedIndex === 0}
               onClick={() => {
                 setSelectedIndex(selectedIndex - 1);
               }}
@@ -73,7 +63,7 @@ export function TutorialDialog(props: TutorialDialogProps): JSX.Element {
               前へ
             </Button>
             <Button
-              disabled={selectedIndex === props.steps.length - 1}
+              isDisabled={selectedIndex === props.steps.length - 1}
               onClick={() => {
                 setSelectedIndex(selectedIndex + 1);
               }}

@@ -43,7 +43,7 @@ export type SortWorkspaceState = {
 function createDefaultState() {
   return {
     heights: Array.from(Array(SORT_COUNT).keys(), (v) => v + 1).sort(
-      () => Math.random() - 0.5,
+      () => Math.random() - 0.5
     ),
     teachersLocation: 0,
   };
@@ -96,12 +96,12 @@ export function SortWorkspace(): JSX.Element {
               [currentState.teachersLocation]: targetLocation,
               [targetLocation]: currentState.teachersLocation,
             }[index] ?? index
-          ],
+          ]
       );
       setState({ ...currentState, heights: newHeights });
       if (
         newHeights.reduce((previous, current) =>
-          previous > current ? current : 0,
+          previous > current ? current : 0
         )
       )
         throw new BlocklyEditorMessage("並び替えに成功しました！");
@@ -126,8 +126,7 @@ export function SortWorkspace(): JSX.Element {
 
   const [interval, setInterval] = useState(500);
 
-  const { workspaceAreaRef, highlightBlock, code } = useBlocklyWorkspace({
-    type: "sort",
+  const { workspaceAreaRef, highlightBlock, getCode } = useBlocklyWorkspace({
     toolboxBlocks,
   });
   const interpreter = useBlocklyInterpreter({
@@ -146,7 +145,7 @@ export function SortWorkspace(): JSX.Element {
             interval={interval}
             setInterval={setInterval}
             onStart={() => {
-              interpreter.startExecution(code);
+              interpreter.start(getCode());
             }}
             onReset={() => {
               setState(createDefaultState());

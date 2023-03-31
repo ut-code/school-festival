@@ -18,7 +18,7 @@ export function MazeRenderer(props: {
   const mazeHeight = props.maze.length;
 
   const [rotation, setRotation] = useState(
-    MazeDirections.indexOf(props.direction),
+    MazeDirections.indexOf(props.direction)
   );
   useEffect(() => {
     const rotationDiff =
@@ -30,8 +30,8 @@ export function MazeRenderer(props: {
           rotationDiff,
           rotationDiff + MazeDirections.length,
         ].reduce((previous, current) =>
-          Math.abs(previous) > Math.abs(current) ? current : previous,
-        ),
+          Math.abs(previous) > Math.abs(current) ? current : previous
+        )
     );
   }, [props.direction, rotation]);
 
@@ -79,7 +79,7 @@ export function MazeRenderer(props: {
               <line x1={0} y1={0} x2={0} y2={MAZE_CELL_SIZE} />
             )}
           </g>
-        )),
+        ))
       )}
       <path
         transform={[

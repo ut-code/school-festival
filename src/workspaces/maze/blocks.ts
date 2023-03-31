@@ -1,5 +1,6 @@
 import Blockly from "blockly";
 import { MazeDirectionMap } from "../../commons/maze";
+import { javascriptGenerator } from "../../config/blockly";
 
 export const CUSTOM_MAZE_STEPFORWARD = "custom_maze_stepForward";
 Blockly.Blocks[CUSTOM_MAZE_STEPFORWARD] = {
@@ -10,7 +11,7 @@ Blockly.Blocks[CUSTOM_MAZE_STEPFORWARD] = {
     this.setColour(0);
   },
 };
-Blockly.JavaScript[CUSTOM_MAZE_STEPFORWARD] = () =>
+javascriptGenerator[CUSTOM_MAZE_STEPFORWARD] = () =>
   `${CUSTOM_MAZE_STEPFORWARD}();`;
 
 export const CUSTOM_MAZE_TURN = "custom_maze_turn";
@@ -23,7 +24,7 @@ Blockly.Blocks[CUSTOM_MAZE_TURN] = {
           ["左", MazeDirectionMap.LEFT],
           ["右", MazeDirectionMap.RIGHT],
         ]),
-        CUSTOM_MAZE_FIELD_DIRECTION,
+        CUSTOM_MAZE_FIELD_DIRECTION
       )
       .appendField("を向く");
     this.setPreviousStatement(true, null);
@@ -32,7 +33,7 @@ Blockly.Blocks[CUSTOM_MAZE_TURN] = {
     this.setTooltip("迷路内の自機を指定した方向に回転させます。");
   },
 };
-Blockly.JavaScript[CUSTOM_MAZE_TURN] = (block) =>
+javascriptGenerator[CUSTOM_MAZE_TURN] = (block) =>
   `${CUSTOM_MAZE_TURN}('${block.getFieldValue(CUSTOM_MAZE_FIELD_DIRECTION)}');`;
 
 export const CUSTOM_MAZE_CHECKWALL = "custom_maze_checkWall";
@@ -46,7 +47,7 @@ Blockly.Blocks[CUSTOM_MAZE_CHECKWALL] = {
           ["右", MazeDirectionMap.RIGHT],
           ["後", MazeDirectionMap.BOTTOM],
         ]),
-        CUSTOM_MAZE_FIELD_DIRECTION,
+        CUSTOM_MAZE_FIELD_DIRECTION
       )
       .appendField("に壁がある");
     this.setOutput(true, "Boolean");
@@ -54,9 +55,9 @@ Blockly.Blocks[CUSTOM_MAZE_CHECKWALL] = {
     this.setTooltip("自機の指定された方向に壁があるかどうか確認します。");
   },
 };
-Blockly.JavaScript[CUSTOM_MAZE_CHECKWALL] = (block) => [
+javascriptGenerator[CUSTOM_MAZE_CHECKWALL] = (block) => [
   `${CUSTOM_MAZE_CHECKWALL}('${block.getFieldValue(
-    CUSTOM_MAZE_FIELD_DIRECTION,
+    CUSTOM_MAZE_FIELD_DIRECTION
   )}')`,
   0,
 ];

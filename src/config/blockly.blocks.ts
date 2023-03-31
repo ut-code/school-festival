@@ -1,4 +1,5 @@
 import Blockly from "blockly";
+import { javascriptGenerator } from "./blockly";
 
 export const BUILTIN_MATH_NUMBER = "math_number";
 export const BUILTIN_MATH_ARITHMETIC = "math_arithmetic";
@@ -10,7 +11,6 @@ export const CUSTOM_COMMON_FIELD_EXPRESSION = "EXPRESSION";
 export const CUSTOM_COMMON_FIELD_TRUE_STATEMENTS = "TRUE_STATEMENTS";
 export const CUSTOM_COMMON_FIELD_FALSE_STATEMENTS = "FALSE_STATEMENTS";
 export const CUSTOM_COMMON_FIELD_STATEMENTS = "STATEMENTS";
-
 export const CUSTOM_COMMON_IF = "custom_common_if";
 Blockly.Blocks[CUSTOM_COMMON_IF] = {
   init(this: Blockly.Block) {
@@ -18,7 +18,7 @@ Blockly.Blocks[CUSTOM_COMMON_IF] = {
     this.appendValueInput(CUSTOM_COMMON_FIELD_EXPRESSION).setCheck("Boolean");
     this.appendDummyInput().appendField("ならば");
     this.appendStatementInput(CUSTOM_COMMON_FIELD_TRUE_STATEMENTS).setCheck(
-      null,
+      null
     );
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
@@ -26,13 +26,13 @@ Blockly.Blocks[CUSTOM_COMMON_IF] = {
     this.setTooltip("条件が満たされた場合のみ、内部の文を実行します。");
   },
 };
-Blockly.JavaScript[CUSTOM_COMMON_IF] = (block) => {
+javascriptGenerator[CUSTOM_COMMON_IF] = (block) => {
   const expression =
-    Blockly.JavaScript.valueToCode(block, CUSTOM_COMMON_FIELD_EXPRESSION, 0) ||
+    javascriptGenerator.valueToCode(block, CUSTOM_COMMON_FIELD_EXPRESSION, 0) ||
     "false";
-  const trueStatements = Blockly.JavaScript.statementToCode(
+  const trueStatements = javascriptGenerator.statementToCode(
     block,
-    CUSTOM_COMMON_FIELD_TRUE_STATEMENTS,
+    CUSTOM_COMMON_FIELD_TRUE_STATEMENTS
   );
   return `if(${expression}){${trueStatements}}`;
 };
@@ -44,31 +44,31 @@ Blockly.Blocks[CUSTOM_COMMON_IF_ELSE] = {
     this.appendValueInput(CUSTOM_COMMON_FIELD_EXPRESSION).setCheck(null);
     this.appendDummyInput().appendField("ならば");
     this.appendStatementInput(CUSTOM_COMMON_FIELD_TRUE_STATEMENTS).setCheck(
-      null,
+      null
     );
     this.appendDummyInput().appendField("違えば");
     this.appendStatementInput(CUSTOM_COMMON_FIELD_FALSE_STATEMENTS).setCheck(
-      null,
+      null
     );
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(210);
     this.setTooltip(
-      "条件が満たされた場合は1番目の文を、満たされない場合は2番目の文を実行します。",
+      "条件が満たされた場合は1番目の文を、満たされない場合は2番目の文を実行します。"
     );
   },
 };
-Blockly.JavaScript[CUSTOM_COMMON_IF_ELSE] = (block) => {
+javascriptGenerator[CUSTOM_COMMON_IF_ELSE] = (block) => {
   const expression =
-    Blockly.JavaScript.valueToCode(block, CUSTOM_COMMON_FIELD_EXPRESSION, 0) ||
+    javascriptGenerator.valueToCode(block, CUSTOM_COMMON_FIELD_EXPRESSION, 0) ||
     "false";
-  const trueStatements = Blockly.JavaScript.statementToCode(
+  const trueStatements = javascriptGenerator.statementToCode(
     block,
-    CUSTOM_COMMON_FIELD_TRUE_STATEMENTS,
+    CUSTOM_COMMON_FIELD_TRUE_STATEMENTS
   );
-  const falseStatements = Blockly.JavaScript.statementToCode(
+  const falseStatements = javascriptGenerator.statementToCode(
     block,
-    CUSTOM_COMMON_FIELD_FALSE_STATEMENTS,
+    CUSTOM_COMMON_FIELD_FALSE_STATEMENTS
   );
   return `if(${expression}){${trueStatements}}else{${falseStatements}}`;
 };
@@ -84,10 +84,10 @@ Blockly.Blocks[CUSTOM_COMMON_WHILE_TRUE] = {
     this.setTooltip("文を繰り返し実行します。");
   },
 };
-Blockly.JavaScript[CUSTOM_COMMON_WHILE_TRUE] = (block) => {
-  const statements = Blockly.JavaScript.statementToCode(
+javascriptGenerator[CUSTOM_COMMON_WHILE_TRUE] = (block) => {
+  const statements = javascriptGenerator.statementToCode(
     block,
-    CUSTOM_COMMON_FIELD_STATEMENTS,
+    CUSTOM_COMMON_FIELD_STATEMENTS
   );
   return `while(true){${statements}}`;
 };
@@ -104,13 +104,13 @@ Blockly.Blocks[CUSTOM_COMMON_WHILE] = {
     this.setTooltip("条件が満たされている間、文を繰り返し実行します。");
   },
 };
-Blockly.JavaScript[CUSTOM_COMMON_WHILE] = (block) => {
+javascriptGenerator[CUSTOM_COMMON_WHILE] = (block) => {
   const expression =
-    Blockly.JavaScript.valueToCode(block, CUSTOM_COMMON_FIELD_EXPRESSION, 0) ||
+    javascriptGenerator.valueToCode(block, CUSTOM_COMMON_FIELD_EXPRESSION, 0) ||
     "false";
-  const statements = Blockly.JavaScript.statementToCode(
+  const statements = javascriptGenerator.statementToCode(
     block,
-    CUSTOM_COMMON_FIELD_STATEMENTS,
+    CUSTOM_COMMON_FIELD_STATEMENTS
   );
   return `while(${expression}){${statements}}`;
 };
@@ -127,13 +127,13 @@ Blockly.Blocks[CUSTOM_COMMON_DO_UNTIL] = {
     this.setTooltip("条件が満たされるまで、文を繰り返し実行します。");
   },
 };
-Blockly.JavaScript[CUSTOM_COMMON_DO_UNTIL] = (block) => {
+javascriptGenerator[CUSTOM_COMMON_DO_UNTIL] = (block) => {
   const expression =
-    Blockly.JavaScript.valueToCode(block, CUSTOM_COMMON_FIELD_EXPRESSION, 0) ||
+    javascriptGenerator.valueToCode(block, CUSTOM_COMMON_FIELD_EXPRESSION, 0) ||
     "false";
-  const statements = Blockly.JavaScript.statementToCode(
+  const statements = javascriptGenerator.statementToCode(
     block,
-    CUSTOM_COMMON_FIELD_STATEMENTS,
+    CUSTOM_COMMON_FIELD_STATEMENTS
   );
   return `while(!(${expression})){${statements}}`;
 };

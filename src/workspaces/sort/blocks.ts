@@ -1,8 +1,9 @@
 import Blockly from "blockly";
+import { javascriptGenerator } from "../../config/blockly";
 
 export const SortDirectionMap = { LEFT: "left", RIGHT: "right" } as const;
 export type SortDirection =
-  typeof SortDirectionMap[keyof typeof SortDirectionMap];
+  (typeof SortDirectionMap)[keyof typeof SortDirectionMap];
 export const SortDirectionDiffMap = {
   [SortDirectionMap.LEFT]: -1,
   [SortDirectionMap.RIGHT]: 1,
@@ -19,7 +20,7 @@ Blockly.Blocks[CUSTOM_SORT_MOVE] = {
           ["左", SortDirectionMap.LEFT],
           ["右", SortDirectionMap.RIGHT],
         ]),
-        CUSTOM_SORT_FIELD_DIRECTION,
+        CUSTOM_SORT_FIELD_DIRECTION
       )
       .appendField("へ動く");
     this.setPreviousStatement(true, null);
@@ -28,7 +29,7 @@ Blockly.Blocks[CUSTOM_SORT_MOVE] = {
     this.setTooltip("左か右に1歩動きます。");
   },
 };
-Blockly.JavaScript[CUSTOM_SORT_MOVE] = (block) =>
+javascriptGenerator[CUSTOM_SORT_MOVE] = (block) =>
   `${CUSTOM_SORT_MOVE}('${block.getFieldValue(CUSTOM_SORT_FIELD_DIRECTION)}');`;
 
 export const CUSTOM_SORT_MOVETOEND = "custom_sort_moveToEnd";
@@ -41,7 +42,7 @@ Blockly.Blocks[CUSTOM_SORT_MOVETOEND] = {
           ["左", SortDirectionMap.LEFT],
           ["右", SortDirectionMap.RIGHT],
         ]),
-        CUSTOM_SORT_FIELD_DIRECTION,
+        CUSTOM_SORT_FIELD_DIRECTION
       )
       .appendField("まで動く");
     this.setPreviousStatement(true, null);
@@ -50,9 +51,9 @@ Blockly.Blocks[CUSTOM_SORT_MOVETOEND] = {
     this.setTooltip("左か右の端まで動きます。");
   },
 };
-Blockly.JavaScript[CUSTOM_SORT_MOVETOEND] = (block) =>
+javascriptGenerator[CUSTOM_SORT_MOVETOEND] = (block) =>
   `${CUSTOM_SORT_MOVETOEND}('${block.getFieldValue(
-    CUSTOM_SORT_FIELD_DIRECTION,
+    CUSTOM_SORT_FIELD_DIRECTION
   )}');`;
 
 export const CUSTOM_SORT_SWAP = "custom_sort_swap";
@@ -64,7 +65,7 @@ Blockly.Blocks[CUSTOM_SORT_SWAP] = {
           ["左", SortDirectionMap.LEFT],
           ["右", SortDirectionMap.RIGHT],
         ]),
-        CUSTOM_SORT_FIELD_DIRECTION,
+        CUSTOM_SORT_FIELD_DIRECTION
       )
       .appendField("の人と入れ替える");
     this.setPreviousStatement(true, null);
@@ -73,7 +74,7 @@ Blockly.Blocks[CUSTOM_SORT_SWAP] = {
     this.setTooltip("左か右の生徒と目の前の生徒を入れ替えます。");
   },
 };
-Blockly.JavaScript[CUSTOM_SORT_SWAP] = (block) =>
+javascriptGenerator[CUSTOM_SORT_SWAP] = (block) =>
   `${CUSTOM_SORT_SWAP}('${block.getFieldValue(CUSTOM_SORT_FIELD_DIRECTION)}');`;
 
 export const CUSTOM_SORT_CHECKTALLER = "custom_maze_checkTaller";
@@ -85,7 +86,7 @@ Blockly.Blocks[CUSTOM_SORT_CHECKTALLER] = {
           ["左", SortDirectionMap.LEFT],
           ["右", SortDirectionMap.RIGHT],
         ]),
-        CUSTOM_SORT_FIELD_DIRECTION,
+        CUSTOM_SORT_FIELD_DIRECTION
       )
       .appendField("の人のほうが大きい");
     this.setOutput(true, "Boolean");
@@ -93,9 +94,9 @@ Blockly.Blocks[CUSTOM_SORT_CHECKTALLER] = {
     this.setTooltip("左か右の生徒と身長を比べます。");
   },
 };
-Blockly.JavaScript[CUSTOM_SORT_CHECKTALLER] = (block) => [
+javascriptGenerator[CUSTOM_SORT_CHECKTALLER] = (block) => [
   `${CUSTOM_SORT_CHECKTALLER}('${block.getFieldValue(
-    CUSTOM_SORT_FIELD_DIRECTION,
+    CUSTOM_SORT_FIELD_DIRECTION
   )}')`,
   0,
 ];
@@ -109,7 +110,7 @@ Blockly.Blocks[CUSTOM_SORT_CHECKEXISTENCE] = {
           ["左", SortDirectionMap.LEFT],
           ["右", SortDirectionMap.RIGHT],
         ]),
-        CUSTOM_SORT_FIELD_DIRECTION,
+        CUSTOM_SORT_FIELD_DIRECTION
       )
       .appendField("に誰かいる");
     this.setOutput(true, "Boolean");
@@ -117,9 +118,9 @@ Blockly.Blocks[CUSTOM_SORT_CHECKEXISTENCE] = {
     this.setTooltip("左か右に生徒がいるかどうか調べます。");
   },
 };
-Blockly.JavaScript[CUSTOM_SORT_CHECKEXISTENCE] = (block) => [
+javascriptGenerator[CUSTOM_SORT_CHECKEXISTENCE] = (block) => [
   `${CUSTOM_SORT_CHECKEXISTENCE}('${block.getFieldValue(
-    CUSTOM_SORT_FIELD_DIRECTION,
+    CUSTOM_SORT_FIELD_DIRECTION
   )}')`,
   0,
 ];

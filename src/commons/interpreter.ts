@@ -1,5 +1,5 @@
 import { useToast } from "@chakra-ui/react";
-import Interpreter from "js-interpreter";
+import JSInterpreter from "js-interpreter";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { STATEMENT_PREFIX_FUNCTION } from "../config/blockly";
 
@@ -18,36 +18,36 @@ export type UseBlocklyInterpreterProps = {
   onStep?(blockId: string | null): void;
 };
 
-export type BlocklyExecutionState =
+export type BlocklyInterpreterState =
   | "stopped"
   | "running"
   | "paused"
   | "finished";
 
-export type UseBlocklyInterpreterReturnValue = {
-  executionState: BlocklyExecutionState;
-  startExecution(code: string): void;
-  stepExecution(): void;
-  pauseExecution(): void;
-  resumeExecution(): void;
-  stopExecution(): void;
+export type BlocklyInterpreter = {
+  state: BlocklyInterpreterState;
+  start(code: string): void;
+  step(): void;
+  pause(): void;
+  resume(): void;
+  stop(): void;
 };
 
 export function useBlocklyInterpreter({
   globalFunctions,
   executionInterval,
   onStep,
-}: UseBlocklyInterpreterProps): UseBlocklyInterpreterReturnValue {
+}: UseBlocklyInterpreterProps): BlocklyInterpreter {
   const toast = useToast();
-  const interpreterRef = useRef<Interpreter>();
+  const jsInterpreterRef = useRef<JSInterpreter>();
   const highlightedBlockIdRef = useRef<string>();
 
   const [executionState, setExecutionState] =
-    useState<BlocklyExecutionState>("stopped");
+    useState<BlocklyInterpreterState>("stopped");
 
   const prepareExecution = useCallback(
     (code: string) => {
-      interpreterRef.current = new Interpreter(
+      jsInterpreterRef.current = new JSInterpreter(
         code,
         (newInterpreter, globalScope) => {
           Object.entries(globalFunctions).forEach(
@@ -55,9 +55,9 @@ export function useBlocklyInterpreter({
               newInterpreter.setProperty(
                 globalScope,
                 functionName,
-                newInterpreter.createNativeFunction(globalFunction),
+                newInterpreter.createNativeFunction(globalFunction)
               );
-            },
+            }
           );
           newInterpreter.setProperty(
             globalScope,
@@ -65,12 +65,12 @@ export function useBlocklyInterpreter({
             newInterpreter.createNativeFunction((blockId: string) => {
               highlightedBlockIdRef.current = blockId;
               onStep?.(blockId);
-            }),
+            })
           );
-        },
+        }
       );
     },
-    [globalFunctions, onStep],
+    [globalFunctions, onStep]
   );
 
   const startExecution = useCallback(
@@ -78,7 +78,7 @@ export function useBlocklyInterpreter({
       prepareExecution(code);
       setExecutionState("running");
     },
-    [prepareExecution],
+    [prepareExecution]
   );
   const pauseExecution = useCallback(() => {
     setExecutionState("paused");
@@ -98,13 +98,13 @@ export function useBlocklyInterpreter({
   }, [onStep]);
 
   const stepExecution = useCallback(() => {
-    const interpreter = interpreterRef.current;
-    if (!interpreter) return;
+    const jsInterpreter = jsInterpreterRef.current;
+    if (!jsInterpreter) return;
     try {
       let loopTrap = 0;
       // eslint-disable-next-line no-constant-condition
       while (true) {
-        if (!interpreter.step()) {
+        if (!jsInterpreter.step()) {
           finishExecution();
           return;
         }
@@ -159,11 +159,11 @@ export function useBlocklyInterpreter({
   }, [executionInterval, executionState, stepExecution]);
 
   return {
-    executionState,
-    startExecution,
-    stepExecution,
-    pauseExecution,
-    resumeExecution,
-    stopExecution,
+    state: executionState,
+    start: startExecution,
+    step: stepExecution,
+    pause: pauseExecution,
+    resume: resumeExecution,
+    stop: stopExecution,
   };
 }

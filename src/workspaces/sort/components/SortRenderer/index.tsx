@@ -1,9 +1,9 @@
 const SORT_HEIGHT_UNIT = 0.2;
 
-export const SortRenderer: React.FC<{
+export function SortRenderer(props: {
   heights: number[];
   teachersLocation: number;
-}> = (props) => {
+}) {
   return (
     <svg
       width="100%"
@@ -72,4 +72,4 @@ export const SortRenderer: React.FC<{
       </g>
     </svg>
   );
-};
+}

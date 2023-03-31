@@ -83,7 +83,7 @@ export function MazeWorkspace(): JSX.Element {
       const nextCell = moveInMaze(
         state.maze,
         currentCell,
-        state.self.direction,
+        state.self.direction
       );
       if (!nextCell || currentCell.walls[state.self.direction])
         throw new Error("壁があるため、進むことができません。");
@@ -115,8 +115,7 @@ export function MazeWorkspace(): JSX.Element {
 
   const [interval, setInterval] = useState(500);
 
-  const { workspaceAreaRef, highlightBlock, code } = useBlocklyWorkspace({
-    type: "maze",
+  const { workspaceAreaRef, highlightBlock, getCode } = useBlocklyWorkspace({
     toolboxBlocks,
   });
   const interpreter = useBlocklyInterpreter({
@@ -135,7 +134,7 @@ export function MazeWorkspace(): JSX.Element {
             interval={interval}
             setInterval={setInterval}
             onStart={() => {
-              interpreter.startExecution(code);
+              interpreter.start(getCode());
             }}
             onReset={() => {
               setState({ ...getState(), self: defaultSelf });

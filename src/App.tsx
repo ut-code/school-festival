@@ -119,12 +119,11 @@ export function App(): JSX.Element {
             onClose={() => {
               setIsTutorialDialogOpenedByUser(false);
               setTutorialFinishedRoutePathSet(
-                new Set(tutorialFinishedRoutePathSet).add(currentRoute.path),
+                new Set(tutorialFinishedRoutePathSet).add(currentRoute.path)
               );
             }}
             title={currentRoute.label}
             steps={currentRoute.tutorialSteps}
-            visible={isTutorialDialogOpenedByUser}
           />
         )}
     </>
