@@ -4,6 +4,8 @@ import { MazeWorkspace } from "./workspaces/maze";
 import { mazeTutorialSteps } from "./workspaces/maze/tutorial";
 import { SortWorkspace } from "./workspaces/sort";
 import { sortTutorialSteps } from "./workspaces/sort/tutorial";
+import { GeneticAlgorithmWorkspace } from "./workspaces/genetic-algorithm";
+import { geneticAlgorithmTutorialSteps } from "./workspaces/genetic-algorithm/tutorial";
 
 // テンプレートがどのように動作するのか確認したい場合はコメントアウトを外してください。
 // import { TemplateWorkspace } from "./workspaces/template";
@@ -30,6 +32,13 @@ export const routes = [
     description: "簡単なルールで生命活動のシミュレーション",
     Component: CellularAutomatonWorkspace,
     tutorialSteps: cellularAutomatonTutorialSteps,
+  },
+  {
+    path: "/genetic-algorithm",
+    label: "遺伝的アルゴリズム",
+    description: "遺伝的アルゴリズムのシミュレーション",
+    Component: GeneticAlgorithmWorkspace,
+    tutorialSteps: geneticAlgorithmTutorialSteps,
   },
   // {
   //   path: "/template",
