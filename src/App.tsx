@@ -27,7 +27,6 @@ export function App(): JSX.Element {
           justify="space-between"
           shadow="md"
           backgroundColor="gray.50"
-          zIndex={50}
           px={3}
         >
           <Logo />
@@ -97,7 +96,9 @@ export function App(): JSX.Element {
               left={0}
               width="100%"
               height="100%"
-              zIndex={location.pathname === route.path ? 40 : undefined}
+              visibility={
+                location.pathname === route.path ? "visible" : "hidden"
+              }
               backgroundColor="white"
             >
               <route.Component />
