@@ -140,11 +140,11 @@ javascriptGenerator[CUSTOM_FOR_ALL_DATAS] = (block: Blockly.Block) => {
   var statements = javascriptGenerator.statementToCode(block, STATEMENTS);
   return `var currentState = getState(); \n
           currentState.listOfClusters.forEach( \n
-            (${CLUSTER}) => ( \n
+            function(${CLUSTER}){ \n
               ${CLUSTER}.datas.forEach( \n
-              (${DATA}) => (${statements}) \n
+              function(${DATA}){${statements}} \n
               )
-            )
+            }
           )`;
 };
 
@@ -172,7 +172,7 @@ javascriptGenerator[CUSTOM_FOR_ALL_CLUSTERS] = (block: Blockly.Block) => {
   var statements = javascriptGenerator.statementToCode(block, STATEMENTS);
   return `var currentState = getState(); \n
           currentState.listOfClusters.forEach( \n
-            (${CLUSTER}) => (${statements}) \n
+            function(${CLUSTER}){${statements}} \n
           )`;
 };
 

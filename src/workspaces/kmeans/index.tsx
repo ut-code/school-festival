@@ -93,7 +93,7 @@ export function KmeansWorkspace(): JSX.Element {
   // javascriptGenerator により生成されたコードから呼ばれる関数を定義します
   const globalFunctions = useRef({
     [CUSTOM_CALCULATE_CENTER_OF_CLUSTER]: () => {
-      for (let i = 0; i < K; i += 1) {
+      for (var i = 0; i < K; i += 1) {
         var currentState = getState();
         var CLUSTER_X: number[] = currentState.listOfClusters[i].datas.map(
           (data_) => data_.x
@@ -101,10 +101,10 @@ export function KmeansWorkspace(): JSX.Element {
         var CLUSTER_Y: number[] = currentState.listOfClusters[i].datas.map(
           (data_) => data_.y
         );
-        let avgX = 0;
-        let avgY = 0;
+        var avgX = 0;
+        var avgY = 0;
         for (
-          let j = 0;
+          var j = 0;
           j < currentState.listOfClusters[i].datas.length;
           j += 1
         ) {
@@ -127,7 +127,7 @@ export function KmeansWorkspace(): JSX.Element {
     [CUSTOM_ASSIGN_CLUSTER]: (data_: data, cluster_: cluster) => {
       var currentState = getState();
       for (
-        let i = 0;
+        var i = 0;
         i < currentState.listOfClusters[data_.n].datas.length;
         i += 1
       ) {
