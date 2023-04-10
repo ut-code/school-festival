@@ -4,6 +4,8 @@ import { MazeWorkspace } from "./workspaces/maze";
 import { mazeTutorialSteps } from "./workspaces/maze/tutorial";
 import { SortWorkspace } from "./workspaces/sort";
 import { sortTutorialSteps } from "./workspaces/sort/tutorial";
+import { KmeansWorkspace } from "./workspaces/kmeans";
+import { kmeansTutorialSteps } from "./workspaces/kmeans/tutorial";
 import { GeneticAlgorithmWorkspace } from "./workspaces/genetic-algorithm";
 import { geneticAlgorithmTutorialSteps } from "./workspaces/genetic-algorithm/tutorial";
 
@@ -32,6 +34,13 @@ export const routes = [
     description: "簡単なルールで生命活動のシミュレーション",
     Component: CellularAutomatonWorkspace,
     tutorialSteps: cellularAutomatonTutorialSteps,
+  },
+  {
+    path: "/kmeans",
+    label: "K平均法",
+    description: "データ分類アルゴリズムの体験",
+    Component: KmeansWorkspace,
+    tutorialSteps: kmeansTutorialSteps,
   },
   {
     path: "/genetic-algorithm",
