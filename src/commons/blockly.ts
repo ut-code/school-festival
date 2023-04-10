@@ -33,13 +33,32 @@ export function useBlocklyWorkspace({
     const workspaceArea = workspaceAreaRef.current;
     if (!workspaceArea) return undefined;
     const workspace = Blockly.inject(workspaceArea, {
-      toolbox: [
-        "<xml>",
-        ...toolboxBlocks.map(
-          (toolboxBlock) => `<block type="${toolboxBlock}"></block>`
-        ),
-        "</xml>",
-      ].join(""),
+      toolbox: {
+        kind: "flyoutToolbox",
+        contents: toolboxBlocks.map((toolboxBlock) => ({
+          kind: "block",
+          type: toolboxBlock,
+        })),
+      },
+      // TODO: 現状のインターフェースだと変数等を扱うのが難しいので categoryToolbox を使うとよい。
+      // kind など一部のプロパティが string literal 型になっていないのが気になるので簡単なラッパーをかぶせたい。
+      // https://developers.google.com/blockly/guides/configure/web/toolbox
+      // 厳密なドキュメントはない。
+      // toolbox: {
+      //   kind: "categoryToolbox",
+      //   contents: [
+      //     {
+      //       kind: "category",
+      //       name: "変数",
+      //       custom: "VARIABLE",
+      //     },
+      //     {
+      //       kind: "category",
+      //       name: "関数",
+      //       custom: "PROCEDURE",
+      //     },
+      //   ],
+      // },
       grid: { spacing: 20, length: 3, colour: "#ccc", snap: true },
       trashcan: true,
       renderer: "thrasos",
