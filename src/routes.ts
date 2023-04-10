@@ -8,8 +8,8 @@ import { KmeansWorkspace } from "./workspaces/kmeans";
 import { kmeansTutorialSteps } from "./workspaces/kmeans/tutorial";
 
 // テンプレートがどのように動作するのか確認したい場合はコメントアウトを外してください。
- import { TemplateWorkspace } from "./workspaces/template";
- import { templateTutorialSteps } from "./workspaces/template/tutorial";
+import { TemplateWorkspace } from "./workspaces/template";
+import { templateTutorialSteps } from "./workspaces/template/tutorial";
 
 export const routes = [
   {
@@ -40,11 +40,11 @@ export const routes = [
     Component: KmeansWorkspace,
     tutorialSteps: kmeansTutorialSteps,
   },
-   {
-     path: "/template",
-     label: "テンプレート",
-     description: "新しい課題を作るためのテンプレートです",
-     Component: TemplateWorkspace,
-     tutorialSteps: templateTutorialSteps,
-   },
+  {
+    path: "/template",
+    label: "テンプレート",
+    description: "新しい課題を作るためのテンプレートです",
+    Component: TemplateWorkspace,
+    tutorialSteps: templateTutorialSteps,
+  },
 ];
