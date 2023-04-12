@@ -24,16 +24,17 @@ import {
   // CUSTOM_FOR_ALL_CLUSTERS,
   // CUSTOM_CLUSTER_PROCESSING,
   // CONSOLE_LOG,
-  data,
   cluster,
-  CUSTOM_ADD_DATA_TO_ARRAY,
-  CUSTOM_DELETE_DATA_FROM_ARRAY,
-  CUSTOM_X_OF_DATA_IN_ARRAY,
-  CUSTOM_Y_OF_DATA_IN_ARRAY,
-  CUSTOM_Y_IS_SMALLER_THAN_X,
-  CUSTOM_A_IS_B,
-  CUSTOM_A_PLUS_B,
-  CUSTOM_A_POWER_B,
+  CUSTOM_KM_ADD_DATA_TO_ARRAY,
+  CUSTOM_KM_DELETE_DATA_FROM_ARRAY,
+  CUSTOM_KM_X_OF_DATA_IN_ARRAY,
+  CUSTOM_KM_Y_OF_DATA_IN_ARRAY,
+  CUSTOM_KM_LENGTH_OF_ARRAY,
+  CUSTOM_KM_Y_IS_SMALLER_THAN_X,
+  CUSTOM_KM_DATA_A_IS_DATA_B,
+  CUSTOM_KM_DEFINE_A_IS_B,
+  CUSTOM_KM_A_PLUS_B,
+  CUSTOM_KM_A_POWER_B,
 } from "./blocks";
 import { ExecutionManager } from "../../components/ExecutionManager";
 import { SimulatorRenderer } from "./SimulatorRenderer";
@@ -56,19 +57,21 @@ const toolboxBlocks = [
   // CUSTOM_FOR_ALL_CLUSTERS,
   // CUSTOM_CLUSTER_PROCESSING,
   // CONSOLE_LOG,
-  CUSTOM_ADD_DATA_TO_ARRAY,
-  CUSTOM_DELETE_DATA_FROM_ARRAY,
-  CUSTOM_X_OF_DATA_IN_ARRAY,
-  CUSTOM_Y_OF_DATA_IN_ARRAY,
-  CUSTOM_Y_IS_SMALLER_THAN_X,
-  CUSTOM_A_IS_B,
-  CUSTOM_A_PLUS_B,
-  CUSTOM_A_POWER_B,
+  CUSTOM_KM_ADD_DATA_TO_ARRAY,
+  CUSTOM_KM_DELETE_DATA_FROM_ARRAY,
+  CUSTOM_KM_X_OF_DATA_IN_ARRAY,
+  CUSTOM_KM_Y_OF_DATA_IN_ARRAY,
+  CUSTOM_KM_LENGTH_OF_ARRAY,
+  CUSTOM_KM_Y_IS_SMALLER_THAN_X,
+  CUSTOM_KM_DATA_A_IS_DATA_B,
+  CUSTOM_KM_DEFINE_A_IS_B,
+  CUSTOM_KM_A_PLUS_B,
+  CUSTOM_KM_A_POWER_B,
 ];
 
 type KmeansWorkspaceState = {
   listOfClusters: cluster[];
-  centerOfClusters: data[];
+  centerOfClusters: cluster;
 };
 
 export function KmeansWorkspace(): JSX.Element {
@@ -114,7 +117,7 @@ export function KmeansWorkspace(): JSX.Element {
     }
     return {
       listOfClusters: clusters,
-      centerOfClusters: [],
+      centerOfClusters: { datas: [], n: K },
     };
   }
 
@@ -191,8 +194,40 @@ export function KmeansWorkspace(): JSX.Element {
     // [CUSTOM_DISTANCE_BETWEEN_X_AND_Y]: (data1: data, data2: data) => {
     //   return Math.sqrt((data1.x - data2.x) ** 2 + (data1.y - data2.y) ** 2);
     // },
-    [CUSTOM_Y_IS_SMALLER_THAN_X]: (number1: number, number2: number) => {
+    [CUSTOM_KM_ADD_DATA_TO_ARRAY]: (a: cluster, x: number, y: number) => {
+      a.datas.push({ x, y });
+    },
+    [CUSTOM_KM_DELETE_DATA_FROM_ARRAY]: (a: cluster, i: number) => {
+      a.datas.splice(i, 1);
+    },
+    [CUSTOM_KM_X_OF_DATA_IN_ARRAY]: (a: cluster, i: number) => {
+      return a.datas[i].x;
+    },
+    [CUSTOM_KM_Y_OF_DATA_IN_ARRAY]: (a: cluster, i: number) => {
+      return a.datas[i].y;
+    },
+    [CUSTOM_KM_LENGTH_OF_ARRAY]: (a: cluster) => {
+      return a.datas.length;
+    },
+    [CUSTOM_KM_Y_IS_SMALLER_THAN_X]: (number1: number, number2: number) => {
       return number1 > number2;
+    },
+    [CUSTOM_KM_DATA_A_IS_DATA_B]: (
+      x1: number,
+      y1: number,
+      x2: number,
+      y2: number
+    ) => {
+      return x1 === x2 && y1 === y2;
+    },
+    // [CUSTOM_KM_DEFINE_A_IS_B]: (a: number, b: number) => {
+    //   a = b;
+    // },
+    [CUSTOM_KM_A_PLUS_B]: (a: number, b: number) => {
+      return a + b;
+    },
+    [CUSTOM_KM_A_POWER_B]: (a: number, b: number) => {
+      return a ** b;
     },
   }).current;
 
@@ -233,38 +268,38 @@ export function KmeansWorkspace(): JSX.Element {
 
         <Text>
           0x{" "}
-          {getState().centerOfClusters[0]
-            ? getState().centerOfClusters[0].x
+          {getState().centerOfClusters.datas[0]
+            ? getState().centerOfClusters.datas[0].x
             : 0}
         </Text>
         <Text>
           0y{" "}
-          {getState().centerOfClusters[0]
-            ? getState().centerOfClusters[0].y
+          {getState().centerOfClusters.datas[0]
+            ? getState().centerOfClusters.datas[0].y
             : 0}
         </Text>
         <Text>
           1x{" "}
-          {getState().centerOfClusters[1]
-            ? getState().centerOfClusters[1].x
+          {getState().centerOfClusters.datas[1]
+            ? getState().centerOfClusters.datas[1].x
             : 0}
         </Text>
         <Text>
           1y{" "}
-          {getState().centerOfClusters[1]
-            ? getState().centerOfClusters[1].y
+          {getState().centerOfClusters.datas[1]
+            ? getState().centerOfClusters.datas[1].y
             : 0}
         </Text>
         <Text>
           2x{" "}
-          {getState().centerOfClusters[2]
-            ? getState().centerOfClusters[2].x
+          {getState().centerOfClusters.datas[2]
+            ? getState().centerOfClusters.datas[2].x
             : 0}
         </Text>
         <Text>
           2y{" "}
-          {getState().centerOfClusters[2]
-            ? getState().centerOfClusters[2].y
+          {getState().centerOfClusters.datas[2]
+            ? getState().centerOfClusters.datas[2].y
             : 0}
         </Text>
       </Box>

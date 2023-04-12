@@ -195,16 +195,18 @@ export type cluster = {
   n: number;
 };
 
-export const CUSTOM_ADD_DATA_TO_ARRAY = "add_data_to_array";
-export const CUSTOM_DELETE_DATA_FROM_ARRAY = "delete_data_from_array";
-export const CUSTOM_X_OF_DATA_IN_ARRAY = "x_of_data_in_array";
-export const CUSTOM_Y_OF_DATA_IN_ARRAY = "y_of_data_in_array";
-export const CUSTOM_Y_IS_SMALLER_THAN_X = "y_is_smaller_than_x";
-export const CUSTOM_A_IS_B = "a_is_b";
-export const CUSTOM_A_PLUS_B = "a_plus_b";
-export const CUSTOM_A_POWER_B = "a_power_b";
+export const CUSTOM_KM_ADD_DATA_TO_ARRAY = "add_data_to_array";
+export const CUSTOM_KM_DELETE_DATA_FROM_ARRAY = "delete_data_from_array";
+export const CUSTOM_KM_X_OF_DATA_IN_ARRAY = "x_of_data_in_array";
+export const CUSTOM_KM_Y_OF_DATA_IN_ARRAY = "y_of_data_in_array";
+export const CUSTOM_KM_LENGTH_OF_ARRAY = "length_of_array";
+export const CUSTOM_KM_Y_IS_SMALLER_THAN_X = "y_is_smaller_than_x";
+export const CUSTOM_KM_DATA_A_IS_DATA_B = "data_a_is_data_b";
+export const CUSTOM_KM_DEFINE_A_IS_B = "define_a_is_b";
+export const CUSTOM_KM_A_PLUS_B = "a_plus_b";
+export const CUSTOM_KM_A_POWER_B = "a_power_b";
 
-Blockly.Blocks[CUSTOM_ADD_DATA_TO_ARRAY] = {
+Blockly.Blocks[CUSTOM_KM_ADD_DATA_TO_ARRAY] = {
   init() {
     this.appendValueInput("ARRAY").setCheck("Array");
     this.appendDummyInput().appendField("（配列）に(");
@@ -219,8 +221,14 @@ Blockly.Blocks[CUSTOM_ADD_DATA_TO_ARRAY] = {
     this.setTooltip("");
   },
 };
+javascriptGenerator[CUSTOM_KM_ADD_DATA_TO_ARRAY] = (block) =>
+  `${CUSTOM_KM_ADD_DATA_TO_ARRAY}(
+    ${block.getFieldValue("ARRAY")},
+    ${block.getFieldValue("NUMBER_X")},
+    ${block.getFieldValue("NUMBER_Y")}
+    );`;
 
-Blockly.Blocks[CUSTOM_DELETE_DATA_FROM_ARRAY] = {
+Blockly.Blocks[CUSTOM_KM_DELETE_DATA_FROM_ARRAY] = {
   init() {
     this.appendValueInput("ARRAY").setCheck("Array");
     this.appendDummyInput().appendField("（配列）から");
@@ -233,8 +241,13 @@ Blockly.Blocks[CUSTOM_DELETE_DATA_FROM_ARRAY] = {
     this.setTooltip("");
   },
 };
+javascriptGenerator[CUSTOM_KM_DELETE_DATA_FROM_ARRAY] = (block) =>
+  `${CUSTOM_KM_DELETE_DATA_FROM_ARRAY}(
+    ${block.getFieldValue("ARRAY")},
+    ${block.getFieldValue("NUMBER")}
+    );`;
 
-Blockly.Blocks[CUSTOM_X_OF_DATA_IN_ARRAY] = {
+Blockly.Blocks[CUSTOM_KM_X_OF_DATA_IN_ARRAY] = {
   init() {
     this.appendValueInput("ARRAY").setCheck("Array");
     this.appendDummyInput().appendField("（配列）の");
@@ -246,8 +259,13 @@ Blockly.Blocks[CUSTOM_X_OF_DATA_IN_ARRAY] = {
     this.setTooltip("");
   },
 };
+javascriptGenerator[CUSTOM_KM_X_OF_DATA_IN_ARRAY] = (block) =>
+  `${CUSTOM_KM_X_OF_DATA_IN_ARRAY}(
+    ${block.getFieldValue("ARRAY")},
+    ${block.getFieldValue("NUMBER")}
+    );`;
 
-Blockly.Blocks[CUSTOM_Y_OF_DATA_IN_ARRAY] = {
+Blockly.Blocks[CUSTOM_KM_Y_OF_DATA_IN_ARRAY] = {
   init() {
     this.appendValueInput("ARRAY").setCheck("Array");
     this.appendDummyInput().appendField("（配列）の");
@@ -259,8 +277,28 @@ Blockly.Blocks[CUSTOM_Y_OF_DATA_IN_ARRAY] = {
     this.setTooltip("");
   },
 };
+javascriptGenerator[CUSTOM_KM_Y_OF_DATA_IN_ARRAY] = (block) =>
+  `${CUSTOM_KM_Y_OF_DATA_IN_ARRAY}(
+    ${block.getFieldValue("ARRAY")},
+    ${block.getFieldValue("NUMBER")}
+    );`;
 
-Blockly.Blocks[CUSTOM_Y_IS_SMALLER_THAN_X] = {
+Blockly.Blocks[CUSTOM_KM_LENGTH_OF_ARRAY] = {
+  init() {
+    this.appendValueInput("ARRAY").setCheck("Array");
+    this.appendDummyInput().appendField("（配列）の要素数");
+    this.setInputsInline(true);
+    this.setOutput(true, "Number");
+    this.setColour(230);
+    this.setTooltip("");
+  },
+};
+javascriptGenerator[CUSTOM_KM_LENGTH_OF_ARRAY] = (block) =>
+  `${CUSTOM_KM_Y_OF_DATA_IN_ARRAY}(
+        ${block.getFieldValue("ARRAY")},
+        );`;
+
+Blockly.Blocks[CUSTOM_KM_Y_IS_SMALLER_THAN_X] = {
   init() {
     this.appendValueInput("NUMBER_X").setCheck("Number").appendField("");
     this.appendDummyInput().appendField("より");
@@ -272,12 +310,37 @@ Blockly.Blocks[CUSTOM_Y_IS_SMALLER_THAN_X] = {
     this.setTooltip("");
   },
 };
-javascriptGenerator[CUSTOM_Y_IS_SMALLER_THAN_X] = (block) =>
-  `${CUSTOM_Y_IS_SMALLER_THAN_X}(${block.getFieldValue(
-    "NUMBERX"
-  )},${block.getFieldValue("NUMBERY")});`;
+javascriptGenerator[CUSTOM_KM_Y_IS_SMALLER_THAN_X] = (block) =>
+  `${CUSTOM_KM_Y_IS_SMALLER_THAN_X}(
+    ${block.getFieldValue("NUMBER_X")},
+    ${block.getFieldValue("NUMBER_Y")}
+    );`;
 
-Blockly.Blocks[CUSTOM_A_IS_B] = {
+Blockly.Blocks[CUSTOM_KM_DATA_A_IS_DATA_B] = {
+  init() {
+    this.appendValueInput("NUMBER_X_1").setCheck("Number").appendField("点(");
+    this.appendDummyInput().appendField(",");
+    this.appendValueInput("NUMBER_Y_1").setCheck("Number").appendField("");
+    this.appendDummyInput().appendField(")と点(");
+    this.appendValueInput("NUMBER_X_2").setCheck("Number").appendField("");
+    this.appendDummyInput().appendField(",");
+    this.appendValueInput("NUMBER_Y_2").setCheck("Number").appendField("");
+    this.appendDummyInput().appendField(")が等しいなら");
+    this.setInputsInline(true);
+    this.setOutput(true, "Boolean");
+    this.setColour(230);
+    this.setTooltip("");
+  },
+};
+javascriptGenerator[CUSTOM_KM_DATA_A_IS_DATA_B] = (block) =>
+  `${CUSTOM_KM_DATA_A_IS_DATA_B}(
+    ${block.getFieldValue("NUMBER_X_1")},
+    ${block.getFieldValue("NUMBER_Y_1")},
+    ${block.getFieldValue("NUMBER_X_2")},
+    ${block.getFieldValue("NUMBER_Y_2")},
+  );`;
+
+Blockly.Blocks[CUSTOM_KM_DEFINE_A_IS_B] = {
   init() {
     this.appendValueInput("NUMBER_A").setCheck("Number");
     this.appendDummyInput().appendField("の値を");
@@ -290,8 +353,13 @@ Blockly.Blocks[CUSTOM_A_IS_B] = {
     this.setTooltip("");
   },
 };
+javascriptGenerator[CUSTOM_KM_DEFINE_A_IS_B] = (block) =>
+  `${CUSTOM_KM_DEFINE_A_IS_B}(
+    ${block.getFieldValue("NUMBER_A")},
+    ${block.getFieldValue("NUMBER_B")}
+  );`;
 
-Blockly.Blocks[CUSTOM_A_PLUS_B] = {
+Blockly.Blocks[CUSTOM_KM_A_PLUS_B] = {
   init() {
     this.appendValueInput("NUMBER_A").setCheck("Number");
     this.appendDummyInput().appendField("+");
@@ -302,8 +370,13 @@ Blockly.Blocks[CUSTOM_A_PLUS_B] = {
     this.setTooltip("");
   },
 };
+javascriptGenerator[CUSTOM_KM_A_PLUS_B] = (block) =>
+  `${CUSTOM_KM_A_PLUS_B}(
+    ${block.getFieldValue("NUMBER_A")},
+    ${block.getFieldValue("NUMBER_B")}
+  );`;
 
-Blockly.Blocks[CUSTOM_A_POWER_B] = {
+Blockly.Blocks[CUSTOM_KM_A_POWER_B] = {
   init() {
     this.appendValueInput("NUMBER_A").setCheck("Number");
     this.appendDummyInput().appendField("^");
@@ -314,6 +387,11 @@ Blockly.Blocks[CUSTOM_A_POWER_B] = {
     this.setTooltip("");
   },
 };
+javascriptGenerator[CUSTOM_KM_A_POWER_B] = (block) =>
+  `${CUSTOM_KM_A_POWER_B}(
+    ${block.getFieldValue("NUMBER_A")},
+    ${block.getFieldValue("NUMBER_B")}
+  );`;
 
 // デバッグ用
 // eslint-disable-next-line import/prefer-default-export
