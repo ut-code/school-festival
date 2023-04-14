@@ -1,6 +1,6 @@
 import { TutorialDialogPropsStep } from "../../../components/TutorialDialog";
 
-export const templateTutorialSteps: TutorialDialogPropsStep[] = [
+export const QlearningTutorialSteps: TutorialDialogPropsStep[] = [
   {
     title: "ページ 1",
     content: <>ページ 1 の内容</>,

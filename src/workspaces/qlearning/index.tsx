@@ -17,7 +17,7 @@ const toolboxBlocks = [
   CUSTOM_TEMPLATE_INCREMENT,
 ];
 
-export function TemplateWorkspace(): JSX.Element {
+export function QlearningWorkspace(): JSX.Element {
   // interpreter に渡す関数は実行開始時に決定されるため、通常の state だと最新の情報が参照できません
   // このため、反則ですが内部的に ref を用いて状態管理をしている react-use の [useGetSet](https://github.com/streamich/react-use/blob/master/docs/useGetSet.md) を用いています。
   const [getState, setState] = useGetSet(0);
