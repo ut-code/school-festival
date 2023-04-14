@@ -2,8 +2,25 @@ import { useCallback, useEffect, useRef } from "react";
 import Blockly from "blockly";
 import { javascriptGenerator } from "../config/blockly";
 
+/** ブロックの数が少ない場合 */
+export type BlocklyToolboxDefinitionFlyout = {
+  type: "flyout";
+  blockTypes: string[];
+};
+
+/** ブロックの数が多い場合、もしくは変数が必要な場合 */
+export type BlocklyToolboxDefinitionCategory = {
+  type: "category";
+  categories: Array<{ name: string; blockTypes: string[] }>;
+  enableVariables?: boolean;
+};
+
+export type BlocklyToolboxDefinition =
+  | BlocklyToolboxDefinitionFlyout
+  | BlocklyToolboxDefinitionCategory;
+
 export type UseBlocklyWorkspaceProps = {
-  toolboxBlocks: string[];
+  toolboxDefinition: BlocklyToolboxDefinition;
   onCodeChange?: (code: string) => void;
 };
 
@@ -14,7 +31,7 @@ export type UseBlocklyWorkspaceReturnValue = {
 };
 
 export function useBlocklyWorkspace({
-  toolboxBlocks,
+  toolboxDefinition,
   onCodeChange,
 }: UseBlocklyWorkspaceProps): UseBlocklyWorkspaceReturnValue {
   const workspaceAreaRef = useRef<HTMLDivElement>(null);
@@ -33,32 +50,31 @@ export function useBlocklyWorkspace({
     const workspaceArea = workspaceAreaRef.current;
     if (!workspaceArea) return undefined;
     const workspace = Blockly.inject(workspaceArea, {
-      toolbox: {
-        kind: "flyoutToolbox",
-        contents: toolboxBlocks.map((toolboxBlock) => ({
-          kind: "block",
-          type: toolboxBlock,
-        })),
-      },
-      // TODO: 現状のインターフェースだと変数等を扱うのが難しいので categoryToolbox を使うとよい。
-      // kind など一部のプロパティが string literal 型になっていないのが気になるので簡単なラッパーをかぶせたい。
-      // https://developers.google.com/blockly/guides/configure/web/toolbox
-      // 厳密なドキュメントはない。
-      // toolbox: {
-      //   kind: "categoryToolbox",
-      //   contents: [
-      //     {
-      //       kind: "category",
-      //       name: "変数",
-      //       custom: "VARIABLE",
-      //     },
-      //     {
-      //       kind: "category",
-      //       name: "関数",
-      //       custom: "PROCEDURE",
-      //     },
-      //   ],
-      // },
+      toolbox:
+        toolboxDefinition.type === "flyout"
+          ? {
+              kind: "flyoutToolbox",
+              contents: toolboxDefinition.blockTypes.map((type) => ({
+                kind: "block",
+                type,
+              })),
+            }
+          : {
+              kind: "categoryToolbox",
+              contents: [
+                ...toolboxDefinition.categories.map((category) => ({
+                  kind: "category",
+                  name: category.name,
+                  contents: category.blockTypes.map((type) => ({
+                    kind: "block",
+                    type,
+                  })),
+                })),
+                ...(toolboxDefinition.enableVariables
+                  ? [{ kind: "category", name: "変数", custom: "VARIABLE" }]
+                  : []),
+              ],
+            },
       grid: { spacing: 20, length: 3, colour: "#ccc", snap: true },
       trashcan: true,
       renderer: "thrasos",
@@ -79,7 +95,7 @@ export function useBlocklyWorkspace({
     return () => {
       workspace.dispose();
     };
-  }, [toolboxBlocks, onCodeChange, getCode]);
+  }, [toolboxDefinition, onCodeChange, getCode]);
 
   return {
     workspaceAreaRef,
