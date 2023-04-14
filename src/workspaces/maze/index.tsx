@@ -116,7 +116,7 @@ export function MazeWorkspace(): JSX.Element {
   const [interval, setInterval] = useState(500);
 
   const { workspaceAreaRef, highlightBlock, getCode } = useBlocklyWorkspace({
-    toolboxBlocks,
+    toolboxDefinition: { type: "flyout", blockTypes: toolboxBlocks },
   });
   const interpreter = useBlocklyInterpreter({
     globalFunctions,
