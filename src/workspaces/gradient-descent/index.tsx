@@ -19,6 +19,9 @@ import {
   CUSTOM_GRAD_SET_Y,
 } from "./blocks";
 import { ExecutionManager } from "../../components/ExecutionManager";
+import { GradRenderer } from "./components/GradRenderer";
+
+import { objectiveFunction } from "./objective";
 
 const toolboxBlocks = [
   // 共有のブロック
@@ -46,10 +49,6 @@ function createDefaultState() {
     x: 0,
     y: 0,
   };
-}
-
-function objectiveFunction(x: number, y: number) {
-  return (x - 2) * (x - 2) + (y + 3) * (y + 3) + 2;
 }
 
 export function GradWorkspace(): JSX.Element {
@@ -100,6 +99,7 @@ export function GradWorkspace(): JSX.Element {
         />
         <Text mt={2}>x: {getState().x}</Text>
         <Text mt={2}>y: {getState().y}</Text>
+        <GradRenderer x={getState().x} y={getState().y} />
       </Box>
     </Grid>
   );
