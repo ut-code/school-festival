@@ -23,7 +23,7 @@ export function GradRenderer(props: { x: number; y: number }) {
     camera.lookAt(new THREE.Vector3(0, 0, 0));
     const controls = new OrbitControls(
       camera,
-      document.querySelector("#mycanvas")
+      document.querySelector("#mycanvas") as HTMLElement
     );
 
     const maxX = 300;
