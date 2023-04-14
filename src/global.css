@@ -1,5 +1,10 @@
-html {
+:root {
   overflow: hidden;
+  --color-text-primary: #222;
+  --color-border: #aaa;
+  --color-divider: #ddd;
+  --color-hover: #eee;
+  --color-background: #fff;
 }
 
 html,
@@ -10,35 +15,68 @@ body,
 }
 
 .blocklyPath {
-  stroke: #444444 !important;
+  stroke: var(--color-text-primary) !important;
 }
 .blocklySelected .blocklyPath {
   stroke-width: inherit !important;
-  stroke: #000000 !important;
+  stroke: var(--color-text-primary) !important;
 }
 .blocklyText {
-  fill: #222 !important;
+  fill: var(--color-text-primary) !important;
 }
 .blocklySelected .blocklyText {
-  fill: #000 !important;
+  fill: var(--color-text-primary) !important;
 }
 .blocklyFieldRect {
   fill: #fff !important;
   fill-opacity: 1 !important;
 }
 .blocklyDropDownDiv {
-  border: 1px solid #aaa;
+  border: 1px solid var(--color-border);
 }
 .blocklyDropDownDiv .blocklyDropDownArrow {
-  border-top: 1px solid #aaa;
-  border-left: 1px solid #aaa;
+  border-top: 1px solid var(--color-border);
+  border-left: 1px solid var(--color-border);
+}
+div.blocklyToolboxDiv {
+  background-color: var(--color-background);
+  border-right: 1px solid var(--color-divider)
+}
+div.blocklyTreeRow {
+  height: 36px;
+  line-height: 36px;
+  margin: 0;
+  padding: 0 16px !important;
+}
+div.blocklyTreeRow:not(.blocklyTreeSelected):hover {
+  background-color: var(--color-hover);
+}
+div.blocklyTreeRow.blocklyTreeSelected {
+  background-color: var(--color-divider) !important;
+}
+div.blocklyTreeSelected .blocklyTreeLabel {
+  color: var(--color-text-primary);
+}
+.blocklyTreeIcon {
+  display: none !important;
 }
 .blocklyFlyout {
-  border-right: 1px solid #ddd;
-  background-color: #fff;
+  border-right: 1px solid var(--color-divider);
+  background-color: var(--color-background);
 }
 .blocklyFlyoutBackground {
-  fill: transparent;
+  fill: none;
+}
+.blocklyFlyoutButton {
+  fill: none;
+  outline: 1px solid var(--color-border);
+  border-radius: 2px;
+}
+.blocklyFlyoutButton:hover {
+  fill: var(--color-hover);
+}
+.blocklyFlyoutButtonShadow {
+  display: none;
 }
 
 /* https://github.com/chakra-ui/chakra-ui/issues/7555 */

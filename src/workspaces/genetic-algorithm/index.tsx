@@ -64,7 +64,11 @@ export function GeneticAlgorithmWorkspace(): JSX.Element {
 
   const [interval, setInterval] = useState(500);
   const { workspaceAreaRef, highlightBlock, getCode } = useBlocklyWorkspace({
-    toolboxBlocks,
+    toolboxDefinition: {
+      type: "category",
+      categories: [{ name: "基本", blockTypes: toolboxBlocks }],
+      enableVariables: true,
+    },
   });
   const interpreter = useBlocklyInterpreter({
     globalFunctions,

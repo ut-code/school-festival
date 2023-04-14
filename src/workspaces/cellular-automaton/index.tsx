@@ -103,7 +103,7 @@ export function CellularAutomatonWorkspace(): JSX.Element {
   const [nextCells, setNextCells] = useState(cells);
 
   const { workspaceAreaRef } = useBlocklyWorkspace({
-    toolboxBlocks,
+    toolboxDefinition: { type: "flyout", blockTypes: toolboxBlocks },
     onCodeChange: setCode,
   });
 
