@@ -5,7 +5,10 @@ import {
   // BlocklyEditorMessage,
   useBlocklyInterpreter,
 } from "../../commons/interpreter";
-import { useBlocklyWorkspace } from "../../commons/blockly";
+import {
+  BlocklyToolboxDefinition,
+  useBlocklyWorkspace,
+} from "../../commons/blockly";
 import {
   CUSTOM_COMMON_WHILE_TRUE,
   CUSTOM_COMMON_DO_UNTIL,
@@ -36,8 +39,10 @@ import {
 import { ExecutionManager } from "../../components/ExecutionManager";
 import { SimulatorRenderer } from "./SimulatorRenderer";
 
-const toolboxBlocks = [
-  // 共有のブロック
+const toolboxDefinition: BlocklyToolboxDefinition = {
+  type: "flyout",
+  blockTypes: [
+    // 共有のブロック
   CUSTOM_COMMON_WHILE_TRUE,
   CUSTOM_COMMON_DO_UNTIL,
   CUSTOM_COMMON_IF,
@@ -60,7 +65,8 @@ const toolboxBlocks = [
   CUSTOM_KM_Y_OF_DATA_IN_ARRAY,
   CUSTOM_KM_DATA_IN_ARRAY,
   CUSTOM_KM_LENGTH_OF_ARRAY,
-];
+  ],
+};
 
 type KmeansWorkspaceState = {
   listOfClusters: cluster[];
@@ -198,11 +204,7 @@ export function KmeansWorkspace(): JSX.Element {
 
   const [interval, setInterval] = useState(500);
   const { workspaceAreaRef, highlightBlock, getCode } = useBlocklyWorkspace({
-    toolboxDefinition: {
-      type: "category",
-      categories: [{ name: "基本", blockTypes: toolboxBlocks }],
-      enableVariables: true,
-    },
+    toolboxDefinition,
   });
   const interpreter = useBlocklyInterpreter({
     globalFunctions,
