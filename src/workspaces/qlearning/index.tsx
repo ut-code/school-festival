@@ -20,6 +20,7 @@ import {
   CUSTOM_QL_PRESENT_ROW,
   CUSTOM_QL_QVALUE,
   CUSTOM_QL_QVALUE_UPDATE,
+  CUSTOM_QL_RANDOM_INT,
   CUSTOM_TEMPLATE_INCREMENT,
 } from "./blocks";
 import { ExecutionManager } from "../../components/ExecutionManager";
@@ -43,6 +44,7 @@ const toolboxDefinition: BlocklyToolboxDefinition = {
       blockTypes: [
         BUILTIN_MATH_NUMBER,
         BUILTIN_MATH_ARITHMETIC,
+        CUSTOM_QL_RANDOM_INT,
         BUILTIN_LOGIC_COMPARE,
         BUILTIN_LOGIC_OPERATION,
         BUILTIN_LOGIC_NEGATE,

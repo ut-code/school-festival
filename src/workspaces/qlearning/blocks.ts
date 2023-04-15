@@ -93,6 +93,18 @@ Blockly.Blocks[CUSTOM_QL_IS_GOAL] = {
   },
 };
 
+export const CUSTOM_QL_RANDOM_INT = "is_goal";
+Blockly.Blocks[CUSTOM_QL_RANDOM_INT] = {
+  init(this: Blockly.Block) {
+    this.appendValueInput("NAME").setCheck("Number");
+    this.appendDummyInput().appendField("の確率で当たった");
+    this.setOutput(true, "Boolean");
+    this.setColour(230);
+    this.setTooltip("");
+    this.setHelpUrl("");
+  },
+};
+
 export const CUSTOM_QL_MOVE = "move";
 Blockly.Blocks[CUSTOM_QL_MOVE] = {
   init(this: Blockly.Block) {
