@@ -37,7 +37,10 @@ import {
   useBlocklyInterpreter,
 } from "../../commons/interpreter";
 import { ExecutionManager } from "../../components/ExecutionManager";
-import { useBlocklyWorkspace } from "../../commons/blockly";
+import {
+  BlocklyToolboxDefinition,
+  useBlocklyWorkspace,
+} from "../../commons/blockly";
 
 type MazeWorkspaceStateSelf = {
   location: { x: number; y: number };
@@ -61,16 +64,19 @@ function createDefaultState(): MazeWorkspaceState {
   };
 }
 
-const toolboxBlocks = [
-  CUSTOM_MAZE_STEPFORWARD,
-  CUSTOM_MAZE_TURN,
-  CUSTOM_MAZE_CHECKWALL,
-  CUSTOM_COMMON_IF,
-  CUSTOM_COMMON_IF_ELSE,
-  CUSTOM_COMMON_WHILE_TRUE,
-  CUSTOM_COMMON_WHILE,
-  CUSTOM_COMMON_DO_UNTIL,
-];
+const toolboxDefinition: BlocklyToolboxDefinition = {
+  type: "flyout",
+  blockTypes: [
+    CUSTOM_MAZE_STEPFORWARD,
+    CUSTOM_MAZE_TURN,
+    CUSTOM_MAZE_CHECKWALL,
+    CUSTOM_COMMON_IF,
+    CUSTOM_COMMON_IF_ELSE,
+    CUSTOM_COMMON_WHILE_TRUE,
+    CUSTOM_COMMON_WHILE,
+    CUSTOM_COMMON_DO_UNTIL,
+  ],
+};
 
 export function MazeWorkspace(): JSX.Element {
   const [getState, setState] = useGetSet(createDefaultState());
@@ -116,7 +122,7 @@ export function MazeWorkspace(): JSX.Element {
   const [interval, setInterval] = useState(500);
 
   const { workspaceAreaRef, highlightBlock, getCode } = useBlocklyWorkspace({
-    toolboxDefinition: { type: "flyout", blockTypes: toolboxBlocks },
+    toolboxDefinition,
   });
   const interpreter = useBlocklyInterpreter({
     globalFunctions,

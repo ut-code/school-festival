@@ -23,7 +23,10 @@ import {
   BlocklyEditorMessage,
   useBlocklyInterpreter,
 } from "../../commons/interpreter";
-import { useBlocklyWorkspace } from "../../commons/blockly";
+import {
+  BlocklyToolboxDefinition,
+  useBlocklyWorkspace,
+} from "../../commons/blockly";
 import {
   CUSTOM_COMMON_DO_UNTIL,
   CUSTOM_COMMON_IF,
@@ -49,18 +52,21 @@ function createDefaultState() {
   };
 }
 
-const toolboxBlocks = [
-  CUSTOM_SORT_MOVE,
-  CUSTOM_SORT_MOVETOEND,
-  CUSTOM_SORT_SWAP,
-  CUSTOM_SORT_CHECKTALLER,
-  CUSTOM_SORT_CHECKEXISTENCE,
-  CUSTOM_COMMON_IF,
-  CUSTOM_COMMON_IF_ELSE,
-  CUSTOM_COMMON_WHILE_TRUE,
-  CUSTOM_COMMON_WHILE,
-  CUSTOM_COMMON_DO_UNTIL,
-];
+const toolboxDefinition: BlocklyToolboxDefinition = {
+  type: "flyout",
+  blockTypes: [
+    CUSTOM_SORT_MOVE,
+    CUSTOM_SORT_MOVETOEND,
+    CUSTOM_SORT_SWAP,
+    CUSTOM_SORT_CHECKTALLER,
+    CUSTOM_SORT_CHECKEXISTENCE,
+    CUSTOM_COMMON_IF,
+    CUSTOM_COMMON_IF_ELSE,
+    CUSTOM_COMMON_WHILE_TRUE,
+    CUSTOM_COMMON_WHILE,
+    CUSTOM_COMMON_DO_UNTIL,
+  ],
+};
 
 export function SortWorkspace(): JSX.Element {
   const [getState, setState] = useGetSet(createDefaultState());
@@ -127,7 +133,7 @@ export function SortWorkspace(): JSX.Element {
   const [interval, setInterval] = useState(500);
 
   const { workspaceAreaRef, highlightBlock, getCode } = useBlocklyWorkspace({
-    toolboxDefinition: { type: "flyout", blockTypes: toolboxBlocks },
+    toolboxDefinition,
   });
   const interpreter = useBlocklyInterpreter({
     globalFunctions,

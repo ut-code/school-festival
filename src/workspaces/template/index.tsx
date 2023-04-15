@@ -5,17 +5,23 @@ import {
   BlocklyEditorMessage,
   useBlocklyInterpreter,
 } from "../../commons/interpreter";
-import { useBlocklyWorkspace } from "../../commons/blockly";
+import {
+  BlocklyToolboxDefinition,
+  useBlocklyWorkspace,
+} from "../../commons/blockly";
 import { CUSTOM_COMMON_WHILE_TRUE } from "../../config/blockly.blocks";
 import { CUSTOM_TEMPLATE_INCREMENT } from "./blocks";
 import { ExecutionManager } from "../../components/ExecutionManager";
 
-const toolboxBlocks = [
-  // 共有のブロック
-  CUSTOM_COMMON_WHILE_TRUE,
-  // ワークスペースごとに定義したブロック
-  CUSTOM_TEMPLATE_INCREMENT,
-];
+const toolboxDefinition: BlocklyToolboxDefinition = {
+  type: "flyout",
+  blockTypes: [
+    // 共有のブロック
+    CUSTOM_COMMON_WHILE_TRUE,
+    // ワークスペースごとに定義したブロック
+    CUSTOM_TEMPLATE_INCREMENT,
+  ],
+};
 
 export function TemplateWorkspace(): JSX.Element {
   // interpreter に渡す関数は実行開始時に決定されるため、通常の state だと最新の情報が参照できません
@@ -37,7 +43,7 @@ export function TemplateWorkspace(): JSX.Element {
 
   const [interval, setInterval] = useState(500);
   const { workspaceAreaRef, highlightBlock, getCode } = useBlocklyWorkspace({
-    toolboxDefinition: { type: "flyout", blockTypes: toolboxBlocks },
+    toolboxDefinition,
   });
   const interpreter = useBlocklyInterpreter({
     globalFunctions,
