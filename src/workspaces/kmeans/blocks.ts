@@ -44,10 +44,12 @@ javascriptGenerator[CUSTOM_KM_CLUSTER_I] = (block: Blockly.Block) => [
 Blockly.Blocks[CUSTOM_KM_SET_CENTER_OF_CLUSTER] = {
   init() {
     this.appendValueInput("NUMBER").setCheck("Number").appendField("");
-    this.appendDummyInput().appendField("の番目のクラスターの中心を");
+    this.appendDummyInput().appendField("番目のクラスターの中心を");
     this.appendValueInput("DATA").setCheck("Data").appendField("");
     this.appendDummyInput().appendField("とする");
     this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
     this.setColour(230);
     this.setTooltip("");
   },
