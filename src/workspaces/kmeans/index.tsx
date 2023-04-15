@@ -5,7 +5,10 @@ import {
   // BlocklyEditorMessage,
   useBlocklyInterpreter,
 } from "../../commons/interpreter";
-import { useBlocklyWorkspace } from "../../commons/blockly";
+import {
+  BlocklyToolboxDefinition,
+  useBlocklyWorkspace,
+} from "../../commons/blockly";
 import {
   CUSTOM_COMMON_WHILE_TRUE,
   CUSTOM_COMMON_DO_UNTIL,
@@ -39,35 +42,38 @@ import {
 import { ExecutionManager } from "../../components/ExecutionManager";
 import { SimulatorRenderer } from "./SimulatorRenderer";
 
-const toolboxBlocks = [
-  // 共有のブロック
-  CUSTOM_COMMON_WHILE_TRUE,
-  CUSTOM_COMMON_DO_UNTIL,
-  CUSTOM_COMMON_IF,
-  CUSTOM_COMMON_IF_ELSE,
-  // ワークスペースごとに定義したブロック
-  // CUSTOM_CENTER_OF_CLUSTER,
-  // CUSTOM_CALCULATE_CENTER_OF_CLUSTER,
-  // CUSTOM_ASSIGN_CLUSTER,
-  // CUSTOM_DISTANCE_BETWEEN_X_AND_Y,
-  // CUSTOM_CLUSTER_OF_X,
-  // CUSTOM_Y_IS_SMALLER_THAN_X,
-  // CUSTOM_FOR_ALL_DATAS,
-  // CUSTOM_DATA_PROCESSING,
-  // CUSTOM_FOR_ALL_CLUSTERS,
-  // CUSTOM_CLUSTER_PROCESSING,
-  // CONSOLE_LOG,
-  CUSTOM_KM_ADD_DATA_TO_ARRAY,
-  CUSTOM_KM_DELETE_DATA_FROM_ARRAY,
-  CUSTOM_KM_X_OF_DATA_IN_ARRAY,
-  CUSTOM_KM_Y_OF_DATA_IN_ARRAY,
-  CUSTOM_KM_LENGTH_OF_ARRAY,
-  CUSTOM_KM_Y_IS_SMALLER_THAN_X,
-  CUSTOM_KM_DATA_A_IS_DATA_B,
-  CUSTOM_KM_DEFINE_A_IS_B,
-  CUSTOM_KM_A_PLUS_B,
-  CUSTOM_KM_A_POWER_B,
-];
+const toolboxDefinition: BlocklyToolboxDefinition = {
+  type: "flyout",
+  blockTypes: [
+    // 共有のブロック
+    CUSTOM_COMMON_WHILE_TRUE,
+    CUSTOM_COMMON_DO_UNTIL,
+    CUSTOM_COMMON_IF,
+    CUSTOM_COMMON_IF_ELSE,
+    // ワークスペースごとに定義したブロック
+    // CUSTOM_CENTER_OF_CLUSTER,
+    // CUSTOM_CALCULATE_CENTER_OF_CLUSTER,
+    // CUSTOM_ASSIGN_CLUSTER,
+    // CUSTOM_DISTANCE_BETWEEN_X_AND_Y,
+    // CUSTOM_CLUSTER_OF_X,
+    // CUSTOM_Y_IS_SMALLER_THAN_X,
+    // CUSTOM_FOR_ALL_DATAS,
+    // CUSTOM_DATA_PROCESSING,
+    // CUSTOM_FOR_ALL_CLUSTERS,
+    // CUSTOM_CLUSTER_PROCESSING,
+    // CONSOLE_LOG,
+    CUSTOM_KM_ADD_DATA_TO_ARRAY,
+    CUSTOM_KM_DELETE_DATA_FROM_ARRAY,
+    CUSTOM_KM_X_OF_DATA_IN_ARRAY,
+    CUSTOM_KM_Y_OF_DATA_IN_ARRAY,
+    CUSTOM_KM_LENGTH_OF_ARRAY,
+    CUSTOM_KM_Y_IS_SMALLER_THAN_X,
+    CUSTOM_KM_DATA_A_IS_DATA_B,
+    CUSTOM_KM_DEFINE_A_IS_B,
+    CUSTOM_KM_A_PLUS_B,
+    CUSTOM_KM_A_POWER_B,
+  ],
+};
 
 type KmeansWorkspaceState = {
   listOfClusters: cluster[];
@@ -233,7 +239,7 @@ export function KmeansWorkspace(): JSX.Element {
 
   const [interval, setInterval] = useState(500);
   const { workspaceAreaRef, highlightBlock, getCode } = useBlocklyWorkspace({
-    toolboxDefinition: { type: "flyout", blockTypes: toolboxBlocks },
+    toolboxDefinition,
   });
   const interpreter = useBlocklyInterpreter({
     globalFunctions,

@@ -23,7 +23,10 @@ import {
   RiSkipForwardFill,
   RiStopFill,
 } from "react-icons/ri";
-import { useBlocklyWorkspace } from "../../commons/blockly";
+import {
+  BlocklyToolboxDefinition,
+  useBlocklyWorkspace,
+} from "../../commons/blockly";
 import {
   BUILTIN_LOGIC_COMPARE,
   BUILTIN_LOGIC_NEGATE,
@@ -41,18 +44,21 @@ import {
 } from "./blocks";
 import { CellularAutomatonWorkspaceWorldRenderer } from "./WorldRenderer";
 
-const toolboxBlocks: string[] = [
-  BUILTIN_MATH_NUMBER,
-  BUILTIN_MATH_ARITHMETIC,
-  BUILTIN_LOGIC_COMPARE,
-  BUILTIN_LOGIC_OPERATION,
-  BUILTIN_LOGIC_NEGATE,
-  CUSTOM_COMMON_IF,
-  CUSTOM_COMMON_IF_ELSE,
-  CUSTOM_CELLULAR_AUTOMATON_FILL,
-  CUSTOM_CELLULAR_AUTOMATON_SELF_IS_BLACK,
-  CUSTOM_CELLULAR_AUTOMATON_SURROUNDINGS_COUNT,
-];
+const toolboxDefinition: BlocklyToolboxDefinition = {
+  type: "flyout",
+  blockTypes: [
+    BUILTIN_MATH_NUMBER,
+    BUILTIN_MATH_ARITHMETIC,
+    BUILTIN_LOGIC_COMPARE,
+    BUILTIN_LOGIC_OPERATION,
+    BUILTIN_LOGIC_NEGATE,
+    CUSTOM_COMMON_IF,
+    CUSTOM_COMMON_IF_ELSE,
+    CUSTOM_CELLULAR_AUTOMATON_FILL,
+    CUSTOM_CELLULAR_AUTOMATON_SELF_IS_BLACK,
+    CUSTOM_CELLULAR_AUTOMATON_SURROUNDINGS_COUNT,
+  ],
+};
 
 function createRandomCells(): boolean[][] {
   return Array.from({ length: CELLULAR_AUTOMATON_WORLD_SIZE }, () =>
@@ -103,7 +109,7 @@ export function CellularAutomatonWorkspace(): JSX.Element {
   const [nextCells, setNextCells] = useState(cells);
 
   const { workspaceAreaRef } = useBlocklyWorkspace({
-    toolboxDefinition: { type: "flyout", blockTypes: toolboxBlocks },
+    toolboxDefinition,
     onCodeChange: setCode,
   });
 

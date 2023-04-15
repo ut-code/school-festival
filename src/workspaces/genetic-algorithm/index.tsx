@@ -5,7 +5,10 @@ import {
   BlocklyEditorMessage,
   useBlocklyInterpreter,
 } from "../../commons/interpreter";
-import { useBlocklyWorkspace } from "../../commons/blockly";
+import {
+  BlocklyToolboxDefinition,
+  useBlocklyWorkspace,
+} from "../../commons/blockly";
 import {
   BUILTIN_LOGIC_COMPARE,
   BUILTIN_LOGIC_NEGATE,
@@ -29,25 +32,34 @@ import {
 } from "./blocks";
 import { ExecutionManager } from "../../components/ExecutionManager";
 
-const toolboxBlocks = [
-  BUILTIN_MATH_NUMBER,
-  BUILTIN_MATH_ARITHMETIC,
-  BUILTIN_LOGIC_COMPARE,
-  BUILTIN_LOGIC_OPERATION,
-  BUILTIN_LOGIC_NEGATE,
-  CUSTOM_COMMON_WHILE_TRUE,
-  CUSTOM_COMMON_WHILE,
-  CUSTOM_GA_RANDOM_INT,
-  CUSTOM_GA_NTH_ROUTE,
-  CUSTOM_GA_CREATE_ROUTE,
-  CUSTOM_GA_DUPLICATE_ROUTE,
-  CUSTOM_GA_DISCARD_AFTER_NTH_ROUTE,
-  CUSTOM_GA_SWAP_ROUTES,
-  CUSTOM_GA_NTH_PLACE,
-  CUSTOM_GA_DISTANCE,
-  CUSTOM_GA_ADD_PLACE,
-  CUSTOM_GA_SWAP_PLACE,
-];
+const toolboxDefinition: BlocklyToolboxDefinition = {
+  type: "category",
+  categories: [
+    {
+      name: "基本",
+      blockTypes: [
+        BUILTIN_MATH_NUMBER,
+        BUILTIN_MATH_ARITHMETIC,
+        BUILTIN_LOGIC_COMPARE,
+        BUILTIN_LOGIC_OPERATION,
+        BUILTIN_LOGIC_NEGATE,
+        CUSTOM_COMMON_WHILE_TRUE,
+        CUSTOM_COMMON_WHILE,
+        CUSTOM_GA_RANDOM_INT,
+        CUSTOM_GA_NTH_ROUTE,
+        CUSTOM_GA_CREATE_ROUTE,
+        CUSTOM_GA_DUPLICATE_ROUTE,
+        CUSTOM_GA_DISCARD_AFTER_NTH_ROUTE,
+        CUSTOM_GA_SWAP_ROUTES,
+        CUSTOM_GA_NTH_PLACE,
+        CUSTOM_GA_DISTANCE,
+        CUSTOM_GA_ADD_PLACE,
+        CUSTOM_GA_SWAP_PLACE,
+      ],
+    },
+  ],
+  enableVariables: true,
+};
 
 export function GeneticAlgorithmWorkspace(): JSX.Element {
   const [getState, setState] = useGetSet(0);
@@ -64,11 +76,7 @@ export function GeneticAlgorithmWorkspace(): JSX.Element {
 
   const [interval, setInterval] = useState(500);
   const { workspaceAreaRef, highlightBlock, getCode } = useBlocklyWorkspace({
-    toolboxDefinition: {
-      type: "category",
-      categories: [{ name: "基本", blockTypes: toolboxBlocks }],
-      enableVariables: true,
-    },
+    toolboxDefinition,
   });
   const interpreter = useBlocklyInterpreter({
     globalFunctions,
