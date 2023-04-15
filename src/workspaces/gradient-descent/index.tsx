@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Box, Grid, Text } from "@chakra-ui/react";
+import { Box, Grid, Text, Button } from "@chakra-ui/react";
 import { useGetSet } from "react-use";
 import { useBlocklyInterpreter } from "../../commons/interpreter";
 import { useBlocklyWorkspace } from "../../commons/blockly";
@@ -20,7 +20,7 @@ import {
   CUSTOM_GRAD_Y,
 } from "./blocks";
 import { ExecutionManager } from "../../components/ExecutionManager";
-import { GradRenderer } from "./components/GradRenderer";
+import { GradRenderer, GradResetCamera } from "./components/GradRenderer";
 
 import { objectiveFunction } from "./objective";
 
@@ -67,7 +67,6 @@ export function GradWorkspace(): JSX.Element {
   // javascriptGenerator により生成されたコードから呼ばれる関数を定義します
   const globalFunctions = useRef({
     [CUSTOM_GRAD_OBJECTIVE]: (x: number, y: number) => {
-      // console.log(objectiveFunction(x, y));
       return objectiveFunction(x, y);
     },
     [CUSTOM_GRAD_SET_X]: (newX: number) => {
@@ -123,6 +122,13 @@ export function GradWorkspace(): JSX.Element {
         <Text mt={2}>x: {getState().x}</Text>
         <Text mt={2}>y: {getState().y}</Text>
         <GradRenderer x={getState().x} y={getState().y} />
+        <Button
+          onClick={() => {
+            GradResetCamera();
+          }}
+        >
+          カメラの位置をリセットする
+        </Button>
       </Box>
     </Grid>
   );
