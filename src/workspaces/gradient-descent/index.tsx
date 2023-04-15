@@ -1,7 +1,10 @@
 import { useRef, useState } from "react";
 import { Box, Grid, Text, Button } from "@chakra-ui/react";
 import { useGetSet } from "react-use";
-import { useBlocklyInterpreter } from "../../commons/interpreter";
+import {
+  useBlocklyInterpreter,
+  BlocklyEditorMessage,
+} from "../../commons/interpreter";
 import {
   BlocklyToolboxDefinition,
   useBlocklyWorkspace,
@@ -76,6 +79,16 @@ function createDefaultState() {
   };
 }
 
+function isConvergence(state: GradWorkspaceState) {
+  const threshold = 0.1;
+  if (
+    objectiveFunction(state.x, state.y, state.x_answer, state.y_answer) <
+    threshold
+  ) {
+    throw new BlocklyEditorMessage("最も低い点に到達しました！");
+  }
+}
+
 export function GradWorkspace(): JSX.Element {
   // interpreter に渡す関数は実行開始時に決定されるため、通常の state だと最新の情報が参照できません
   // このため、反則ですが内部的に ref を用いて状態管理をしている react-use の [useGetSet](https://github.com/streamich/react-use/blob/master/docs/useGetSet.md) を用いています。
@@ -90,10 +103,12 @@ export function GradWorkspace(): JSX.Element {
     [CUSTOM_GRAD_SET_X]: (newX: number) => {
       const state = getState();
       setState({ ...state, x: newX });
+      isConvergence(getState());
     },
     [CUSTOM_GRAD_SET_Y]: (newY: number) => {
       const state = getState();
       setState({ ...state, y: newY });
+      isConvergence(getState());
     },
     [CUSTOM_GRAD_X_VALUE]: () => {
       const state = getState();

@@ -13,7 +13,7 @@ Blockly.Blocks[CUSTOM_GRAD_OBJECTIVE] = {
     this.appendDummyInput().appendField(")の高さ");
     this.setOutput(true, "Number");
     this.setColour(230);
-    this.setTooltip("点(x, y)の高さを求めます。");
+    this.setTooltip("入力された点の高さを求めます。");
   },
 };
 
@@ -36,7 +36,7 @@ Blockly.Blocks[CUSTOM_GRAD_SET_X] = {
     this.setColour(350);
     this.setPreviousStatement(true);
     this.setNextStatement(true);
-    this.setTooltip("x の値をセットします。");
+    this.setTooltip("この入力を x と等しくなるように設定します。");
   },
 };
 
@@ -57,7 +57,7 @@ Blockly.Blocks[CUSTOM_GRAD_SET_Y] = {
     this.setColour(350);
     this.setPreviousStatement(true);
     this.setNextStatement(true);
-    this.setTooltip("y の値をセットします。");
+    this.setTooltip("この入力を y と等しくなるように設定します。");
   },
 };
 
@@ -74,7 +74,7 @@ Blockly.Blocks[CUSTOM_GRAD_X_VALUE] = {
     this.appendDummyInput().appendField("x");
     this.setOutput(true, "Number");
     this.setColour(230);
-    this.setTooltip("x の値を使います。");
+    this.setTooltip("x の値を返します。");
   },
 };
 
@@ -89,7 +89,7 @@ Blockly.Blocks[CUSTOM_GRAD_Y_VALUE] = {
     this.appendDummyInput().appendField("y");
     this.setOutput(true, "Number");
     this.setColour(230);
-    this.setTooltip("y の値を使います。");
+    this.setTooltip("y の値を返します。");
   },
 };
 
