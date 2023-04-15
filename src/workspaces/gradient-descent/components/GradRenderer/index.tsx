@@ -4,14 +4,33 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { objectiveFunction } from "../../objective";
 
 export function GradRenderer(props: { x: number; y: number }) {
-  /** case1 */
+  function createAxis(max: number, direction: THREE.Vector3, color: number) {
+    const axisLength = max * 2;
+    const axisHeadLength = axisLength * 0.05;
+    const axisHeadWidth = axisHeadLength * 0.5;
+    const start = new THREE.Vector3(
+      -max * direction.x,
+      -max * direction.y,
+      -max * direction.z
+    );
+    const axis = new THREE.ArrowHelper(
+      direction,
+      start,
+      axisLength + axisHeadLength * 2,
+      color,
+      axisHeadLength,
+      axisHeadWidth
+    );
+    return axis;
+  }
+
   const graph = () => {
     // サイズを指定
     const width = 350;
     const height = 350;
     // レンダラを作成
     const renderer = new THREE.WebGLRenderer({
-      canvas: document.querySelector("#mycanvas") as HTMLCanvasElement,
+      canvas: document.querySelector("#graph") as HTMLCanvasElement,
     });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(width, height);
@@ -23,62 +42,29 @@ export function GradRenderer(props: { x: number; y: number }) {
     camera.lookAt(new THREE.Vector3(0, 0, 0));
     const controls = new OrbitControls(
       camera,
-      document.querySelector("#mycanvas") as HTMLElement
+      document.querySelector("#graph") as HTMLElement
     );
 
     const maxX = 300;
-    const axisXLength = maxX * 2; // 矢印の長さ
-    const axisXHeadLength = axisXLength * 0.05; // 矢印の頭の長さ
-    const axisXHeadWidth = axisXHeadLength * 0.5; // 矢印の頭の太さ
-    const directionX = new THREE.Vector3(1, 0, 0); // 矢印の向き(X方向)
-    const startX = new THREE.Vector3(-maxX, 0, 0); // 矢印の始点
+    const directionX = new THREE.Vector3(1, 0, 0);
     const colorX = 0xff0000;
-    const axisX = new THREE.ArrowHelper(
-      directionX,
-      startX,
-      axisXLength + axisXHeadLength * 2,
-      colorX,
-      axisXHeadLength,
-      axisXHeadWidth
-    );
+    const axisX = createAxis(maxX, directionX, colorX);
     scene.add(axisX);
 
     const maxY = 300;
-    const axisYLength = maxY * 2; // 矢印の長さ
-    const axisYHeadLength = axisYLength * 0.05; // 矢印の頭の長さ
-    const axisYHeadWidth = axisYHeadLength * 0.5; // 矢印の頭の太さ
-    const directionY = new THREE.Vector3(0, 1, 0); // 矢印の向き(Y方向)
-    const startY = new THREE.Vector3(0, -maxY, 0); // 矢印の始点
+    const directionY = new THREE.Vector3(0, 1, 0);
     const colorY = 0x00ff00;
-    const axisY = new THREE.ArrowHelper(
-      directionY,
-      startY,
-      axisYLength + axisYHeadLength * 2,
-      colorY,
-      axisYHeadLength,
-      axisYHeadWidth
-    );
+    const axisY = createAxis(maxY, directionY, colorY);
     scene.add(axisY);
 
     const maxZ = 300;
-    const axisZLength = maxY * 2; // 矢印の長さ
-    const axisZHeadLength = axisZLength * 0.05; // 矢印の頭の長さ
-    const axisZHeadWidth = axisZHeadLength * 0.5; // 矢印の頭の太さ
-    const directionZ = new THREE.Vector3(0, 0, 1); // 矢印の向き(Y方向)
-    const startZ = new THREE.Vector3(0, 0, -maxZ); // 矢印の始点
+    const directionZ = new THREE.Vector3(0, 0, 1);
     const colorZ = 0x0000ff;
-    const axisZ = new THREE.ArrowHelper(
-      directionZ,
-      startZ,
-      axisZLength + axisZHeadLength * 2,
-      colorZ,
-      axisZHeadLength,
-      axisZHeadWidth
-    );
+    const axisZ = createAxis(maxZ, directionZ, colorZ);
     scene.add(axisZ);
 
+    // 3次元グラフを点群で表現
     const vertices = [];
-    vertices.push(props.x, objectiveFunction(props.x, props.y), props.y);
     for (let x = -1.5 * maxX; x <= 1.5 * maxX; x += 10) {
       for (let z = -1.5 * maxZ; z <= 1.5 * maxZ; z += 10) {
         const y = objectiveFunction(x, z);
@@ -90,39 +76,44 @@ export function GradRenderer(props: { x: number; y: number }) {
       "position",
       new THREE.Float32BufferAttribute(vertices, 3)
     );
-    // マテリアルを作成
     const material = new THREE.PointsMaterial({
       size: 10,
       color: 0xffffff,
     });
-
-    // 物体を作成
     const mesh = new THREE.Points(geometry, material);
-    scene.add(mesh); // シーンは任意の THREE.Scene インスタンス
+    scene.add(mesh);
 
+    // 現在の位置
     const point = [];
-    point.push(
-      props.x,
-      0.002 * ((props.x - 200) ** 2 + (props.y - 100) ** 2),
-      props.y
-    );
-
+    point.push(props.x, objectiveFunction(props.x, props.y), props.y);
     const geometryPoint = new THREE.BufferGeometry();
     geometryPoint.setAttribute(
       "position",
       new THREE.Float32BufferAttribute(point, 3)
     );
-    // マテリアルを作成
     const materialPoint = new THREE.PointsMaterial({
       size: 30,
       color: 0x00ffff,
     });
-
-    // 物体を作成
     const meshPoint = new THREE.Points(geometryPoint, materialPoint);
-    scene.add(meshPoint); // シーンは任意の THREE.Scene インスタンス
+    scene.add(meshPoint);
 
-    // 毎フレーム時に実行されるループイベント
+    // 目標地点
+    const goal = [];
+    goal.push(200, objectiveFunction(200, 100), 100);
+    const geometryGoal = new THREE.BufferGeometry();
+    geometryGoal.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(goal, 3)
+    );
+    const materialGoal = new THREE.PointsMaterial({
+      size: 30,
+      color: 0xff0000,
+    });
+    const meshGoal = new THREE.Points(geometryGoal, materialGoal);
+    scene.add(meshGoal);
+
+    // 毎フレーム時に実行
     function tick() {
       controls.update();
       renderer.render(scene, camera);
@@ -135,5 +126,5 @@ export function GradRenderer(props: { x: number; y: number }) {
   useEffect(() => {
     graph();
   });
-  return <canvas id="mycanvas" />;
+  return <canvas id="graph" />;
 }

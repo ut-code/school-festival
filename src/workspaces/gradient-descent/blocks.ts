@@ -61,7 +61,7 @@ Blockly.Blocks[CUSTOM_GRAD_OBJECTIVE] = {
     this.appendDummyInput().appendField(")の高さ");
     this.setOutput(true, "Number");
     this.setColour(230);
-    this.setTooltip("関数を適用します。");
+    this.setTooltip("点(x, y)の高さを求めます。");
   },
 };
 
@@ -79,7 +79,7 @@ Blockly.Blocks[CUSTOM_GRAD_SET_X] = {
     this.appendDummyInput().appendField("x に");
     this.appendValueInput(CUSTOM_GRAD_NEW_X).setCheck("Number");
     this.appendDummyInput().appendField("をセット");
-    this.setColour(230);
+    this.setColour(350);
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.setTooltip("x の値をセットします。");
@@ -100,7 +100,7 @@ Blockly.Blocks[CUSTOM_GRAD_SET_Y] = {
     this.appendDummyInput().appendField("y に");
     this.appendValueInput(CUSTOM_GRAD_NEW_Y).setCheck("Number");
     this.appendDummyInput().appendField("をセット");
-    this.setColour(230);
+    this.setColour(350);
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.setTooltip("y の値をセットします。");
@@ -113,3 +113,25 @@ javascriptGenerator[CUSTOM_GRAD_SET_Y] = (block) =>
     CUSTOM_GRAD_NEW_Y,
     0
   )});`;
+
+Blockly.Blocks[CUSTOM_GRAD_X] = {
+  init(this: Blockly.Block) {
+    this.appendDummyInput().appendField("x");
+    this.setOutput(true, "Number");
+    this.setColour(230);
+    this.setTooltip("x の値を使います。");
+  },
+};
+
+javascriptGenerator[CUSTOM_GRAD_X] = () => [``, 0];
+
+Blockly.Blocks[CUSTOM_GRAD_Y] = {
+  init(this: Blockly.Block) {
+    this.appendDummyInput().appendField("y");
+    this.setOutput(true, "Number");
+    this.setColour(230);
+    this.setTooltip("y の値を使います。");
+  },
+};
+
+javascriptGenerator[CUSTOM_GRAD_Y] = () => [``, 0];

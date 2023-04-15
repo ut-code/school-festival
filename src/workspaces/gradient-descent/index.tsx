@@ -13,10 +13,11 @@ import {
   CUSTOM_COMMON_WHILE_TRUE,
 } from "../../config/blockly.blocks";
 import {
-  CUSTOM_GRAD_CONSOLE_LOG,
   CUSTOM_GRAD_OBJECTIVE,
   CUSTOM_GRAD_SET_X,
   CUSTOM_GRAD_SET_Y,
+  CUSTOM_GRAD_X,
+  CUSTOM_GRAD_Y,
 } from "./blocks";
 import { ExecutionManager } from "../../components/ExecutionManager";
 import { GradRenderer } from "./components/GradRenderer";
@@ -33,7 +34,11 @@ const toolboxBlocks = [
   CUSTOM_COMMON_WHILE_TRUE,
   CUSTOM_COMMON_WHILE,
   // ワークスペースごとに定義したブロック
-  CUSTOM_GRAD_CONSOLE_LOG,
+];
+
+const toolBoxCoordination = [
+  CUSTOM_GRAD_X,
+  CUSTOM_GRAD_Y,
   CUSTOM_GRAD_OBJECTIVE,
   CUSTOM_GRAD_SET_X,
   CUSTOM_GRAD_SET_Y,
@@ -44,10 +49,13 @@ export type GradWorkspaceState = {
   y: number;
 };
 
+const initialX = -100;
+const initialY = -100;
+
 function createDefaultState() {
   return {
-    x: 0,
-    y: 0,
+    x: initialX,
+    y: initialY,
   };
 }
 
@@ -70,11 +78,26 @@ export function GradWorkspace(): JSX.Element {
       const state = getState();
       setState({ x: state.x, y: newY });
     },
+    [CUSTOM_GRAD_X]: () => {
+      const state = getState();
+      return state.x;
+    },
+    [CUSTOM_GRAD_Y]: () => {
+      const state = getState();
+      return state.y;
+    },
   }).current;
 
   const [interval, setInterval] = useState(500);
   const { workspaceAreaRef, highlightBlock, getCode } = useBlocklyWorkspace({
-    toolboxDefinition: { type: "flyout", blockTypes: toolboxBlocks },
+    toolboxDefinition: {
+      type: "category",
+      categories: [
+        { name: "基本", blockTypes: toolboxBlocks },
+        { name: "座標", blockTypes: toolBoxCoordination },
+      ],
+      enableVariables: true,
+    },
   });
   const interpreter = useBlocklyInterpreter({
     globalFunctions,
@@ -94,7 +117,7 @@ export function GradWorkspace(): JSX.Element {
             interpreter.start(getCode());
           }}
           onReset={() => {
-            setState({ x: 0, y: 0 });
+            setState({ x: initialX, y: initialY });
           }}
         />
         <Text mt={2}>x: {getState().x}</Text>
