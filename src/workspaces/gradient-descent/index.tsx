@@ -79,6 +79,7 @@ export function GradWorkspace(): JSX.Element {
   // javascriptGenerator により生成されたコードから呼ばれる関数を定義します
   const globalFunctions = useRef({
     [CUSTOM_GRAD_OBJECTIVE]: (x: number, y: number) => {
+      console.log(objectiveFunction(x, y));
       return objectiveFunction(x, y);
     },
     [CUSTOM_GRAD_SET_X]: (newX: number) => {
