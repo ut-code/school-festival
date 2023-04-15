@@ -15,7 +15,12 @@ export function GradResetCamera() {
   camera.lookAt(new THREE.Vector3(0, 0, 0));
 }
 
-export function GradRenderer(props: { x: number; y: number }) {
+export function GradRenderer(props: {
+  x: number;
+  y: number;
+  xAnswer: number;
+  yAnswer: number;
+}) {
   function createAxis(max: number, direction: THREE.Vector3, color: number) {
     const axisLength = max * 2;
     const axisHeadLength = axisLength * 0.05;
@@ -35,7 +40,13 @@ export function GradRenderer(props: { x: number; y: number }) {
     );
     return axis;
   }
-  function createMeshOfPoints(color: number, size: number, points: number[]) {
+  function createMeshOfPoints(
+    color: number,
+    size: number,
+    points: number[],
+    transparent: boolean,
+    opacity: number
+  ) {
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute(
       "position",
@@ -44,6 +55,8 @@ export function GradRenderer(props: { x: number; y: number }) {
     const material = new THREE.PointsMaterial({
       size,
       color,
+      transparent,
+      opacity,
     });
     const mesh = new THREE.Points(geometry, material);
     return mesh;
@@ -82,23 +95,36 @@ export function GradRenderer(props: { x: number; y: number }) {
 
     // 3次元グラフを点群で表示
     const vertices = [];
-    for (let x = -1.5 * maxes[0]; x <= 1.5 * maxes[0]; x += 10) {
-      for (let z = -1.5 * maxes[2]; z <= 1.5 * maxes[2]; z += 10) {
-        const y = objectiveFunction(x, z);
+    for (let x = -1.5 * maxes[0]; x <= 1.5 * maxes[0]; x += 1) {
+      for (let z = -1.5 * maxes[2]; z <= 1.5 * maxes[2]; z += 1) {
+        const y = objectiveFunction(x, z, props.xAnswer, props.yAnswer);
         vertices.push(x, y, z);
       }
     }
-    const meshOfGraph = createMeshOfPoints(0xffffff, 10, vertices);
+    const meshOfGraph = createMeshOfPoints(0xffffff, 5, vertices, true, 0.2);
     scene.add(meshOfGraph);
 
     // 現在の位置を表示
-    const point = [props.x, objectiveFunction(props.x, props.y), props.y];
-    const meshOfPoint = createMeshOfPoints(0x00ffff, 30, point);
+    const point = [
+      props.x,
+      objectiveFunction(props.x, props.y, props.xAnswer, props.yAnswer),
+      props.y,
+    ];
+    const meshOfPoint = createMeshOfPoints(0x00ffff, 30, point, false, 1.0);
     scene.add(meshOfPoint);
 
     // 目標地点を表示
-    const goal = [200, objectiveFunction(200, 100), 100];
-    const meshOfGoal = createMeshOfPoints(0xff0000, 30, goal);
+    const goal = [
+      props.xAnswer,
+      objectiveFunction(
+        props.xAnswer,
+        props.yAnswer,
+        props.xAnswer,
+        props.yAnswer
+      ),
+      props.yAnswer,
+    ];
+    const meshOfGoal = createMeshOfPoints(0xff0000, 30, goal, false, 1.0);
     scene.add(meshOfGoal);
 
     // 毎フレーム時に実行

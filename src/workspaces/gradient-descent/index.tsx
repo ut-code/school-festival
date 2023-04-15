@@ -59,15 +59,20 @@ const toolboxDefinition: BlocklyToolboxDefinition = {
 export type GradWorkspaceState = {
   x: number;
   y: number;
+  x_answer: number;
+  y_answer: number;
 };
 
 const initialX = -100;
 const initialY = -100;
+const answerRange = 600;
 
 function createDefaultState() {
   return {
     x: initialX,
     y: initialY,
+    x_answer: (Math.random() - 0.5) * answerRange,
+    y_answer: (Math.random() - 0.5) * answerRange,
   };
 }
 
@@ -79,15 +84,16 @@ export function GradWorkspace(): JSX.Element {
   // javascriptGenerator により生成されたコードから呼ばれる関数を定義します
   const globalFunctions = useRef({
     [CUSTOM_GRAD_OBJECTIVE]: (x: number, y: number) => {
-      return objectiveFunction(x, y);
+      const state = getState();
+      return objectiveFunction(x, y, state.x_answer, state.y_answer);
     },
     [CUSTOM_GRAD_SET_X]: (newX: number) => {
       const state = getState();
-      setState({ x: newX, y: state.y });
+      setState({ ...state, x: newX });
     },
     [CUSTOM_GRAD_SET_Y]: (newY: number) => {
       const state = getState();
-      setState({ x: state.x, y: newY });
+      setState({ ...state, y: newY });
     },
     [CUSTOM_GRAD_X_VALUE]: () => {
       const state = getState();
@@ -121,18 +127,35 @@ export function GradWorkspace(): JSX.Element {
             interpreter.start(getCode());
           }}
           onReset={() => {
-            setState({ x: initialX, y: initialY });
+            setState({ ...getState(), x: initialX, y: initialY });
           }}
         />
         <Text mt={2}>x: {getState().x}</Text>
         <Text mt={2}>y: {getState().y}</Text>
-        <GradRenderer x={getState().x} y={getState().y} />
+        <GradRenderer
+          x={getState().x}
+          y={getState().y}
+          xAnswer={getState().x_answer}
+          yAnswer={getState().y_answer}
+        />
         <Button
           onClick={() => {
             GradResetCamera();
           }}
         >
           カメラの位置をリセットする
+        </Button>
+        <Button
+          onClick={() => {
+            setState({
+              ...getState(),
+              x_answer: (Math.random() - 0.5) * answerRange,
+              y_answer: (Math.random() - 0.5) * answerRange,
+            });
+            GradResetCamera();
+          }}
+        >
+          新しいグラフにする
         </Button>
       </Box>
     </Grid>

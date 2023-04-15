@@ -1,3 +1,9 @@
-export function objectiveFunction(x: number, y: number) {
-  return 0.002 * ((x - 200) ** 2 + (y - 100) ** 2);
+export function objectiveFunction(
+  x: number,
+  y: number,
+  xAnswer: number,
+  yAnswer: number
+) {
+  const zMagnification = 0.002;
+  return zMagnification * ((x - xAnswer) ** 2 + (y - yAnswer) ** 2);
 }
