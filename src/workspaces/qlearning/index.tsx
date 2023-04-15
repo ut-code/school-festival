@@ -5,17 +5,71 @@ import {
   BlocklyEditorMessage,
   useBlocklyInterpreter,
 } from "../../commons/interpreter";
-import { useBlocklyWorkspace } from "../../commons/blockly";
-import { CUSTOM_COMMON_WHILE_TRUE } from "../../config/blockly.blocks";
-import { CUSTOM_TEMPLATE_INCREMENT } from "./blocks";
-import { ExecutionManager } from "../../components/ExecutionManager";
-
-const toolboxBlocks = [
-  // 共有のブロック
-  CUSTOM_COMMON_WHILE_TRUE,
-  // ワークスペースごとに定義したブロック
+import {
+  BlocklyToolboxDefinition,
+  useBlocklyWorkspace,
+} from "../../commons/blockly";
+import {
+  CUSTOM_QL_DIRECTION,
+  CUSTOM_QL_IS_GOAL,
+  CUSTOM_QL_IS_WALL,
+  CUSTOM_QL_MOVE,
+  CUSTOM_QL_MOVE_RANDOM,
+  CUSTOM_QL_MOVE_TO_START,
+  CUSTOM_QL_PRESENT_COL,
+  CUSTOM_QL_PRESENT_ROW,
+  CUSTOM_QL_QVALUE,
+  CUSTOM_QL_QVALUE_UPDATE,
   CUSTOM_TEMPLATE_INCREMENT,
-];
+} from "./blocks";
+import { ExecutionManager } from "../../components/ExecutionManager";
+import {
+  BUILTIN_LOGIC_COMPARE,
+  BUILTIN_LOGIC_NEGATE,
+  BUILTIN_MATH_NUMBER,
+  CUSTOM_COMMON_WHILE_TRUE,
+  BUILTIN_MATH_ARITHMETIC,
+  BUILTIN_LOGIC_OPERATION,
+  CUSTOM_COMMON_IF_ELSE,
+  CUSTOM_COMMON_IF,
+  CUSTOM_COMMON_DO_UNTIL,
+} from "../../config/blockly.blocks";
+
+const toolboxDefinition: BlocklyToolboxDefinition = {
+  type: "category",
+  categories: [
+    {
+      name: "基本",
+      blockTypes: [
+        BUILTIN_MATH_NUMBER,
+        BUILTIN_MATH_ARITHMETIC,
+        BUILTIN_LOGIC_COMPARE,
+        BUILTIN_LOGIC_OPERATION,
+        BUILTIN_LOGIC_NEGATE,
+        CUSTOM_COMMON_WHILE_TRUE,
+        CUSTOM_COMMON_IF,
+        CUSTOM_COMMON_IF_ELSE,
+        CUSTOM_COMMON_DO_UNTIL,
+      ],
+    },
+    {
+      name: "迷路探索",
+      blockTypes: [
+        CUSTOM_QL_DIRECTION,
+        CUSTOM_QL_IS_WALL,
+        CUSTOM_QL_PRESENT_ROW,
+        CUSTOM_QL_PRESENT_COL,
+        CUSTOM_QL_IS_GOAL,
+        CUSTOM_QL_MOVE,
+        CUSTOM_QL_MOVE_RANDOM,
+        CUSTOM_QL_MOVE_TO_START,
+        CUSTOM_QL_QVALUE,
+        CUSTOM_QL_QVALUE_UPDATE,
+      ],
+    },
+  ],
+  enableVariables: true,
+};
 
 export function QlearningWorkspace(): JSX.Element {
   // interpreter に渡す関数は実行開始時に決定されるため、通常の state だと最新の情報が参照できません
@@ -37,11 +91,7 @@ export function QlearningWorkspace(): JSX.Element {
 
   const [interval, setInterval] = useState(500);
   const { workspaceAreaRef, highlightBlock, getCode } = useBlocklyWorkspace({
-    toolboxDefinition: {
-      type: "category",
-      categories: [{ name: "基本", blockTypes: toolboxBlocks }],
-      enableVariables: true,
-    },
+    toolboxDefinition,
   });
   const interpreter = useBlocklyInterpreter({
     globalFunctions,
