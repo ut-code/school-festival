@@ -17,7 +17,6 @@ import { gradTutorialSteps } from "./workspaces/gradient-descent/tutorial";
 
 export const routes = [
   {
-    id: "maze",
     path: "/maze",
     label: "迷路",
     description: "プログラムを書いて迷路を解こう！",
@@ -25,7 +24,6 @@ export const routes = [
     tutorialSteps: mazeTutorialSteps,
   },
   {
-    id: "sort",
     path: "/sort",
     label: "並べ替え",
     description: "先生になりきって生徒を並ばせよう！",
@@ -33,7 +31,6 @@ export const routes = [
     tutorialSteps: sortTutorialSteps,
   },
   {
-    id: "cellular-automaton",
     path: "/cellular-automaton",
     label: "セル・オートマトン",
     description: "簡単なルールで生命活動のシミュレーション",
@@ -41,7 +38,6 @@ export const routes = [
     tutorialSteps: cellularAutomatonTutorialSteps,
   },
   {
-    id: "kmeans",
     path: "/kmeans",
     label: "K平均法",
     description: "データ分類アルゴリズムの体験",
@@ -49,7 +45,6 @@ export const routes = [
     tutorialSteps: kmeansTutorialSteps,
   },
   {
-    id: "genetic-algorithm",
     path: "/genetic-algorithm",
     label: "遺伝的アルゴリズム",
     description: "遺伝的アルゴリズムのシミュレーション",
@@ -57,7 +52,6 @@ export const routes = [
     tutorialSteps: geneticAlgorithmTutorialSteps,
   },
   {
-    id: "gradient-descent",
     path: "/gradient-descent",
     label: "勾配降下法",
     description: "勾配降下法のシミュレーション",
