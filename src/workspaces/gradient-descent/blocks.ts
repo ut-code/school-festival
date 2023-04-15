@@ -29,26 +29,6 @@ javascriptGenerator[CUSTOM_TEMPLATE_INCREMENT] = (block) =>
     CUSTOM_TEMPLATE_INCREMENT_VALUE
   )});`;
 
-export const CUSTOM_GRAD_CONSOLE_LOG = "custom_grad_console_log";
-export const CUSTOM_GRAD_CONSOLE_LOG_VALUE = "value";
-
-Blockly.Blocks[CUSTOM_GRAD_CONSOLE_LOG] = {
-  init(this: Blockly.Block) {
-    this.appendValueInput(CUSTOM_GRAD_CONSOLE_LOG_VALUE).appendField(
-      "console.log"
-    );
-    this.setPreviousStatement(true);
-    this.setNextStatement(true);
-    this.setColour(160);
-  },
-};
-javascriptGenerator[CUSTOM_GRAD_CONSOLE_LOG] = (block) =>
-  `console.log(${javascriptGenerator.valueToCode(
-    block,
-    CUSTOM_GRAD_CONSOLE_LOG_VALUE,
-    0
-  )});`;
-
 export const CUSTOM_GRAD_OBJECTIVE = "custom_grad_objective";
 export const CUSTOM_GRAD_X = "x";
 export const CUSTOM_GRAD_Y = "y";
@@ -114,7 +94,9 @@ javascriptGenerator[CUSTOM_GRAD_SET_Y] = (block) =>
     0
   )});`;
 
-Blockly.Blocks[CUSTOM_GRAD_X] = {
+export const CUSTOM_GRAD_X_VALUE = "custom_grad_x_value";
+
+Blockly.Blocks[CUSTOM_GRAD_X_VALUE] = {
   init(this: Blockly.Block) {
     this.appendDummyInput().appendField("x");
     this.setOutput(true, "Number");
@@ -123,9 +105,11 @@ Blockly.Blocks[CUSTOM_GRAD_X] = {
   },
 };
 
-javascriptGenerator[CUSTOM_GRAD_X] = () => [``, 0];
+javascriptGenerator[CUSTOM_GRAD_X_VALUE] = () => [``, 0];
 
-Blockly.Blocks[CUSTOM_GRAD_Y] = {
+export const CUSTOM_GRAD_Y_VALUE = "custom_grad_y_value";
+
+Blockly.Blocks[CUSTOM_GRAD_Y_VALUE] = {
   init(this: Blockly.Block) {
     this.appendDummyInput().appendField("y");
     this.setOutput(true, "Number");
@@ -134,4 +118,4 @@ Blockly.Blocks[CUSTOM_GRAD_Y] = {
   },
 };
 
-javascriptGenerator[CUSTOM_GRAD_Y] = () => [``, 0];
+javascriptGenerator[CUSTOM_GRAD_Y_VALUE] = () => [``, 0];

@@ -2,7 +2,10 @@ import { useRef, useState } from "react";
 import { Box, Grid, Text, Button } from "@chakra-ui/react";
 import { useGetSet } from "react-use";
 import { useBlocklyInterpreter } from "../../commons/interpreter";
-import { useBlocklyWorkspace } from "../../commons/blockly";
+import {
+  BlocklyToolboxDefinition,
+  useBlocklyWorkspace,
+} from "../../commons/blockly";
 import {
   BUILTIN_LOGIC_COMPARE,
   BUILTIN_LOGIC_NEGATE,
@@ -16,33 +19,42 @@ import {
   CUSTOM_GRAD_OBJECTIVE,
   CUSTOM_GRAD_SET_X,
   CUSTOM_GRAD_SET_Y,
-  CUSTOM_GRAD_X,
-  CUSTOM_GRAD_Y,
+  CUSTOM_GRAD_X_VALUE,
+  CUSTOM_GRAD_Y_VALUE,
 } from "./blocks";
 import { ExecutionManager } from "../../components/ExecutionManager";
 import { GradRenderer, GradResetCamera } from "./components/GradRenderer";
 
 import { objectiveFunction } from "./objective";
 
-const toolboxBlocks = [
-  // 共有のブロック
-  BUILTIN_MATH_NUMBER,
-  BUILTIN_MATH_ARITHMETIC,
-  BUILTIN_LOGIC_COMPARE,
-  BUILTIN_LOGIC_OPERATION,
-  BUILTIN_LOGIC_NEGATE,
-  CUSTOM_COMMON_WHILE_TRUE,
-  CUSTOM_COMMON_WHILE,
-  // ワークスペースごとに定義したブロック
-];
-
-const toolBoxCoordination = [
-  CUSTOM_GRAD_X,
-  CUSTOM_GRAD_Y,
-  CUSTOM_GRAD_OBJECTIVE,
-  CUSTOM_GRAD_SET_X,
-  CUSTOM_GRAD_SET_Y,
-];
+const toolboxDefinition: BlocklyToolboxDefinition = {
+  type: "category",
+  categories: [
+    {
+      name: "基本",
+      blockTypes: [
+        BUILTIN_MATH_NUMBER,
+        BUILTIN_MATH_ARITHMETIC,
+        BUILTIN_LOGIC_COMPARE,
+        BUILTIN_LOGIC_OPERATION,
+        BUILTIN_LOGIC_NEGATE,
+        CUSTOM_COMMON_WHILE_TRUE,
+        CUSTOM_COMMON_WHILE,
+      ],
+    },
+    {
+      name: "座標",
+      blockTypes: [
+        CUSTOM_GRAD_X_VALUE,
+        CUSTOM_GRAD_Y_VALUE,
+        CUSTOM_GRAD_OBJECTIVE,
+        CUSTOM_GRAD_SET_X,
+        CUSTOM_GRAD_SET_Y,
+      ],
+    },
+  ],
+  enableVariables: true,
+};
 
 export type GradWorkspaceState = {
   x: number;
@@ -77,11 +89,11 @@ export function GradWorkspace(): JSX.Element {
       const state = getState();
       setState({ x: state.x, y: newY });
     },
-    [CUSTOM_GRAD_X]: () => {
+    [CUSTOM_GRAD_X_VALUE]: () => {
       const state = getState();
       return state.x;
     },
-    [CUSTOM_GRAD_Y]: () => {
+    [CUSTOM_GRAD_Y_VALUE]: () => {
       const state = getState();
       return state.y;
     },
@@ -89,14 +101,7 @@ export function GradWorkspace(): JSX.Element {
 
   const [interval, setInterval] = useState(500);
   const { workspaceAreaRef, highlightBlock, getCode } = useBlocklyWorkspace({
-    toolboxDefinition: {
-      type: "category",
-      categories: [
-        { name: "基本", blockTypes: toolboxBlocks },
-        { name: "座標", blockTypes: toolBoxCoordination },
-      ],
-      enableVariables: true,
-    },
+    toolboxDefinition,
   });
   const interpreter = useBlocklyInterpreter({
     globalFunctions,
