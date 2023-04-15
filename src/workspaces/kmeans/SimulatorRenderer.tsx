@@ -12,6 +12,7 @@ export function SimulatorRenderer(props: { clusters: cluster[] }): JSX.Element {
             cy={`${data.y}`}
             r="1"
             fill={`${ColorList[cluster_.n]}`}
+            key={data.x}
           />
         ))
       )}
