@@ -23,59 +23,67 @@ const toolboxDefinition: BlocklyToolboxDefinition = {
 };
 
 export function GraphWorkspace(): JSX.Element {
-  type tNode = {
+  type TNode = {
     value: string;
-    leftChild: tNode | null;
-    rightChild: tNode | null;
+    leftChild: TNode | null;
+    rightChild: TNode | null;
     colour?: string;
   };
 
-  const tNode7: tNode = {
+  type AllState = {
+    rootNode: TNode;
+    currentTNode: TNode;
+  };
+
+  const TNode7: TNode = {
     value: "seven",
     leftChild: null,
     rightChild: null,
   };
 
-  const tNode6: tNode = {
+  const TNode6: TNode = {
     value: "six",
     leftChild: null,
     rightChild: null,
   };
 
-  const tNode5: tNode = {
+  const TNode5: TNode = {
     value: "five",
     leftChild: null,
     rightChild: null,
   };
 
-  const tNode4: tNode = {
+  const TNode4: TNode = {
     value: "four",
     leftChild: null,
     rightChild: null,
   };
 
-  const tNode3: tNode = {
+  const TNode3: TNode = {
     value: "three",
-    leftChild: tNode6,
-    rightChild: tNode7,
+    leftChild: TNode6,
+    rightChild: TNode7,
   };
 
-  const tNode2: tNode = {
+  const TNode2: TNode = {
     value: "two",
-    leftChild: tNode4,
-    rightChild: tNode5,
+    leftChild: TNode4,
+    rightChild: TNode5,
   };
 
-  const tNode1: tNode = {
+  const TNode1: TNode = {
     value: "one",
-    leftChild: tNode2,
-    rightChild: tNode3,
+    leftChild: TNode2,
+    rightChild: TNode3,
   };
 
   // interpreter に渡す関数は実行開始時に決定されるため、通常の state だと最新の情報が参照できません
   // このため、反則ですが内部的に ref を用いて状態管理をしている react-use の [useGetSet](https://github.com/streamich/react-use/blob/master/docs/useGetSet.md) を用いています。
-  const [getState, setState] = useGetSet<tNode>(tNode1);
-  // setState(tNode1);
+  const [getState, setState] = useGetSet<AllState>({
+    rootNode: TNode1,
+    currentTNode: TNode1,
+  });
+  // setState(TNode1);
 
   // javascriptGenerator により生成されたコードから呼ばれる関数を定義します
   const globalFunctions = useRef({
@@ -89,8 +97,9 @@ export function GraphWorkspace(): JSX.Element {
     //   if (newState < 0) throw new Error("残念！ゼロを下回ってしまいました...");
     // },
     [CUSTOM_GRAPH_COLOUR_CHANGE]: (colour: "red" | "blue") => {
-      const currentState = getState();
-      const newState = { ...currentState, colour };
+      const { currentTNode } = getState();
+      currentTNode.colour = colour;
+      const newState = { ...getState(), currentTNode };
       setState(newState);
       // // GlobalFunction 内で BlocklyEditorMessage オブジェクトをスローすると「情報」スナックバーが表示され、実行が停止されます
       // if (newState >= 10) throw new BlocklyEditorMessage("10 になりました！");
@@ -127,7 +136,7 @@ export function GraphWorkspace(): JSX.Element {
           }}
         />
         <StackRenderer stack={stack} />
-        <TreeRenderer key={tNode1.colour} node={getState()} />
+        <TreeRenderer key={TNode1.colour} node={getState().rootNode} />
       </Box>
     </Grid>
   );
