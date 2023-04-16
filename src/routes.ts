@@ -8,6 +8,10 @@ import { KmeansWorkspace } from "./workspaces/kmeans";
 import { kmeansTutorialSteps } from "./workspaces/kmeans/tutorial";
 import { GeneticAlgorithmWorkspace } from "./workspaces/genetic-algorithm";
 import { geneticAlgorithmTutorialSteps } from "./workspaces/genetic-algorithm/tutorial";
+
+import { QlearningWorkspace } from "./workspaces/qlearning";
+import { QlearningTutorialSteps } from "./workspaces/qlearning/tutorial";
+
 import { GradWorkspace } from "./workspaces/gradient-descent";
 import { gradTutorialSteps } from "./workspaces/gradient-descent/tutorial";
 
@@ -50,6 +54,13 @@ export const routes = [
     description: "遺伝的アルゴリズムのシミュレーション",
     Component: GeneticAlgorithmWorkspace,
     tutorialSteps: geneticAlgorithmTutorialSteps,
+  },
+  {
+    path: "/qlearning",
+    label: "Q学習",
+    description: "Q学習で迷路の最短ルートを見つけよう！",
+    Component: QlearningWorkspace,
+    tutorialSteps: QlearningTutorialSteps,
   },
   {
     path: "/gradient-descent",
