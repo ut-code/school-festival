@@ -1,7 +1,14 @@
 import { Box, Stack } from "@chakra-ui/react";
 
+type TNode = {
+  value: string;
+  leftChild: TNode | null;
+  rightChild: TNode | null;
+  colour?: string;
+};
+
 type StackRendererProps = {
-  stack: string[];
+  stack: TNode[];
 };
 
 export function StackRenderer({ stack }: StackRendererProps) {
@@ -15,7 +22,7 @@ export function StackRenderer({ stack }: StackRendererProps) {
       overflow="hidden"
       borderTopWidth="0"
     >
-      {reversedStack.map((value, index) => (
+      {reversedStack.map((tNode, index) => (
         <Box
           borderWidth="1px"
           borderColor="gray.200"
@@ -25,7 +32,7 @@ export function StackRenderer({ stack }: StackRendererProps) {
           bg={index % 2 === 0 ? "gray.50" : "white"}
           _last={{ borderBottomRadius: "md" }}
         >
-          {value}
+          {tNode.value}
         </Box>
       ))}
     </Stack>

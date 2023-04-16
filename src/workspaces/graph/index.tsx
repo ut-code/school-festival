@@ -33,6 +33,7 @@ export function GraphWorkspace(): JSX.Element {
   type AllState = {
     rootNode: TNode;
     currentTNode: TNode;
+    stack: TNode[];
   };
 
   const TNode7: TNode = {
@@ -82,6 +83,7 @@ export function GraphWorkspace(): JSX.Element {
   const [getState, setState] = useGetSet<AllState>({
     rootNode: TNode1,
     currentTNode: TNode1,
+    stack: [TNode1],
   });
   // setState(TNode1);
 
@@ -135,7 +137,7 @@ export function GraphWorkspace(): JSX.Element {
             setState({ ...getState() });
           }}
         />
-        <StackRenderer stack={stack} />
+        <StackRenderer stack={getState().stack} />
         <TreeRenderer key={TNode1.colour} node={getState().rootNode} />
       </Box>
     </Grid>
