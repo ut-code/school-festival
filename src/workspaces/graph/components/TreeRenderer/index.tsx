@@ -1,40 +1,51 @@
 import { Box, Flex, HStack, Text } from "@chakra-ui/react";
 
 type TNode = {
+  id: string;
   value: string;
   leftChild: TNode | null;
   rightChild: TNode | null;
-  colour?: string;
+  visited: boolean;
 };
 
 type TreeRendererProps = {
-  node: TNode;
+  rootTNode: TNode;
+  currentTNode: TNode;
 };
 
-export function TreeRenderer({ node }: TreeRendererProps) {
+export function TreeRenderer({ rootTNode, currentTNode }: TreeRendererProps) {
   let colour;
-  if (node.colour === "red") {
-    colour = "red.400";
-  } else if (node.colour === "blue") {
+  if (rootTNode.visited) {
     colour = "blue.400";
   } else {
-    colour = "green.400";
+    colour = "gray.400";
   }
   return (
     <Flex flexDirection="column">
       <Box>
         <HStack>
           <Box w="15px" h="15px" borderRadius="50%" bg={colour} />
-          <Text>{node.value}</Text>
+          {rootTNode.id === currentTNode.id && (
+            <Text textDecoration="underline">{rootTNode.value}</Text>
+          )}
+          {rootTNode.id !== currentTNode.id && <Text>{rootTNode.value}</Text>}{" "}
           {/* <Text>{colour}</Text> */}
         </HStack>
       </Box>
       <HStack>
-        {node.leftChild && (
-          <TreeRenderer key={node.leftChild.value} node={node.leftChild} />
+        {rootTNode.leftChild && (
+          <TreeRenderer
+            key={rootTNode.leftChild.value}
+            rootTNode={rootTNode.leftChild}
+            currentTNode={currentTNode}
+          />
         )}
-        {node.rightChild && (
-          <TreeRenderer key={node.rightChild.value} node={node.rightChild} />
+        {rootTNode.rightChild && (
+          <TreeRenderer
+            key={rootTNode.rightChild.value}
+            rootTNode={rootTNode.rightChild}
+            currentTNode={currentTNode}
+          />
         )}
       </HStack>
     </Flex>

@@ -5,11 +5,13 @@ import { javascriptGenerator } from "../../config/blockly";
 // ユーザー定義のコンポーネントには CUSTOM プレフィックスをつけ、続けて各 Workspace 毎のプレフィックスをつけています。
 // export const CUSTOM_TEMPLATE_INCREMENT = "custom_template_increment";
 export const CUSTOM_GRAPH_COLOUR_CHANGE = "CUSTOM_GRAPH_COLOUR_CHANGE";
-export const CUSTOM_GRAPH_DIRECTION_CHECK = "CUSTOM_GRAPH_DIRECTION_CHECK";
+export const CUSTOM_GRAPH_DIRECTION_PUSH = "CUSTOM_GRAPH_DIRECTION_PUSH";
+export const CUSTOM_GRAPH_DIRECTION_POP = "CUSTOM_GRAPH_DIRECTION_POP";
 // ブロックのフィールドにも名前が必要です。こちらはブロック毎にユニークで構いません。
 // export const CUSTOM_TEMPLATE_INCREMENT_VALUE = "value";
 export const CUSTOM_GRAPH_COLOUR = "MYCOLOUR";
-export const CUSTOM_GRAPH_DIRECTION = "MYCHECK";
+export const CUSTOM_GRAPH_DIRECTION = "MYDIRECTION";
+
 // Blockly.Blocks のプロパティでブロックを定義します。
 // 詳細は https://developers.google.com/blockly/guides/create-custom-blocks/define-blocks を参照してください。
 // Blockly.Blocks[CUSTOM_TEMPLATE_INCREMENT] = {
@@ -33,46 +35,49 @@ export const CUSTOM_GRAPH_DIRECTION = "MYCHECK";
 
 Blockly.Blocks[CUSTOM_GRAPH_COLOUR_CHANGE] = {
   init(this: Blockly.Block) {
-    this.appendDummyInput()
-      .appendField(
-        new Blockly.FieldDropdown([
-          ["赤", "red"],
-          ["青", "blue"],
-        ]),
-        CUSTOM_GRAPH_COLOUR
-      )
-      .appendField("の色にする");
+    this.appendDummyInput().appendField("青色にする");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour("gray");
+    this.setColour("6DA9E4");
     this.setTooltip("色を変えます");
   },
 };
 
 javascriptGenerator[CUSTOM_GRAPH_COLOUR_CHANGE] = (block) =>
-  `${CUSTOM_GRAPH_COLOUR_CHANGE}('${block.getFieldValue(
-    CUSTOM_GRAPH_COLOUR
+  `${CUSTOM_GRAPH_COLOUR_CHANGE}();`;
+
+Blockly.Blocks[CUSTOM_GRAPH_DIRECTION_PUSH] = {
+  init(this: Blockly.Block) {
+    this.appendDummyInput()
+      .appendField(
+        new Blockly.FieldDropdown([
+          ["左", "left"],
+          ["右", "right"],
+        ]),
+        CUSTOM_GRAPH_DIRECTION
+      )
+      .appendField("のnodeをstackにpushする");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour("B7B7B7");
+    this.setTooltip("stackに追加するnodeを決めます");
+  },
+};
+
+javascriptGenerator[CUSTOM_GRAPH_DIRECTION_PUSH] = (block) =>
+  `${CUSTOM_GRAPH_DIRECTION_PUSH}('${block.getFieldValue(
+    CUSTOM_GRAPH_DIRECTION
   )}');`;
 
-// Blockly.Blocks[CUSTOM_GRAPH_DIRECTION_CHECK] = {
-//   init(this: Blockly.Block) {
-//     this.appendDummyInput()
-//       .appendField(
-//         new Blockly.FieldDropdown([
-//           ["左", "left"],
-//           ["右", "right"],
-//         ]),
-//         CUSTOM_GRAPH_DIRECTION
-//       )
-//       .appendField("のノードへ移動する");
-//     this.setPreviousStatement(true, null);
-//     this.setNextStatement(true, null);
-//     this.setColour("green");
-//     this.setTooltip("移動するノードを決めます");
-//   },
-// };
+Blockly.Blocks[CUSTOM_GRAPH_DIRECTION_POP] = {
+  init(this: Blockly.Block) {
+    this.appendDummyInput().appendField("nodeをstackからpopする");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour("#B7B7B7");
+    this.setTooltip("stackからnodeをpopします");
+  },
+};
 
-// javascriptGenerator[CUSTOM_GRAPH_DIRECTION_CHECK] = (block) =>
-//   `${CUSTOM_GRAPH_DIRECTION_CHECK}('${block.getFieldValue(
-//     CUSTOM_GRAPH_DIRECTION
-//   )}');`;
+javascriptGenerator[CUSTOM_GRAPH_DIRECTION_POP] = (block) =>
+  `${CUSTOM_GRAPH_DIRECTION_POP}();`;

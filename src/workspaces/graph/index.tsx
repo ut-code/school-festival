@@ -1,13 +1,20 @@
 import { useRef, useState } from "react";
 import { Box, Grid } from "@chakra-ui/react";
 import { useGetSet } from "react-use";
-import { useBlocklyInterpreter } from "../../commons/interpreter";
+import {
+  BlocklyEditorMessage,
+  useBlocklyInterpreter,
+} from "../../commons/interpreter";
 import {
   BlocklyToolboxDefinition,
   useBlocklyWorkspace,
 } from "../../commons/blockly";
 import { CUSTOM_COMMON_WHILE_TRUE } from "../../config/blockly.blocks";
-import { CUSTOM_GRAPH_COLOUR_CHANGE } from "./blocks";
+import {
+  CUSTOM_GRAPH_COLOUR_CHANGE,
+  CUSTOM_GRAPH_DIRECTION_POP,
+  CUSTOM_GRAPH_DIRECTION_PUSH,
+} from "./blocks";
 import { ExecutionManager } from "../../components/ExecutionManager";
 import { TreeRenderer } from "./components/TreeRenderer";
 import { StackRenderer } from "./components/StackRenderer";
@@ -19,69 +26,86 @@ const toolboxDefinition: BlocklyToolboxDefinition = {
     CUSTOM_COMMON_WHILE_TRUE,
     // ワークスペースごとに定義したブロック
     CUSTOM_GRAPH_COLOUR_CHANGE,
+    CUSTOM_GRAPH_DIRECTION_PUSH,
+    CUSTOM_GRAPH_DIRECTION_POP,
   ],
 };
 
 export function GraphWorkspace(): JSX.Element {
   type TNode = {
+    id: string;
     value: string;
     leftChild: TNode | null;
     rightChild: TNode | null;
-    colour?: string;
+    visited: boolean;
   };
 
   type AllState = {
-    rootNode: TNode;
+    rootTNode: TNode;
     currentTNode: TNode;
     stack: TNode[];
   };
 
   const TNode7: TNode = {
+    id: "7",
     value: "seven",
     leftChild: null,
     rightChild: null,
+    visited: false,
   };
 
   const TNode6: TNode = {
+    id: "6",
     value: "six",
     leftChild: null,
     rightChild: null,
+    visited: false,
   };
 
   const TNode5: TNode = {
+    id: "5",
     value: "five",
     leftChild: null,
     rightChild: null,
+    visited: false,
   };
 
   const TNode4: TNode = {
+    id: "4",
     value: "four",
     leftChild: null,
     rightChild: null,
+    visited: false,
   };
 
   const TNode3: TNode = {
+    id: "3",
     value: "three",
     leftChild: TNode6,
     rightChild: TNode7,
+    visited: false,
   };
 
   const TNode2: TNode = {
+    id: "2",
     value: "two",
     leftChild: TNode4,
     rightChild: TNode5,
+    visited: false,
   };
 
   const TNode1: TNode = {
+    id: "1",
     value: "one",
     leftChild: TNode2,
     rightChild: TNode3,
+    visited: false,
   };
 
   // interpreter に渡す関数は実行開始時に決定されるため、通常の state だと最新の情報が参照できません
   // このため、反則ですが内部的に ref を用いて状態管理をしている react-use の [useGetSet](https://github.com/streamich/react-use/blob/master/docs/useGetSet.md) を用いています。
   const [getState, setState] = useGetSet<AllState>({
-    rootNode: TNode1,
+    rootTNode: TNode1,
     currentTNode: TNode1,
     stack: [TNode1],
   });
@@ -98,15 +122,50 @@ export function GraphWorkspace(): JSX.Element {
     //   // GlobalFunction 内で Error オブジェクトをスローすると「エラー」スナックバーが表示され、実行が停止されます
     //   if (newState < 0) throw new Error("残念！ゼロを下回ってしまいました...");
     // },
-    [CUSTOM_GRAPH_COLOUR_CHANGE]: (colour: "red" | "blue") => {
+    [CUSTOM_GRAPH_COLOUR_CHANGE]: () => {
       const { currentTNode } = getState();
-      currentTNode.colour = colour;
+      currentTNode.visited = true;
       const newState = { ...getState(), currentTNode };
       setState(newState);
       // // GlobalFunction 内で BlocklyEditorMessage オブジェクトをスローすると「情報」スナックバーが表示され、実行が停止されます
       // if (newState >= 10) throw new BlocklyEditorMessage("10 になりました！");
       // // GlobalFunction 内で Error オブジェクトをスローすると「エラー」スナックバーが表示され、実行が停止されます
       // if (newState < 0) throw new Error("残念！ゼロを下回ってしまいました...");
+    },
+    [CUSTOM_GRAPH_DIRECTION_PUSH]: (direction: "left" | "right") => {
+      const { stack, currentTNode } = getState();
+      if (direction === "left") {
+        if (currentTNode.leftChild) {
+          stack.push(currentTNode.leftChild);
+          const newState = {
+            ...getState(),
+            stack,
+          };
+          setState(newState);
+        }
+      } else if (direction === "right") {
+        if (currentTNode.rightChild) {
+          stack.push(currentTNode.rightChild);
+          const newState = {
+            ...getState(),
+            stack,
+          };
+          setState(newState);
+        }
+      }
+    },
+    [CUSTOM_GRAPH_DIRECTION_POP]: () => {
+      const { stack } = getState();
+      const currentTNode = stack.pop();
+      if (!currentTNode)
+        throw new BlocklyEditorMessage("すべての探索をクリアしました！");
+
+      const newState: AllState = {
+        ...getState(),
+        stack,
+        currentTNode,
+      };
+      setState(newState);
     },
   }).current;
 
@@ -119,8 +178,6 @@ export function GraphWorkspace(): JSX.Element {
     executionInterval: interval,
     onStep: highlightBlock,
   });
-
-  const stack: string[] = ["a", "b", "c"];
 
   return (
     <Grid h="100%" templateColumns="1fr 25rem">
@@ -138,7 +195,11 @@ export function GraphWorkspace(): JSX.Element {
           }}
         />
         <StackRenderer stack={getState().stack} />
-        <TreeRenderer key={TNode1.colour} node={getState().rootNode} />
+        <TreeRenderer
+          key={TNode1.id}
+          rootTNode={getState().rootTNode}
+          currentTNode={getState().currentTNode}
+        />
       </Box>
     </Grid>
   );
