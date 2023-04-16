@@ -15,7 +15,6 @@ import { QlearningTutorialSteps } from "./workspaces/qlearning/tutorial";
 import { GradWorkspace } from "./workspaces/gradient-descent";
 import { gradTutorialSteps } from "./workspaces/gradient-descent/tutorial";
 
-
 // テンプレートがどのように動作するのか確認したい場合はコメントアウトを外してください。
 // import { TemplateWorkspace } from "./workspaces/template";
 // import { templateTutorialSteps } from "./workspaces/template/tutorial";
