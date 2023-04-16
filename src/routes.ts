@@ -8,6 +8,8 @@ import { KmeansWorkspace } from "./workspaces/kmeans";
 import { kmeansTutorialSteps } from "./workspaces/kmeans/tutorial";
 import { GeneticAlgorithmWorkspace } from "./workspaces/genetic-algorithm";
 import { geneticAlgorithmTutorialSteps } from "./workspaces/genetic-algorithm/tutorial";
+import { GradWorkspace } from "./workspaces/gradient-descent";
+import { gradTutorialSteps } from "./workspaces/gradient-descent/tutorial";
 
 // テンプレートがどのように動作するのか確認したい場合はコメントアウトを外してください。
 // import { TemplateWorkspace } from "./workspaces/template";
@@ -48,6 +50,13 @@ export const routes = [
     description: "遺伝的アルゴリズムのシミュレーション",
     Component: GeneticAlgorithmWorkspace,
     tutorialSteps: geneticAlgorithmTutorialSteps,
+  },
+  {
+    path: "/gradient-descent",
+    label: "勾配降下法",
+    description: "勾配降下法のシミュレーション",
+    Component: GradWorkspace,
+    tutorialSteps: gradTutorialSteps,
   },
   // {
   //   path: "/template",
