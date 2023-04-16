@@ -33,6 +33,7 @@ import {
   CUSTOM_KM_DISTANCE_BETWEEN_X_AND_Y,
   CUSTOM_KM_X_OF_DATA_IN_ARRAY,
   CUSTOM_KM_Y_OF_DATA_IN_ARRAY,
+  CUSTOM_KM_DATA_X_Y,
   CUSTOM_KM_DATA_IN_ARRAY,
   CUSTOM_KM_LENGTH_OF_ARRAY,
 } from "./blocks";
@@ -66,6 +67,7 @@ const toolboxDefinition: BlocklyToolboxDefinition = {
         CUSTOM_KM_DISTANCE_BETWEEN_X_AND_Y,
         CUSTOM_KM_X_OF_DATA_IN_ARRAY,
         CUSTOM_KM_Y_OF_DATA_IN_ARRAY,
+        CUSTOM_KM_DATA_X_Y,
         CUSTOM_KM_DATA_IN_ARRAY,
         CUSTOM_KM_LENGTH_OF_ARRAY,
       ],
@@ -98,9 +100,10 @@ export function KmeansWorkspace(): JSX.Element {
       const c: number = Math.floor(Math.random() * K);
       clusters[c].datas.push({ x, y });
     }
+    const x: data = { x: 0, y: 0 };
     return {
       listOfClusters: clusters,
-      centerOfClusters: { datas: [] },
+      centerOfClusters: { datas: [x, x, x] },
     };
   }
 
@@ -127,6 +130,11 @@ export function KmeansWorkspace(): JSX.Element {
       });
     },
     [CUSTOM_KM_CALCULATE_CENTER_OF_CLUSTER]: () => {
+      var currentStateStart = getState();
+      setState({
+        ...currentStateStart,
+        centerOfClusters: { datas: [] },
+      });
       for (let i = 0; i < K; i += 1) {
         var currentState = getState();
         var CLUSTER_X: number[] = currentState.listOfClusters[i].datas.map(
@@ -202,6 +210,9 @@ export function KmeansWorkspace(): JSX.Element {
     },
     [CUSTOM_KM_Y_OF_DATA_IN_ARRAY]: (a: cluster, i: number) => {
       return a.datas[i].y;
+    },
+    [CUSTOM_KM_DATA_X_Y]: (x: number, y: number) => {
+      return { x, y };
     },
     [CUSTOM_KM_LENGTH_OF_ARRAY]: (a: cluster) => {
       return a.datas.length;

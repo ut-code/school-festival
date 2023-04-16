@@ -23,12 +23,21 @@ export const CUSTOM_KM_DELETE_DATA_FROM_ARRAY = "delete_data_from_array";
 export const CUSTOM_KM_DISTANCE_BETWEEN_X_AND_Y = "distance_between_x_and_y";
 export const CUSTOM_KM_X_OF_DATA_IN_ARRAY = "x_of_data_in_array";
 export const CUSTOM_KM_Y_OF_DATA_IN_ARRAY = "y_of_data_in_array";
+export const CUSTOM_KM_DATA_X_Y = "data_x_y";
 export const CUSTOM_KM_DATA_IN_ARRAY = "data_in_array";
 export const CUSTOM_KM_LENGTH_OF_ARRAY = "length_of_array";
 
+export const CUSTOM_KM_NUMBER = "custom_km_number";
+export const CUSTOM_KM_DATA = "custom_km_data";
+export const CUSTOM_KM_DATA_1 = "custom_km_data_1";
+export const CUSTOM_KM_DATA_2 = "custom_km_data_2";
+export const CUSTOM_KM_CLUSTER = "custom_km_cluster";
+export const CUSTOM_KM_NUMBER_X = "custom_km_number_x";
+export const CUSTOM_KM_NUMBER_Y = "custom_km_number_y";
+
 Blockly.Blocks[CUSTOM_KM_CLUSTER_I] = {
   init() {
-    this.appendValueInput("NUMBER").setCheck("Number").appendField("");
+    this.appendValueInput(CUSTOM_KM_NUMBER).setCheck("Number").appendField("");
     this.appendDummyInput().appendField("番目のクラスター");
     this.setInputsInline(true);
     this.setOutput(true, "Cluster");
@@ -37,15 +46,19 @@ Blockly.Blocks[CUSTOM_KM_CLUSTER_I] = {
   },
 };
 javascriptGenerator[CUSTOM_KM_CLUSTER_I] = (block: Blockly.Block) => [
-  `${CUSTOM_KM_CLUSTER_I}(${block.getFieldValue("NUMBER")});`,
+  `${CUSTOM_KM_CLUSTER_I}(${javascriptGenerator.valueToCode(
+    block,
+    CUSTOM_KM_NUMBER,
+    0
+  )})`,
   0,
 ];
 
 Blockly.Blocks[CUSTOM_KM_SET_CENTER_OF_CLUSTER] = {
   init() {
-    this.appendValueInput("NUMBER").setCheck("Number").appendField("");
+    this.appendValueInput(CUSTOM_KM_NUMBER).setCheck("Number").appendField("");
     this.appendDummyInput().appendField("番目のクラスターの中心を");
-    this.appendValueInput("DATA").setCheck("Data").appendField("");
+    this.appendValueInput(CUSTOM_KM_DATA).setCheck("Data").appendField("");
     this.appendDummyInput().appendField("とする");
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
@@ -56,13 +69,13 @@ Blockly.Blocks[CUSTOM_KM_SET_CENTER_OF_CLUSTER] = {
 };
 javascriptGenerator[CUSTOM_KM_SET_CENTER_OF_CLUSTER] = (block: Blockly.Block) =>
   `${CUSTOM_KM_SET_CENTER_OF_CLUSTER}(
-    ${block.getFieldValue("NUMBER")},
-    ${block.getFieldValue("DATA")}
+    ${javascriptGenerator.valueToCode(block, CUSTOM_KM_NUMBER, 0)},
+    ${javascriptGenerator.valueToCode(block, CUSTOM_KM_DATA, 0)}
   );`;
 
 Blockly.Blocks[CUSTOM_KM_CENTER_OF_CLUSTER] = {
   init() {
-    this.appendValueInput("CLUSTER")
+    this.appendValueInput(CUSTOM_KM_CLUSTER)
       .setCheck("Cluster")
       .appendField("クラスター");
     this.appendDummyInput().appendField("の中心");
@@ -73,7 +86,11 @@ Blockly.Blocks[CUSTOM_KM_CENTER_OF_CLUSTER] = {
   },
 };
 javascriptGenerator[CUSTOM_KM_CENTER_OF_CLUSTER] = (block: Blockly.Block) => [
-  `${CUSTOM_KM_CENTER_OF_CLUSTER}(${block.getFieldValue("CLUSTER")});`,
+  `${CUSTOM_KM_CENTER_OF_CLUSTER}(${javascriptGenerator.valueToCode(
+    block,
+    CUSTOM_KM_CLUSTER,
+    0
+  )})`,
   0,
 ];
 
@@ -91,9 +108,9 @@ javascriptGenerator[CUSTOM_KM_CALCULATE_CENTER_OF_CLUSTER] = () =>
 
 Blockly.Blocks[CUSTOM_KM_ADD_DATA_TO_ARRAY] = {
   init() {
-    this.appendValueInput("ARRAY").setCheck("Cluster");
+    this.appendValueInput(CUSTOM_KM_CLUSTER).setCheck("Cluster");
     this.appendDummyInput().appendField("（配列）に");
-    this.appendValueInput("DATA").setCheck("Data");
+    this.appendValueInput(CUSTOM_KM_DATA).setCheck("Data");
     this.appendDummyInput().appendField("（点）を加える");
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
@@ -104,15 +121,15 @@ Blockly.Blocks[CUSTOM_KM_ADD_DATA_TO_ARRAY] = {
 };
 javascriptGenerator[CUSTOM_KM_ADD_DATA_TO_ARRAY] = (block) =>
   `${CUSTOM_KM_ADD_DATA_TO_ARRAY}(
-    ${block.getFieldValue("ARRAY")},
-    ${block.getFieldValue("DATA")}
+    ${javascriptGenerator.valueToCode(block, CUSTOM_KM_CLUSTER, 0)},
+    ${javascriptGenerator.valueToCode(block, CUSTOM_KM_DATA, 0)}
     );`;
 
 Blockly.Blocks[CUSTOM_KM_DELETE_DATA_FROM_ARRAY] = {
   init() {
-    this.appendValueInput("ARRAY").setCheck("Cluster");
+    this.appendValueInput(CUSTOM_KM_CLUSTER).setCheck("Cluster");
     this.appendDummyInput().appendField("（配列）から");
-    this.appendValueInput("NUMBER").setCheck("Number");
+    this.appendValueInput(CUSTOM_KM_NUMBER).setCheck("Number");
     this.appendDummyInput().appendField("番目の要素を削除する");
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
@@ -123,15 +140,15 @@ Blockly.Blocks[CUSTOM_KM_DELETE_DATA_FROM_ARRAY] = {
 };
 javascriptGenerator[CUSTOM_KM_DELETE_DATA_FROM_ARRAY] = (block) =>
   `${CUSTOM_KM_DELETE_DATA_FROM_ARRAY}(
-    ${block.getFieldValue("ARRAY")},
-    ${block.getFieldValue("NUMBER")}
+    ${javascriptGenerator.valueToCode(block, CUSTOM_KM_CLUSTER, 0)},
+    ${javascriptGenerator.valueToCode(block, CUSTOM_KM_NUMBER, 0)}
     );`;
 
 Blockly.Blocks[CUSTOM_KM_DISTANCE_BETWEEN_X_AND_Y] = {
   init() {
-    this.appendValueInput("DATA1").setCheck("Data").appendField("点");
+    this.appendValueInput(CUSTOM_KM_DATA_1).setCheck("Data").appendField("点");
     this.appendDummyInput().appendField("から");
-    this.appendValueInput("DATA2").setCheck("Data").appendField("点");
+    this.appendValueInput(CUSTOM_KM_DATA_2).setCheck("Data").appendField("点");
     this.appendDummyInput().appendField("までの距離");
     this.setInputsInline(true);
     this.setOutput(true, "Number");
@@ -141,17 +158,17 @@ Blockly.Blocks[CUSTOM_KM_DISTANCE_BETWEEN_X_AND_Y] = {
 };
 javascriptGenerator[CUSTOM_KM_DISTANCE_BETWEEN_X_AND_Y] = (block) => [
   `${CUSTOM_KM_DISTANCE_BETWEEN_X_AND_Y}(
-    ${block.getFieldValue("DATA1")},
-    ${block.getFieldValue("DATA2")}
-    );`,
+    ${javascriptGenerator.valueToCode(block, CUSTOM_KM_DATA_1, 0)},
+    ${javascriptGenerator.valueToCode(block, CUSTOM_KM_DATA_2, 0)}
+    )`,
   0,
 ];
 
 Blockly.Blocks[CUSTOM_KM_X_OF_DATA_IN_ARRAY] = {
   init() {
-    this.appendValueInput("ARRAY").setCheck("Cluster");
+    this.appendValueInput(CUSTOM_KM_CLUSTER).setCheck("Cluster");
     this.appendDummyInput().appendField("（配列）の");
-    this.appendValueInput("NUMBER").setCheck("Number");
+    this.appendValueInput(CUSTOM_KM_NUMBER).setCheck("Number");
     this.appendDummyInput().appendField("番目の要素のx座標");
     this.setInputsInline(true);
     this.setOutput(true, "Number");
@@ -161,17 +178,17 @@ Blockly.Blocks[CUSTOM_KM_X_OF_DATA_IN_ARRAY] = {
 };
 javascriptGenerator[CUSTOM_KM_X_OF_DATA_IN_ARRAY] = (block) => [
   `${CUSTOM_KM_X_OF_DATA_IN_ARRAY}(
-        ${block.getFieldValue("ARRAY")},
-        ${block.getFieldValue("NUMBER")}
-        );`,
+        ${javascriptGenerator.valueToCode(block, CUSTOM_KM_CLUSTER, 0)},
+        ${javascriptGenerator.valueToCode(block, CUSTOM_KM_NUMBER, 0)}
+        )`,
   0,
 ];
 
 Blockly.Blocks[CUSTOM_KM_Y_OF_DATA_IN_ARRAY] = {
   init() {
-    this.appendValueInput("ARRAY").setCheck("Cluster");
+    this.appendValueInput(CUSTOM_KM_CLUSTER).setCheck("Cluster");
     this.appendDummyInput().appendField("（配列）の");
-    this.appendValueInput("NUMBER").setCheck("Number");
+    this.appendValueInput(CUSTOM_KM_NUMBER).setCheck("Number");
     this.appendDummyInput().appendField("番目の要素のy座標");
     this.setInputsInline(true);
     this.setOutput(true, "Number");
@@ -181,17 +198,38 @@ Blockly.Blocks[CUSTOM_KM_Y_OF_DATA_IN_ARRAY] = {
 };
 javascriptGenerator[CUSTOM_KM_Y_OF_DATA_IN_ARRAY] = (block) => [
   `${CUSTOM_KM_Y_OF_DATA_IN_ARRAY}(
-        ${block.getFieldValue("ARRAY")},
-        ${block.getFieldValue("NUMBER")}
-        );`,
+        ${javascriptGenerator.valueToCode(block, CUSTOM_KM_CLUSTER, 0)},
+        ${javascriptGenerator.valueToCode(block, CUSTOM_KM_NUMBER, 0)}
+        )`,
+  0,
+];
+
+Blockly.Blocks[CUSTOM_KM_DATA_X_Y] = {
+  init() {
+    this.appendDummyInput().appendField("点(");
+    this.appendValueInput(CUSTOM_KM_NUMBER_X).setCheck("Number");
+    this.appendDummyInput().appendField(",");
+    this.appendValueInput(CUSTOM_KM_NUMBER_Y).setCheck("Number");
+    this.appendDummyInput().appendField(")");
+    this.setInputsInline(true);
+    this.setOutput(true, "Data");
+    this.setColour(230);
+    this.setTooltip("");
+  },
+};
+javascriptGenerator[CUSTOM_KM_DATA_X_Y] = (block) => [
+  `${CUSTOM_KM_DATA_X_Y}(
+        ${javascriptGenerator.valueToCode(block, CUSTOM_KM_NUMBER_X, 0)},
+        ${javascriptGenerator.valueToCode(block, CUSTOM_KM_NUMBER_Y, 0)}
+        )`,
   0,
 ];
 
 Blockly.Blocks[CUSTOM_KM_DATA_IN_ARRAY] = {
   init() {
-    this.appendValueInput("ARRAY").setCheck("Cluster");
+    this.appendValueInput(CUSTOM_KM_CLUSTER).setCheck("Cluster");
     this.appendDummyInput().appendField("（配列）の");
-    this.appendValueInput("NUMBER").setCheck("Number");
+    this.appendValueInput(CUSTOM_KM_NUMBER).setCheck("Number");
     this.appendDummyInput().appendField("番目のデータ");
     this.setInputsInline(true);
     this.setOutput(true, "Data");
@@ -201,15 +239,15 @@ Blockly.Blocks[CUSTOM_KM_DATA_IN_ARRAY] = {
 };
 javascriptGenerator[CUSTOM_KM_DATA_IN_ARRAY] = (block) => [
   `${CUSTOM_KM_DATA_IN_ARRAY}(
-    ${block.getFieldValue("ARRAY")},
-    ${block.getFieldValue("NUMBER")}
-    );`,
+    ${javascriptGenerator.valueToCode(block, CUSTOM_KM_CLUSTER, 0)},
+    ${javascriptGenerator.valueToCode(block, CUSTOM_KM_NUMBER, 0)}
+    )`,
   0,
 ];
 
 Blockly.Blocks[CUSTOM_KM_LENGTH_OF_ARRAY] = {
   init() {
-    this.appendValueInput("ARRAY").setCheck("Cluster");
+    this.appendValueInput(CUSTOM_KM_CLUSTER).setCheck("Cluster");
     this.appendDummyInput().appendField("（配列）の要素数");
     this.setInputsInline(true);
     this.setOutput(true, "Number");
@@ -219,8 +257,8 @@ Blockly.Blocks[CUSTOM_KM_LENGTH_OF_ARRAY] = {
 };
 javascriptGenerator[CUSTOM_KM_LENGTH_OF_ARRAY] = (block) => [
   `${CUSTOM_KM_LENGTH_OF_ARRAY}(
-        ${block.getFieldValue("ARRAY")},
-        );`,
+        ${javascriptGenerator.valueToCode(block, CUSTOM_KM_CLUSTER, 0)}
+        )`,
   0,
 ];
 
@@ -236,4 +274,4 @@ Blockly.Blocks[CONSOLE_LOG] = {
   },
 };
 javascriptGenerator[CONSOLE_LOG] = (block) =>
-  `${CONSOLE_LOG}(${block.getFieldValue(VALUE)});`;
+  `console.log(${javascriptGenerator.valueToCode(block, VALUE, 0)});`;
