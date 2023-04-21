@@ -13,14 +13,19 @@ export const CUSTOM_GA_FIELD_VALUE = "value";
 export const CUSTOM_GA_RANDOM_INT = "custom_ga_random_int";
 Blockly.Blocks[CUSTOM_GA_RANDOM_INT] = {
   init(this: Blockly.Block) {
-    this.appendValueInput(CUSTOM_GA_FIELD_VALUE).setCheck("Number");
+    this.appendValueInput("a").setCheck("Number");
     this.appendDummyInput().appendField("以上");
-    this.appendValueInput(CUSTOM_GA_FIELD_VALUE).setCheck("Number");
+    this.appendValueInput("b").setCheck("Number");
     this.appendDummyInput().appendField("未満の整数");
     this.setOutput(true, "Number");
     this.setColour(0);
     this.setTooltip("乱数");
   },
+};
+javascriptGenerator[CUSTOM_GA_RANDOM_INT] = (block) => {
+  const a = block.getFieldValue("a");
+  const b = block.getFieldValue("b");
+  return [`Math.floor(Math.random() * (${b} - ${a}) + ${a})`, 0];
 };
 
 export const CUSTOM_GA_NTH_ROUTE = "custom_ga_nth_route";
@@ -45,6 +50,10 @@ Blockly.Blocks[CUSTOM_GA_CREATE_ROUTE] = {
     this.setTooltip("経路");
   },
 };
+javascriptGenerator[CUSTOM_GA_CREATE_ROUTE] = () => [
+  `${CUSTOM_GA_CREATE_ROUTE}()`,
+  0,
+];
 
 export const CUSTOM_GA_DUPLICATE_ROUTE = "custom_ga_duplicate_route";
 Blockly.Blocks[CUSTOM_GA_DUPLICATE_ROUTE] = {

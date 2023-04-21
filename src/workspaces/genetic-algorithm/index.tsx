@@ -1,10 +1,7 @@
-import { useRef, useState } from "react";
-import { Box, Grid, Text } from "@chakra-ui/react";
+import { useCallback, useRef, useState } from "react";
+import { Grid, Stack } from "@chakra-ui/react";
 import { useGetSet } from "react-use";
-import {
-  BlocklyEditorMessage,
-  useBlocklyInterpreter,
-} from "../../commons/interpreter";
+import { useBlocklyInterpreter } from "../../commons/interpreter";
 import {
   BlocklyToolboxDefinition,
   useBlocklyWorkspace,
@@ -31,6 +28,9 @@ import {
   CUSTOM_GA_SWAP_ROUTES,
 } from "./blocks";
 import { ExecutionManager } from "../../components/ExecutionManager";
+import GARenderer from "./GARenderer";
+import { createInitialGAState, createRouteReducer, isGARoute } from "./types";
+import VariableList from "../../components/VariableList";
 
 const toolboxDefinition: BlocklyToolboxDefinition = {
   type: "category",
@@ -62,21 +62,24 @@ const toolboxDefinition: BlocklyToolboxDefinition = {
 };
 
 export function GeneticAlgorithmWorkspace(): JSX.Element {
-  const [getState, setState] = useGetSet(0);
+  const initialState = useState(createInitialGAState)[0];
+  const [getState, setState] = useGetSet(initialState);
 
   const globalFunctions = useRef({
-    [CUSTOM_GA_NTH_ROUTE]: (value: number) => {
-      const currentState = getState();
-      const newState = currentState + value;
+    [CUSTOM_GA_CREATE_ROUTE]: () => {
+      const [newState, newRoute] = createRouteReducer(getState());
       setState(newState);
-      if (newState >= 10) throw new BlocklyEditorMessage("10 になりました！");
-      if (newState < 0) throw new Error("残念！ゼロを下回ってしまいました...");
+      return newRoute;
     },
   }).current;
 
   const [interval, setInterval] = useState(500);
+  const [variableNames, setVariableNames] = useState<string[]>([]);
   const { workspaceAreaRef, highlightBlock, getCode } = useBlocklyWorkspace({
     toolboxDefinition,
+    onCodeChange: useCallback((_: unknown, newVariableNames: string[]) => {
+      setVariableNames(newVariableNames);
+    }, []),
   });
   const interpreter = useBlocklyInterpreter({
     globalFunctions,
@@ -87,7 +90,7 @@ export function GeneticAlgorithmWorkspace(): JSX.Element {
   return (
     <Grid h="100%" templateColumns="1fr 25rem">
       <div ref={workspaceAreaRef} />
-      <Box p={4}>
+      <Stack p={4} spacing={2}>
         <ExecutionManager
           interpreter={interpreter}
           interval={interval}
@@ -96,11 +99,19 @@ export function GeneticAlgorithmWorkspace(): JSX.Element {
             interpreter.start(getCode());
           }}
           onReset={() => {
-            setState(0);
+            setState(initialState);
           }}
         />
-        <Text mt={2}>{getState()}</Text>
-      </Box>
+        <VariableList
+          interpreter={interpreter}
+          variableNames={variableNames}
+          renderVariable={(value) => {
+            if (isGARoute(value)) return <>経路 #{value.label}</>;
+            return undefined;
+          }}
+        />
+        <GARenderer state={getState()} />
+      </Stack>
     </Grid>
   );
 }
