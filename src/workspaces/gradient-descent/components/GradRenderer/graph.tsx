@@ -2,6 +2,28 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { objectiveFunction } from "../../objective";
 
+function createMeshOfPoints(
+  color: number,
+  size: number,
+  points: number[],
+  transparent: boolean,
+  opacity: number
+) {
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(points, 3)
+  );
+  const material = new THREE.PointsMaterial({
+    size,
+    color,
+    transparent,
+    opacity,
+  });
+  const mesh = new THREE.Points(geometry, material);
+  return mesh;
+}
+
 export class GradGraph {
   camera: THREE.PerspectiveCamera;
 
@@ -10,6 +32,10 @@ export class GradGraph {
   controls: OrbitControls;
 
   scene: THREE.Scene;
+
+  point = createMeshOfPoints(0x00ffff, 30, [0, 0, 0], false, 1.0);
+
+  goal = createMeshOfPoints(0xff0000, 30, [0, 0, 0], false, 1.0);
 
   constructor(props: {
     xAnswer: number;
@@ -20,9 +46,11 @@ export class GradGraph {
     // レンダラを作成
     this.renderer = new THREE.WebGLRenderer({
       canvas: document.querySelector("#graph") as HTMLCanvasElement,
+      alpha: true,
     });
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(props.width, props.height);
+    // this.renderer.setClearColor(0x191970, 1);
 
     this.camera = new THREE.PerspectiveCamera(60, props.width / props.height);
     this.camera.position.set(500, 500, 500);
@@ -30,6 +58,15 @@ export class GradGraph {
 
     // シーンを作成
     this.scene = new THREE.Scene();
+
+    this.scene.add(this.point);
+    this.scene.add(this.goal);
+
+    const ambientLight = new THREE.AmbientLight(0x00000, 1.0);
+    this.scene.add(ambientLight);
+
+    const directionalLight = new THREE.DirectionalLight(0x00000, 1);
+    this.scene.add(directionalLight);
 
     // 座標軸を作成
     const maxes = [300, 300, 300];
@@ -154,6 +191,16 @@ export class GradGraph {
 
   addToScene(mesh: THREE.Points) {
     this.scene.add(mesh);
+  }
+
+  updatePointPosition(position: number[]) {
+    [this.point.position.x, this.point.position.y, this.point.position.z] =
+      position;
+  }
+
+  updateGoalPosition(position: number[]) {
+    [this.goal.position.x, this.goal.position.y, this.goal.position.z] =
+      position;
   }
 
   controlsUpdate() {
