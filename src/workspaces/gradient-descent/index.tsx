@@ -26,7 +26,11 @@ import {
   CUSTOM_GRAD_Y_VALUE,
 } from "./blocks";
 import { ExecutionManager } from "../../components/ExecutionManager";
-import { GradRenderer, GradResetCamera } from "./components/GradRenderer";
+import {
+  GradCreateGraph,
+  GradRenderer,
+  GradResetCamera,
+} from "./components/GradRenderer";
 
 import { objectiveFunction } from "./objective";
 
@@ -167,6 +171,7 @@ export function GradWorkspace(): JSX.Element {
               x_answer: (Math.random() - 0.5) * answerRange,
               y_answer: (Math.random() - 0.5) * answerRange,
             });
+            GradCreateGraph(getState().x_answer, getState().y_answer);
             GradResetCamera();
           }}
         >
