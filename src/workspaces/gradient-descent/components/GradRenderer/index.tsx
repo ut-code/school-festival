@@ -22,7 +22,7 @@ export function GradCreateGraph(xAnswer: number, yAnswer: number) {
   });
 }
 
-function createMeshOfPoints(
+export function createMeshOfPoints(
   color: number,
   size: number,
   points: number[],
@@ -51,16 +51,15 @@ export function GradRenderer(props: {
   yAnswer: number;
 }) {
   const updateGraph = () => {
-    // 現在の位置を表示
+    // 現在の位置を更新
     const point = [
       props.x,
       objectiveFunction(props.x, props.y, props.xAnswer, props.yAnswer),
       props.y,
     ];
-    const meshOfPoint = createMeshOfPoints(0x00ffff, 30, point, false, 1.0);
-    gradGraph.addToScene(meshOfPoint);
+    gradGraph.updatePointPosition(point);
 
-    // 目標地点を表示
+    // 目標地点を更新
     const goal = [
       props.xAnswer,
       objectiveFunction(
@@ -71,8 +70,7 @@ export function GradRenderer(props: {
       ),
       props.yAnswer,
     ];
-    const meshOfGoal = createMeshOfPoints(0xff0000, 30, goal, false, 1.0);
-    gradGraph.addToScene(meshOfGoal);
+    gradGraph.updateGoalPosition(goal);
 
     // 毎フレーム時に実行
     function tick() {
@@ -91,5 +89,10 @@ export function GradRenderer(props: {
       updateGraph();
     }
   });
-  return <canvas id="graph" />;
+  return (
+    <canvas
+      id="graph"
+      style={{ backgroundImage: "radial-gradient(#000000, #c0c0c0)" }}
+    />
+  );
 }
