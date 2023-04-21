@@ -31,6 +31,7 @@
     "blockly": "^9.3.1",
     "framer-motion": "^10.10.0",
     "js-interpreter": "^4.0.0",
+    "nullthrows": "^1.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.8.0",
@@ -38,6 +39,7 @@
     "react-router-dom": "^6.10.0",
     "react-use": "^17.4.0",
     "three": "^0.151.3",
+    "tiny-invariant": "^1.3.1",
     "use-debounce": "^9.0.3"
   },
   "devDependencies": {

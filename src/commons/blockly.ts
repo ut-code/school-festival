@@ -21,7 +21,7 @@ export type BlocklyToolboxDefinition =
 
 export type UseBlocklyWorkspaceProps = {
   toolboxDefinition: BlocklyToolboxDefinition;
-  onCodeChange?: (code: string) => void;
+  onCodeChange?: (code: string, variableNames: string[]) => void;
 };
 
 export type UseBlocklyWorkspaceReturnValue = {
@@ -86,7 +86,7 @@ export function useBlocklyWorkspace({
         const latestCode = getCode();
         if (previousCode !== latestCode) {
           previousCode = latestCode;
-          onCodeChange(latestCode);
+          onCodeChange(latestCode, workspace.getAllVariableNames());
         }
       });
     }
