@@ -1,4 +1,5 @@
 import { Box, List, ListItem, Text } from "@chakra-ui/react";
+import nullthrows from "nullthrows";
 import { GAPlace, GARoute, GAState, gaMapSize } from "./types";
 
 const mapScale = 100;
@@ -18,6 +19,21 @@ function Map({ places, route }: { places: GAPlace[]; route?: GARoute }) {
           realMapSize.height + 20,
         ].join(" ")}
       >
+        {route && route.placeLabels.length > 0 && (
+          <polyline
+            fill="none"
+            stroke="#9df"
+            points={route.placeLabels
+              .map((label) => {
+                const a = nullthrows(
+                  places.find((place) => place.label === label),
+                  `地点 ${label} は存在しません`
+                );
+                return `${a.x * mapScale},${a.y * mapScale}`;
+              })
+              .join(" ")}
+          />
+        )}
         {places.map((place) => (
           <g
             key={place.label}
@@ -60,11 +76,17 @@ export default function GARenderer({ state }: { state: GAState }) {
         <Map places={state.places} />
       </Box>
       <Text fontSize="xl" mt={2}>
-        経路
+        遺伝子
       </Text>
-      <List mt={1}>
-        {state.routes.map((route) => (
-          <ListItem key={route.label}>
+      <List mt={1} spacing={4}>
+        {state.routes.map((route, i) => (
+          <ListItem
+            key={route.label}
+            display="grid"
+            gridTemplateColumns="30px 1fr"
+            gap={4}
+          >
+            <Text align="end">#{i + 1}</Text>
             <Map places={state.places} route={route} />
           </ListItem>
         ))}
