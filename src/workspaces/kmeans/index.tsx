@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Box, Grid, Text } from "@chakra-ui/react";
 import { useGetSet } from "react-use";
 import {
@@ -21,7 +21,6 @@ import {
   BUILTIN_MATH_NUMBER,
 } from "../../config/blockly.blocks";
 import {
-  CONSOLE_LOG,
   data,
   cluster,
   CUSTOM_KM_CLUSTER_I,
@@ -39,6 +38,7 @@ import {
 } from "./blocks";
 import { ExecutionManager } from "../../components/ExecutionManager";
 import { SimulatorRenderer } from "./SimulatorRenderer";
+import VariableList from "../../components/VariableList";
 
 const toolboxDefinition: BlocklyToolboxDefinition = {
   type: "category",
@@ -56,20 +56,24 @@ const toolboxDefinition: BlocklyToolboxDefinition = {
         BUILTIN_LOGIC_OPERATION,
         BUILTIN_MATH_ARITHMETIC,
         BUILTIN_MATH_NUMBER,
-        CONSOLE_LOG,
         // ワークスペースごとに定義したブロック
         CUSTOM_KM_CLUSTER_I,
-        CUSTOM_KM_SET_CENTER_OF_CLUSTER,
         CUSTOM_KM_CENTER_OF_CLUSTER,
-        CUSTOM_KM_CALCULATE_CENTER_OF_CLUSTER,
         CUSTOM_KM_ADD_DATA_TO_ARRAY,
         CUSTOM_KM_DELETE_DATA_FROM_ARRAY,
-        CUSTOM_KM_DISTANCE_BETWEEN_X_AND_Y,
+        CUSTOM_KM_DATA_IN_ARRAY,
+        CUSTOM_KM_LENGTH_OF_ARRAY,
+        CUSTOM_KM_SET_CENTER_OF_CLUSTER,
         CUSTOM_KM_X_OF_DATA_IN_ARRAY,
         CUSTOM_KM_Y_OF_DATA_IN_ARRAY,
         CUSTOM_KM_DATA_X_Y,
-        CUSTOM_KM_DATA_IN_ARRAY,
-        CUSTOM_KM_LENGTH_OF_ARRAY,
+      ],
+    },
+    {
+      name: "お助け",
+      blockTypes: [
+        CUSTOM_KM_CALCULATE_CENTER_OF_CLUSTER,
+        CUSTOM_KM_DISTANCE_BETWEEN_X_AND_Y,
       ],
     },
   ],
@@ -79,13 +83,21 @@ const toolboxDefinition: BlocklyToolboxDefinition = {
 type KmeansWorkspaceState = {
   listOfClusters: cluster[];
   centerOfClusters: { datas: data[] };
+  distanceCalculated: { data1: data; data2: data }[];
 };
 
 export function KmeansWorkspace(): JSX.Element {
-  const N = 100;
+  const N = 50;
   const K = 3;
 
   const clusters: cluster[] = [];
+
+  function normalDistribution() {
+    const value =
+      Math.sqrt(-2 * Math.log(1 - Math.random())) *
+      Math.cos(2 * Math.PI * Math.random());
+    return value;
+  }
 
   for (let i = 0; i < K; i += 1) {
     clusters.push({
@@ -94,22 +106,29 @@ export function KmeansWorkspace(): JSX.Element {
     });
   }
   function RandomDatas(n: number): KmeansWorkspaceState {
+    const randomMean = [
+      [Math.random(), Math.random()],
+      [Math.random(), Math.random()],
+      [Math.random(), Math.random()],
+    ];
     for (let i = 0; i < n; i += 1) {
-      const x: number = Math.random() * N;
-      const y: number = Math.random() * N;
       const c: number = Math.floor(Math.random() * K);
+      const x = normalDistribution() * 20 + randomMean[c][0] * 100;
+      const y = normalDistribution() * 20 + randomMean[c][1] * 100;
       clusters[c].datas.push({ x, y });
     }
     const x: data = { x: 0, y: 0 };
     return {
       listOfClusters: clusters,
       centerOfClusters: { datas: [x, x, x] },
+      distanceCalculated: [],
     };
   }
 
   // interpreter に渡す関数は実行開始時に決定されるため、通常の state だと最新の情報が参照できません
   // このため、反則ですが内部的に ref を用いて状態管理をしている react-use の [useGetSet](https://github.com/streamich/react-use/blob/master/docs/useGetSet.md) を用いています。
   const [getState, setState] = useGetSet(RandomDatas(N));
+  const [variableNames, setVariableNames] = useState<string[]>([]);
 
   /* eslint-disable no-var */
   /* eslint-disable vars-on-top */
@@ -203,6 +222,15 @@ export function KmeansWorkspace(): JSX.Element {
       return a.datas[i];
     },
     [CUSTOM_KM_DISTANCE_BETWEEN_X_AND_Y]: (data1: data, data2: data) => {
+      var currentState = getState();
+      var newDistanceCalculated = currentState.distanceCalculated.concat({
+        data1,
+        data2,
+      });
+      setState({
+        ...currentState,
+        distanceCalculated: newDistanceCalculated,
+      });
       return Math.sqrt((data1.x - data2.x) ** 2 + (data1.y - data2.y) ** 2);
     },
     [CUSTOM_KM_X_OF_DATA_IN_ARRAY]: (a: cluster, i: number) => {
@@ -222,6 +250,9 @@ export function KmeansWorkspace(): JSX.Element {
   const [interval, setInterval] = useState(500);
   const { workspaceAreaRef, highlightBlock, getCode } = useBlocklyWorkspace({
     toolboxDefinition,
+    onCodeChange: useCallback((_: unknown, newVariableNames: string[]) => {
+      setVariableNames(newVariableNames);
+    }, []),
   });
   const interpreter = useBlocklyInterpreter({
     globalFunctions,
@@ -252,7 +283,18 @@ export function KmeansWorkspace(): JSX.Element {
         >
           (再配置)
         </button>
-        <SimulatorRenderer clusters={getState().listOfClusters} />
+        <VariableList
+          interpreter={interpreter}
+          variableNames={variableNames}
+          renderVariable={() => {
+            return undefined;
+          }}
+        />
+        <SimulatorRenderer
+          clusters={getState().listOfClusters}
+          lines={getState().distanceCalculated}
+          centers={getState().centerOfClusters}
+        />
 
         <Text>
           0x{" "}

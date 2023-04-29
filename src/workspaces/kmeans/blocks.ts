@@ -41,7 +41,7 @@ Blockly.Blocks[CUSTOM_KM_CLUSTER_I] = {
     this.appendDummyInput().appendField("番目のクラスター");
     this.setInputsInline(true);
     this.setOutput(true, "Cluster");
-    this.setColour(230);
+    this.setColour(0);
     this.setTooltip("");
   },
 };
@@ -81,7 +81,7 @@ Blockly.Blocks[CUSTOM_KM_CENTER_OF_CLUSTER] = {
     this.appendDummyInput().appendField("の中心");
     this.setInputsInline(true);
     this.setOutput(true, "Data");
-    this.setColour(230);
+    this.setColour(0);
     this.setTooltip("");
   },
 };
@@ -99,7 +99,7 @@ Blockly.Blocks[CUSTOM_KM_CALCULATE_CENTER_OF_CLUSTER] = {
     this.appendDummyInput().appendField("クラスターの中心を計算する");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(230);
+    this.setColour(60);
     this.setTooltip("");
   },
 };
@@ -115,7 +115,7 @@ Blockly.Blocks[CUSTOM_KM_ADD_DATA_TO_ARRAY] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(230);
+    this.setColour(0);
     this.setTooltip("");
   },
 };
@@ -134,7 +134,7 @@ Blockly.Blocks[CUSTOM_KM_DELETE_DATA_FROM_ARRAY] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(230);
+    this.setColour(0);
     this.setTooltip("");
   },
 };
@@ -152,7 +152,7 @@ Blockly.Blocks[CUSTOM_KM_DISTANCE_BETWEEN_X_AND_Y] = {
     this.appendDummyInput().appendField("までの距離");
     this.setInputsInline(true);
     this.setOutput(true, "Number");
-    this.setColour(230);
+    this.setColour(60);
     this.setTooltip("");
   },
 };
@@ -233,7 +233,7 @@ Blockly.Blocks[CUSTOM_KM_DATA_IN_ARRAY] = {
     this.appendDummyInput().appendField("番目のデータ");
     this.setInputsInline(true);
     this.setOutput(true, "Data");
-    this.setColour(230);
+    this.setColour(0);
     this.setTooltip("");
   },
 };
@@ -251,7 +251,7 @@ Blockly.Blocks[CUSTOM_KM_LENGTH_OF_ARRAY] = {
     this.appendDummyInput().appendField("（配列）の要素数");
     this.setInputsInline(true);
     this.setOutput(true, "Number");
-    this.setColour(230);
+    this.setColour(0);
     this.setTooltip("");
   },
 };
