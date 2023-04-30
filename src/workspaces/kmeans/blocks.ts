@@ -3,16 +3,6 @@ import { javascriptGenerator } from "../../config/blockly";
 
 const VALUE = "value";
 
-// k-means
-export type data = {
-  x: number;
-  y: number;
-};
-export type cluster = {
-  datas: data[];
-  n: number;
-};
-
 export const CUSTOM_KM_CLUSTER_I = "cluster_i";
 export const CUSTOM_KM_SET_CENTER_OF_CLUSTER = "set_center_of_cluster";
 export const CUSTOM_KM_CENTER_OF_CLUSTER = "center_of_cluster";
@@ -58,7 +48,7 @@ Blockly.Blocks[CUSTOM_KM_SET_CENTER_OF_CLUSTER] = {
   init() {
     this.appendValueInput(CUSTOM_KM_NUMBER).setCheck("Number").appendField("");
     this.appendDummyInput().appendField("番目のクラスターの中心を");
-    this.appendValueInput(CUSTOM_KM_DATA).setCheck("Data").appendField("");
+    this.appendValueInput(CUSTOM_KM_DATA).setCheck("Vector").appendField("");
     this.appendDummyInput().appendField("とする");
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
@@ -80,7 +70,7 @@ Blockly.Blocks[CUSTOM_KM_CENTER_OF_CLUSTER] = {
       .appendField("クラスター");
     this.appendDummyInput().appendField("の中心");
     this.setInputsInline(true);
-    this.setOutput(true, "Data");
+    this.setOutput(true, "Vector");
     this.setColour(0);
     this.setTooltip("");
   },
@@ -110,7 +100,7 @@ Blockly.Blocks[CUSTOM_KM_ADD_DATA_TO_ARRAY] = {
   init() {
     this.appendValueInput(CUSTOM_KM_CLUSTER).setCheck("Cluster");
     this.appendDummyInput().appendField("（配列）に");
-    this.appendValueInput(CUSTOM_KM_DATA).setCheck("Data");
+    this.appendValueInput(CUSTOM_KM_DATA).setCheck("Vector");
     this.appendDummyInput().appendField("（点）を加える");
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
@@ -146,9 +136,13 @@ javascriptGenerator[CUSTOM_KM_DELETE_DATA_FROM_ARRAY] = (block) =>
 
 Blockly.Blocks[CUSTOM_KM_DISTANCE_BETWEEN_X_AND_Y] = {
   init() {
-    this.appendValueInput(CUSTOM_KM_DATA_1).setCheck("Data").appendField("点");
+    this.appendValueInput(CUSTOM_KM_DATA_1)
+      .setCheck("Vector")
+      .appendField("点");
     this.appendDummyInput().appendField("から");
-    this.appendValueInput(CUSTOM_KM_DATA_2).setCheck("Data").appendField("点");
+    this.appendValueInput(CUSTOM_KM_DATA_2)
+      .setCheck("Vector")
+      .appendField("点");
     this.appendDummyInput().appendField("までの距離");
     this.setInputsInline(true);
     this.setOutput(true, "Number");
@@ -212,7 +206,7 @@ Blockly.Blocks[CUSTOM_KM_DATA_X_Y] = {
     this.appendValueInput(CUSTOM_KM_NUMBER_Y).setCheck("Number");
     this.appendDummyInput().appendField(")");
     this.setInputsInline(true);
-    this.setOutput(true, "Data");
+    this.setOutput(true, "Vector");
     this.setColour(230);
     this.setTooltip("");
   },
@@ -232,7 +226,7 @@ Blockly.Blocks[CUSTOM_KM_DATA_IN_ARRAY] = {
     this.appendValueInput(CUSTOM_KM_NUMBER).setCheck("Number");
     this.appendDummyInput().appendField("番目のデータ");
     this.setInputsInline(true);
-    this.setOutput(true, "Data");
+    this.setOutput(true, "Vector");
     this.setColour(0);
     this.setTooltip("");
   },
