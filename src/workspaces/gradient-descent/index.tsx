@@ -26,11 +26,7 @@ import {
   CUSTOM_GRAD_Y_VALUE,
 } from "./blocks";
 import { ExecutionManager } from "../../components/ExecutionManager";
-import {
-  GradCreateGraph,
-  GradRenderer,
-  GradResetCamera,
-} from "./components/GradRenderer";
+import { GradRenderer } from "./components/GradRenderer";
 
 import { objectiveFunction } from "./objective";
 
@@ -84,12 +80,12 @@ function createDefaultState() {
 }
 
 function isConvergence(state: GradWorkspaceState) {
-  const threshold = 0.1;
+  const threshold = 199;
   if (
-    objectiveFunction(state.x, state.y, state.x_answer, state.y_answer) <
+    objectiveFunction(state.x, state.y, state.x_answer, state.y_answer) >
     threshold
   ) {
-    throw new BlocklyEditorMessage("最も低い点に到達しました！");
+    throw new BlocklyEditorMessage("最も高い点に到達しました！");
   }
 }
 
@@ -159,20 +155,11 @@ export function GradWorkspace(): JSX.Element {
         />
         <Button
           onClick={() => {
-            GradResetCamera();
-          }}
-        >
-          カメラの位置をリセットする
-        </Button>
-        <Button
-          onClick={() => {
             setState({
               ...getState(),
               x_answer: (Math.random() - 0.5) * answerRange,
               y_answer: (Math.random() - 0.5) * answerRange,
             });
-            GradCreateGraph(getState().x_answer, getState().y_answer);
-            GradResetCamera();
           }}
         >
           新しいグラフにする

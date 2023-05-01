@@ -4,6 +4,6 @@ export function objectiveFunction(
   xAnswer: number,
   yAnswer: number
 ) {
-  const zMagnification = 0.002;
-  return zMagnification * ((x - xAnswer) ** 2 + (y - yAnswer) ** 2);
+  const zMagnification = -0.002;
+  return zMagnification * ((x - xAnswer) ** 2 + (y - yAnswer) ** 2) + 200;
 }
