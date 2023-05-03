@@ -2,13 +2,11 @@
 // ユーザーに露出するオブジェクトには __typename タグをつけることにより JSON シリアライズしても型情報が維持されるようする。
 
 import nullthrows from "nullthrows";
-import invariant from "tiny-invariant";
 
 export type GAPlaceLabel = string & { __GAPlaceLabel: never };
 export const gaPlaceLabels = [..."ABCDEFGH"] as GAPlaceLabel[];
-invariant(new Set(gaPlaceLabels).size === gaPlaceLabels.length);
-export const gaPlaceCountInRoute = 8;
-invariant(gaPlaceLabels.length === gaPlaceCountInRoute);
+export const gaPlaceCountInRoute = gaPlaceLabels.length;
+export const gaInitialRouteCount = 5;
 
 export const gaMapSize = { width: (1 + Math.sqrt(5)) / 2, height: 1 };
 export const gaMinSpaceBetweenPlaces = 0.4;
@@ -71,15 +69,35 @@ export function createInitialGAState(): GAState {
   // 視認性の都合上、x 座標でソートする
   positions.sort((a, b) => a.x - b.x);
 
+  const places: GAPlace[] = positions.map((p, i) => ({
+    __typename: "GAPlace",
+    label: nullthrows(gaPlaceLabels[i]),
+    x: p.x,
+    y: p.y,
+  }));
+
+  const routes: GARoute[] = [];
+
+  while (routes.length < gaInitialRouteCount) {
+    const newRoute: GARoute = {
+      __typename: "GARoute",
+      label: (routes.length + 1) as GARouteLabel,
+      placeLabels: gaPlaceLabels.slice().sort(() => Math.random() - 0.5),
+    };
+
+    // 重複する経路は追加しない
+    if (
+      routes.every(
+        (route) => route.placeLabels.join() !== newRoute.placeLabels.join()
+      )
+    )
+      routes.push(newRoute);
+  }
+
   return {
-    places: positions.map((p, i) => ({
-      __typename: "GAPlace",
-      label: nullthrows(gaPlaceLabels[i]),
-      x: p.x,
-      y: p.y,
-    })),
-    nextRouteLabel: 1 as GARouteLabel,
-    routes: [],
+    places,
+    nextRouteLabel: (gaInitialRouteCount + 1) as GARouteLabel,
+    routes,
   };
 }
 
