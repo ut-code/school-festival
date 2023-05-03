@@ -55,11 +55,11 @@ export class GradGraph {
     });
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(props.width, props.height);
-    // this.renderer.setClearColor(0x191970, 1);
 
     this.camera = new THREE.PerspectiveCamera(60, props.width / props.height);
     this.camera.position.set(500, 500, 500);
     this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+    this.camera.near = 0;
 
     // カメラをカーソルで操作できるようにする
     this.controls = new OrbitControls(this.camera, props.canvas);
@@ -147,14 +147,14 @@ export class GradGraph {
     );
     const positionAttribute = geometry.attributes.position;
     for (let i = 0; i < positionAttribute.count; i += 1) {
-      geometry.attributes.position.setXYZ(
+      positionAttribute.setXYZ(
         i,
         positionAttribute.array[3 * i],
         positionAttribute.array[3 * i + 1],
         Math.random() * 10
       );
     }
-    geometry.attributes.position.needsUpdate = true;
+    positionAttribute.needsUpdate = true;
     geometry.computeVertexNormals();
     const material = new THREE.MeshStandardMaterial({
       color,
@@ -176,7 +176,12 @@ export class GradGraph {
     positionY: number
   ) {
     const geometry = new THREE.BoxGeometry(lengthX, lengthY, lengthZ);
-    const material = new THREE.MeshStandardMaterial({ color });
+    const clippingPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+    const material = new THREE.MeshStandardMaterial({
+      color,
+      side: THREE.DoubleSide,
+      clippingPlanes: [clippingPlane],
+    });
     const cube = new THREE.Mesh(geometry, material);
     cube.position.y = positionY;
     return cube;
@@ -208,6 +213,8 @@ export class GradGraph {
     // ポリゴン面を構成する頂点のインデックス (Face3の代替となる情報)
     const faces = [0, 1, 2, 3, 4, 5];
 
+    const clippingPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+
     const geometry = new THREE.BufferGeometry();
 
     // 頂点情報をBufferGeometryにセット
@@ -224,6 +231,7 @@ export class GradGraph {
       side: THREE.DoubleSide,
       opacity: 1.0,
       transparent: true,
+      clippingPlanes: [clippingPlane],
     });
 
     const triangleMesh = new THREE.Mesh(geometry, material);
@@ -246,7 +254,7 @@ export class GradGraph {
         );
         const y3 = objectiveFunction(x, z + interval, xAnswer, yAnswer);
 
-        if (y1 > -100 && y2 > -100 && y3 > -100) {
+        if (y1 > -200 && y2 > -200 && y3 > -200) {
           vertices.push(new THREE.Vector3(x, y0, z));
           vertices.push(new THREE.Vector3(x + interval, y1, z));
           vertices.push(new THREE.Vector3(x + interval, y2, z + interval));
