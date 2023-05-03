@@ -48,29 +48,25 @@ export class GradGraph {
     height: number;
     canvas: HTMLCanvasElement;
   }) {
-    // レンダラを作成
     this.renderer = new THREE.WebGLRenderer({
       canvas: props.canvas,
       alpha: true,
     });
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(props.width, props.height);
+    this.renderer.localClippingEnabled = true;
 
     this.camera = new THREE.PerspectiveCamera(60, props.width / props.height);
     this.camera.position.set(500, 500, 500);
     this.camera.lookAt(new THREE.Vector3(0, 0, 0));
-    this.camera.near = 0;
 
-    // カメラをカーソルで操作できるようにする
     this.controls = new OrbitControls(this.camera, props.canvas);
 
-    // シーンを作成
     this.scene = new THREE.Scene();
 
     this.scene.add(this.point);
     this.scene.add(this.goal);
 
-    // 座標軸を作成
     const directions = [
       new THREE.Vector3(1, 0, 0),
       new THREE.Vector3(0, 1, 0),
@@ -145,7 +141,8 @@ export class GradGraph {
       widthSegments,
       heightSegments
     );
-    const positionAttribute = geometry.attributes.position;
+    const positionAttribute = geometry.attributes
+      .position as THREE.BufferAttribute;
     for (let i = 0; i < positionAttribute.count; i += 1) {
       positionAttribute.setXYZ(
         i,
@@ -176,11 +173,9 @@ export class GradGraph {
     positionY: number
   ) {
     const geometry = new THREE.BoxGeometry(lengthX, lengthY, lengthZ);
-    const clippingPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
     const material = new THREE.MeshStandardMaterial({
       color,
       side: THREE.DoubleSide,
-      clippingPlanes: [clippingPlane],
     });
     const cube = new THREE.Mesh(geometry, material);
     cube.position.y = positionY;
@@ -209,18 +204,15 @@ export class GradGraph {
     return mesh;
   }
 
-  static createTriangle(vertices: THREE.Vector3[], color: number) {
-    // ポリゴン面を構成する頂点のインデックス (Face3の代替となる情報)
+  static createTriangle(
+    vertices: THREE.Vector3[],
+    color: number,
+    clippingPlane: THREE.Plane
+  ) {
     const faces = [0, 1, 2, 3, 4, 5];
 
-    const clippingPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-
     const geometry = new THREE.BufferGeometry();
-
-    // 頂点情報をBufferGeometryにセット
-    // BufferAttributeを生成する代わりに、setFromPointsを呼ぶと内部でいいようにやってくれる
     geometry.setFromPoints(vertices);
-
     geometry.computeVertexNormals();
 
     // ポリゴン面を構成する頂点のインデックスをセット
@@ -240,6 +232,7 @@ export class GradGraph {
   }
 
   createGraph(xAnswer: number, yAnswer: number) {
+    const clippingPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 1);
     const interval = 30.0;
     for (let x = -2.0 * maxes[0]; x <= 2.0 * maxes[0]; x += interval) {
       for (let z = -2.0 * maxes[2]; z <= 2.0 * maxes[2]; z += interval) {
@@ -262,7 +255,11 @@ export class GradGraph {
           vertices.push(new THREE.Vector3(x + interval, y2, z + interval));
           vertices.push(new THREE.Vector3(x, y3, z + interval));
 
-          const mesh = GradGraph.createTriangle(vertices, 0x00ff00);
+          const mesh = GradGraph.createTriangle(
+            vertices,
+            0x00ff00,
+            clippingPlane
+          );
           this.scene.add(mesh);
         }
       }
