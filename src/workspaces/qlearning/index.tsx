@@ -17,7 +17,7 @@ import {
   CUSTOM_QL_PRESENT_ROW,
   CUSTOM_QL_QVALUE,
   CUSTOM_QL_QVALUE_UPDATE,
-  CUSTOM_QL_RANDOM_INT,
+  CUSTOM_QL_PROBABLE,
   CUSTOM_TEMPLATE_INCREMENT,
 } from "./blocks";
 import { ExecutionManager } from "../../components/ExecutionManager";
@@ -43,7 +43,7 @@ const toolboxDefinition: BlocklyToolboxDefinition = {
       blockTypes: [
         BUILTIN_MATH_NUMBER,
         BUILTIN_MATH_ARITHMETIC,
-        CUSTOM_QL_RANDOM_INT,
+        CUSTOM_QL_PROBABLE,
         BUILTIN_LOGIC_COMPARE,
         BUILTIN_LOGIC_OPERATION,
         BUILTIN_LOGIC_NEGATE,
@@ -121,7 +121,8 @@ export function QlearningWorkspace(): JSX.Element {
           interval={interval}
           setInterval={setInterval}
           onStart={() => {
-            interpreter.start(getCode());
+            // interpreter.start(getCode());
+            console.log(getCode());
           }}
           onReset={() => {
             setState({ ...getState(), location: { x: 0, y: 0 } });
