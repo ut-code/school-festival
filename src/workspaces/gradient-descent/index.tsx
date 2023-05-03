@@ -66,9 +66,9 @@ export type GradWorkspaceState = {
   y_answer: number;
 };
 
-const initialX = -100;
-const initialY = -100;
-const answerRange = 600;
+const initialX = 0;
+const initialY = 0;
+const answerRange = 500;
 
 function createDefaultState() {
   return {

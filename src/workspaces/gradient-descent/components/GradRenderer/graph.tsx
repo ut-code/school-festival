@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { objectiveFunction } from "../../objective";
 
-const maxes = [300, 300, 300];
+const maxes = [500, 500, 500];
 
 function createMeshOfPoints(
   color: number,
@@ -33,6 +33,8 @@ export class GradGraph {
 
   controls: OrbitControls;
 
+  directionalLight: THREE.DirectionalLight;
+
   scene: THREE.Scene;
 
   point = createMeshOfPoints(0x00ffff, 30, [0, 0, 0], false, 1.0);
@@ -48,7 +50,6 @@ export class GradGraph {
   }) {
     // レンダラを作成
     this.renderer = new THREE.WebGLRenderer({
-      // canvas: document.querySelector("#graph") as HTMLCanvasElement,
       canvas: props.canvas,
       alpha: true,
     });
@@ -61,11 +62,7 @@ export class GradGraph {
     this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
     // カメラをカーソルで操作できるようにする
-    this.controls = new OrbitControls(
-      this.camera,
-      // document.querySelector("#graph") as HTMLElement
-      props.canvas
-    );
+    this.controls = new OrbitControls(this.camera, props.canvas);
 
     // シーンを作成
     this.scene = new THREE.Scene();
@@ -73,104 +70,43 @@ export class GradGraph {
     this.scene.add(this.point);
     this.scene.add(this.goal);
 
-    const ambientLight = new THREE.AmbientLight(0x00000, 1.0);
-    this.scene.add(ambientLight);
-
-    const directionalLight = new THREE.DirectionalLight(0x00000, 1);
-    this.scene.add(directionalLight);
-
     // 座標軸を作成
     const directions = [
       new THREE.Vector3(1, 0, 0),
       new THREE.Vector3(0, 1, 0),
       new THREE.Vector3(0, 0, 1),
     ];
-    const colors = [0xff0000, 0x00ff00, 0x0000ff];
+    const axesColors = [0xff0000, 0x00ff00, 0x0000ff];
 
     for (let i = 0; i < 3; i += 1) {
-      const axis = GradGraph.createAxis(maxes[i], directions[i], colors[i]);
+      const axis = GradGraph.createAxis(maxes[i], directions[i], axesColors[i]);
       this.scene.add(axis);
     }
 
-    this.createNewGraph(props.xAnswer, props.yAnswer);
+    this.createGraph(props.xAnswer, props.yAnswer);
 
-    // // レンダラを作成
-    // this.renderer = new THREE.WebGLRenderer({
-    //   canvas: document.querySelector("#graph") as HTMLCanvasElement,
-    //   alpha: true,
-    // });
-    // this.renderer.setPixelRatio(window.devicePixelRatio);
-    // this.renderer.setSize(props.width, props.height);
-    // // this.renderer.setClearColor(0x191970, 1);
+    this.scene.add(
+      GradGraph.createPlane(
+        0x00ff00,
+        3.0 * maxes[0],
+        3.0 * maxes[2],
+        64,
+        64,
+        true,
+        1.0,
+        0
+      )
+    );
 
-    // this.camera = new THREE.PerspectiveCamera(60, props.width / props.height);
-    // this.camera.position.set(500, 500, 500);
-    // this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+    this.scene.add(
+      GradGraph.createCube(0x00ff00, 3.0 * maxes[0], 100, 3.0 * maxes[2], -60)
+    );
 
-    // // シーンを作成
-    // this.scene = new THREE.Scene();
-
-    // this.scene.add(this.point);
-    // this.scene.add(this.goal);
-
-    // const ambientLight = new THREE.AmbientLight(0x00000, 1.0);
-    // this.scene.add(ambientLight);
-
-    // const directionalLight = new THREE.DirectionalLight(0x00000, 1);
-    // this.scene.add(directionalLight);
-
-    // // 座標軸を作成
-    // const maxes = [300, 300, 300];
-    // const directions = [
-    //   new THREE.Vector3(1, 0, 0),
-    //   new THREE.Vector3(0, 1, 0),
-    //   new THREE.Vector3(0, 0, 1),
-    // ];
-    // const colors = [0xff0000, 0x00ff00, 0x0000ff];
-
-    // for (let i = 0; i < 3; i += 1) {
-    //   const axis = GradGraph.createAxis(maxes[i], directions[i], colors[i]);
-    //   this.scene.add(axis);
-    // }
-
-    // // カメラをカーソルで操作できるようにする
-    // this.controls = new OrbitControls(
-    //   this.camera,
-    //   document.querySelector("#graph") as HTMLElement
-    // );
-
-    // const interval = 30.0;
-    // for (let x = -1.5 * maxes[0]; x <= 1.5 * maxes[0]; x += interval) {
-    //   for (let z = -1.5 * maxes[2]; z <= 1.5 * maxes[2]; z += interval) {
-    //     const vertices = [];
-    //     const y0 = objectiveFunction(x, z, props.xAnswer, props.yAnswer);
-    //     const y1 = objectiveFunction(
-    //       x + interval,
-    //       z,
-    //       props.xAnswer,
-    //       props.yAnswer
-    //     );
-    //     const y2 = objectiveFunction(
-    //       x + interval,
-    //       z + interval,
-    //       props.xAnswer,
-    //       props.yAnswer
-    //     );
-    //     const y3 = objectiveFunction(
-    //       x,
-    //       z + interval,
-    //       props.xAnswer,
-    //       props.yAnswer
-    //     );
-    //     vertices.push(new THREE.Vector3(x, y0, z));
-    //     vertices.push(new THREE.Vector3(x + interval, y1, z));
-    //     vertices.push(new THREE.Vector3(x + interval, y2, z + interval));
-    //     vertices.push(new THREE.Vector3(x, y3, z + interval));
-
-    //     const mesh = GradGraph.createTriangle(vertices, 0x00ff00);
-    //     this.scene.add(mesh);
-    //   }
-    // }
+    this.directionalLight = new THREE.DirectionalLight(0x00ff00, 1);
+    this.directionalLight.position.x = 100;
+    this.directionalLight.position.y = 300;
+    this.directionalLight.position.z = 0;
+    this.scene.add(this.directionalLight);
   }
 
   static createAxis(max: number, direction: THREE.Vector3, color: number) {
@@ -191,6 +127,59 @@ export class GradGraph {
       axisHeadWidth
     );
     return axis;
+  }
+
+  static createPlane(
+    color: number,
+    width: number,
+    height: number,
+    widthSegments: number,
+    heightSegments: number,
+    transparent: boolean,
+    opacity: number,
+    positionY: number
+  ) {
+    const geometry = new THREE.PlaneGeometry(
+      width,
+      height,
+      widthSegments,
+      heightSegments
+    );
+    const positionAttribute = geometry.attributes.position;
+    for (let i = 0; i < positionAttribute.count; i += 1) {
+      geometry.attributes.position.setXYZ(
+        i,
+        positionAttribute.array[3 * i],
+        positionAttribute.array[3 * i + 1],
+        Math.random() * 10
+      );
+    }
+    geometry.attributes.position.needsUpdate = true;
+    geometry.computeVertexNormals();
+    const material = new THREE.MeshStandardMaterial({
+      color,
+      side: THREE.DoubleSide,
+      opacity,
+      transparent,
+    });
+    const plane = new THREE.Mesh(geometry, material);
+    plane.rotation.set(Math.PI / 2, 0, 0);
+    plane.position.set(0, positionY, 0);
+    return plane;
+  }
+
+  static createCube(
+    color: number,
+    lengthX: number,
+    lengthY: number,
+    lengthZ: number,
+    positionY: number
+  ) {
+    const geometry = new THREE.BoxGeometry(lengthX, lengthY, lengthZ);
+    const material = new THREE.MeshStandardMaterial({ color });
+    const cube = new THREE.Mesh(geometry, material);
+    cube.position.y = positionY;
+    return cube;
   }
 
   static createMeshOfPoints(
@@ -217,7 +206,7 @@ export class GradGraph {
 
   static createTriangle(vertices: THREE.Vector3[], color: number) {
     // ポリゴン面を構成する頂点のインデックス (Face3の代替となる情報)
-    const faces = [0, 1, 2, 0, 2, 3];
+    const faces = [0, 1, 2, 3, 4, 5];
 
     const geometry = new THREE.BufferGeometry();
 
@@ -225,13 +214,15 @@ export class GradGraph {
     // BufferAttributeを生成する代わりに、setFromPointsを呼ぶと内部でいいようにやってくれる
     geometry.setFromPoints(vertices);
 
+    geometry.computeVertexNormals();
+
     // ポリゴン面を構成する頂点のインデックスをセット
     geometry.setIndex(faces);
 
-    const material = new THREE.MeshBasicMaterial({
+    const material = new THREE.MeshStandardMaterial({
       color,
       side: THREE.DoubleSide,
-      opacity: 0.5,
+      opacity: 1.0,
       transparent: true,
     });
 
@@ -240,10 +231,10 @@ export class GradGraph {
     return triangleMesh;
   }
 
-  createNewGraph(xAnswer: number, yAnswer: number) {
+  createGraph(xAnswer: number, yAnswer: number) {
     const interval = 30.0;
-    for (let x = -1.5 * maxes[0]; x <= 1.5 * maxes[0]; x += interval) {
-      for (let z = -1.5 * maxes[2]; z <= 1.5 * maxes[2]; z += interval) {
+    for (let x = -2.0 * maxes[0]; x <= 2.0 * maxes[0]; x += interval) {
+      for (let z = -2.0 * maxes[2]; z <= 2.0 * maxes[2]; z += interval) {
         const vertices = [];
         const y0 = objectiveFunction(x, z, xAnswer, yAnswer);
         const y1 = objectiveFunction(x + interval, z, xAnswer, yAnswer);
@@ -254,13 +245,18 @@ export class GradGraph {
           yAnswer
         );
         const y3 = objectiveFunction(x, z + interval, xAnswer, yAnswer);
-        vertices.push(new THREE.Vector3(x, y0, z));
-        vertices.push(new THREE.Vector3(x + interval, y1, z));
-        vertices.push(new THREE.Vector3(x + interval, y2, z + interval));
-        vertices.push(new THREE.Vector3(x, y3, z + interval));
 
-        const mesh = GradGraph.createTriangle(vertices, 0x00ff00);
-        this.scene.add(mesh);
+        if (y1 > -100 && y2 > -100 && y3 > -100) {
+          vertices.push(new THREE.Vector3(x, y0, z));
+          vertices.push(new THREE.Vector3(x + interval, y1, z));
+          vertices.push(new THREE.Vector3(x + interval, y2, z + interval));
+          vertices.push(new THREE.Vector3(x, y0, z));
+          vertices.push(new THREE.Vector3(x + interval, y2, z + interval));
+          vertices.push(new THREE.Vector3(x, y3, z + interval));
+
+          const mesh = GradGraph.createTriangle(vertices, 0x00ff00);
+          this.scene.add(mesh);
+        }
       }
     }
   }
@@ -293,46 +289,13 @@ export class GradGraph {
   }
 
   update(x: number, y: number, xAnswer: number, yAnswer: number) {
-    // if (
-    //   xAnswer < this.goal.position.x - 1 ||
-    //   xAnswer > this.goal.position.x + 1 ||
-    //   yAnswer < this.goal.position.z - 1 ||
-    //   yAnswer > this.goal.position.z + 1
-    // ) {
-    //   // シーンを作成
-    //   this.scene = new THREE.Scene();
-
-    //   this.scene.add(this.point);
-    //   this.scene.add(this.goal);
-
-    //   const ambientLight = new THREE.AmbientLight(0x00000, 1.0);
-    //   this.scene.add(ambientLight);
-
-    //   const directionalLight = new THREE.DirectionalLight(0x00000, 1);
-    //   this.scene.add(directionalLight);
-
-    //   // 座標軸を作成
-    //   const directions = [
-    //     new THREE.Vector3(1, 0, 0),
-    //     new THREE.Vector3(0, 1, 0),
-    //     new THREE.Vector3(0, 0, 1),
-    //   ];
-    //   const colors = [0xff0000, 0x00ff00, 0x0000ff];
-
-    //   for (let i = 0; i < 3; i += 1) {
-    //     const axis = GradGraph.createAxis(maxes[i], directions[i], colors[i]);
-    //     this.scene.add(axis);
-    //   }
-    //   this.createNewGraph(xAnswer, yAnswer);
-    // }
-
-    const point = [x, objectiveFunction(x, y, xAnswer, yAnswer), y];
+    const point = [x, objectiveFunction(x, y, xAnswer, yAnswer) + 10, y];
     this.updatePointPosition(point);
 
     // 目標地点を更新
     const goal = [
       xAnswer,
-      objectiveFunction(xAnswer, yAnswer, xAnswer, yAnswer),
+      objectiveFunction(xAnswer, yAnswer, xAnswer, yAnswer) + 10,
       yAnswer,
     ];
     this.updateGoalPosition(goal);
