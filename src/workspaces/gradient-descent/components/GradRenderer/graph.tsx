@@ -79,24 +79,15 @@ export class GradGraph {
       this.scene.add(axis);
     }
 
-    this.createGraph(props.xAnswer, props.yAnswer);
-
     this.scene.add(
-      GradGraph.createPlane(
-        0x00ff00,
-        3.0 * maxes[0],
-        3.0 * maxes[2],
-        64,
-        64,
-        true,
-        1.0,
-        0
-      )
+      GradGraph.createPlane(0x00ff00, 3.0 * maxes[0], 3.0 * maxes[2], 64, 64, 0)
     );
 
     this.scene.add(
       GradGraph.createCube(0x00ff00, 3.0 * maxes[0], 100, 3.0 * maxes[2], -60)
     );
+
+    this.createGraph(props.xAnswer, props.yAnswer);
 
     this.directionalLight = new THREE.DirectionalLight(0x00ff00, 1);
     this.directionalLight.position.x = 100;
@@ -131,8 +122,6 @@ export class GradGraph {
     height: number,
     widthSegments: number,
     heightSegments: number,
-    transparent: boolean,
-    opacity: number,
     positionY: number
   ) {
     const geometry = new THREE.PlaneGeometry(
@@ -144,20 +133,13 @@ export class GradGraph {
     const positionAttribute = geometry.attributes
       .position as THREE.BufferAttribute;
     for (let i = 0; i < positionAttribute.count; i += 1) {
-      positionAttribute.setXYZ(
-        i,
-        positionAttribute.array[3 * i],
-        positionAttribute.array[3 * i + 1],
-        Math.random() * 10
-      );
+      positionAttribute.setZ(i, Math.random() * 10);
     }
     positionAttribute.needsUpdate = true;
     geometry.computeVertexNormals();
     const material = new THREE.MeshStandardMaterial({
       color,
       side: THREE.DoubleSide,
-      opacity,
-      transparent,
     });
     const plane = new THREE.Mesh(geometry, material);
     plane.rotation.set(Math.PI / 2, 0, 0);
@@ -204,7 +186,7 @@ export class GradGraph {
     return mesh;
   }
 
-  static createTriangle(
+  static createTwoTriangles(
     vertices: THREE.Vector3[],
     color: number,
     clippingPlane: THREE.Plane
@@ -215,25 +197,22 @@ export class GradGraph {
     geometry.setFromPoints(vertices);
     geometry.computeVertexNormals();
 
-    // ポリゴン面を構成する頂点のインデックスをセット
     geometry.setIndex(faces);
 
     const material = new THREE.MeshStandardMaterial({
       color,
       side: THREE.DoubleSide,
-      opacity: 1.0,
-      transparent: true,
       clippingPlanes: [clippingPlane],
     });
 
-    const triangleMesh = new THREE.Mesh(geometry, material);
+    const twoTrianglesMesh = new THREE.Mesh(geometry, material);
 
-    return triangleMesh;
+    return twoTrianglesMesh;
   }
 
   createGraph(xAnswer: number, yAnswer: number) {
     const clippingPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 1);
-    const interval = 30.0;
+    const interval = 20.0;
     for (let x = -2.0 * maxes[0]; x <= 2.0 * maxes[0]; x += interval) {
       for (let z = -2.0 * maxes[2]; z <= 2.0 * maxes[2]; z += interval) {
         const vertices = [];
@@ -246,8 +225,7 @@ export class GradGraph {
           yAnswer
         );
         const y3 = objectiveFunction(x, z + interval, xAnswer, yAnswer);
-
-        if (y1 > -200 && y2 > -200 && y3 > -200) {
+        if (y0 > -50 && y1 > -50 && y2 > -50 && y3 > -50) {
           vertices.push(new THREE.Vector3(x, y0, z));
           vertices.push(new THREE.Vector3(x + interval, y1, z));
           vertices.push(new THREE.Vector3(x + interval, y2, z + interval));
@@ -255,7 +233,7 @@ export class GradGraph {
           vertices.push(new THREE.Vector3(x + interval, y2, z + interval));
           vertices.push(new THREE.Vector3(x, y3, z + interval));
 
-          const mesh = GradGraph.createTriangle(
+          const mesh = GradGraph.createTwoTriangles(
             vertices,
             0x00ff00,
             clippingPlane
@@ -297,7 +275,6 @@ export class GradGraph {
     const point = [x, objectiveFunction(x, y, xAnswer, yAnswer) + 10, y];
     this.updatePointPosition(point);
 
-    // 目標地点を更新
     const goal = [
       xAnswer,
       objectiveFunction(xAnswer, yAnswer, xAnswer, yAnswer) + 10,

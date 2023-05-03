@@ -28,7 +28,7 @@ import {
 import { ExecutionManager } from "../../components/ExecutionManager";
 import { GradRenderer } from "./components/GradRenderer";
 
-import { objectiveFunction } from "./objective";
+import { maxHeight, objectiveFunction } from "./objective";
 
 const toolboxDefinition: BlocklyToolboxDefinition = {
   type: "category",
@@ -62,8 +62,8 @@ const toolboxDefinition: BlocklyToolboxDefinition = {
 export type GradWorkspaceState = {
   x: number;
   y: number;
-  x_answer: number;
-  y_answer: number;
+  xAnswer: number;
+  yAnswer: number;
 };
 
 const initialX = 0;
@@ -74,15 +74,15 @@ function createDefaultState() {
   return {
     x: initialX,
     y: initialY,
-    x_answer: (Math.random() - 0.5) * answerRange,
-    y_answer: (Math.random() - 0.5) * answerRange,
+    xAnswer: (Math.random() - 0.5) * answerRange,
+    yAnswer: (Math.random() - 0.5) * answerRange,
   };
 }
 
 function isConvergence(state: GradWorkspaceState) {
-  const threshold = 199;
+  const threshold = maxHeight - 1;
   if (
-    objectiveFunction(state.x, state.y, state.x_answer, state.y_answer) >
+    objectiveFunction(state.x, state.y, state.xAnswer, state.yAnswer) >
     threshold
   ) {
     throw new BlocklyEditorMessage("最も高い点に到達しました！");
@@ -98,15 +98,21 @@ export function GradWorkspace(): JSX.Element {
   const globalFunctions = useRef({
     [CUSTOM_GRAD_OBJECTIVE]: (x: number, y: number) => {
       const state = getState();
-      return objectiveFunction(x, y, state.x_answer, state.y_answer);
+      return objectiveFunction(x, y, state.xAnswer, state.yAnswer);
     },
     [CUSTOM_GRAD_SET_X]: (newX: number) => {
       const state = getState();
+      if (objectiveFunction(newX, state.y, state.xAnswer, state.yAnswer) < 0) {
+        throw new Error("山から下りてしまいました。");
+      }
       setState({ ...state, x: newX });
       isConvergence(getState());
     },
     [CUSTOM_GRAD_SET_Y]: (newY: number) => {
       const state = getState();
+      if (objectiveFunction(state.x, newY, state.xAnswer, state.yAnswer) < 0) {
+        throw new Error("山から下りてしまいました。");
+      }
       setState({ ...state, y: newY });
       isConvergence(getState());
     },
@@ -150,15 +156,15 @@ export function GradWorkspace(): JSX.Element {
         <GradRenderer
           x={getState().x}
           y={getState().y}
-          xAnswer={getState().x_answer}
-          yAnswer={getState().y_answer}
+          xAnswer={getState().xAnswer}
+          yAnswer={getState().yAnswer}
         />
         <Button
           onClick={() => {
             setState({
               ...getState(),
-              x_answer: (Math.random() - 0.5) * answerRange,
-              y_answer: (Math.random() - 0.5) * answerRange,
+              xAnswer: (Math.random() - 0.5) * answerRange,
+              yAnswer: (Math.random() - 0.5) * answerRange,
             });
           }}
         >
