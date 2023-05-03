@@ -37,9 +37,11 @@ export class GradGraph {
 
   scene: THREE.Scene;
 
-  point = createMeshOfPoints(0x00ffff, 30, [0, 0, 0], false, 1.0);
+  // point = createMeshOfPoints(0x00ffff, 30, [0, 0, 0], false, 1.0);
 
   goal = createMeshOfPoints(0xff0000, 30, [0, 0, 0], false, 1.0);
+
+  human = GradGraph.createHuman(0x00ffff);
 
   constructor(props: {
     xAnswer: number;
@@ -64,8 +66,10 @@ export class GradGraph {
 
     this.scene = new THREE.Scene();
 
-    this.scene.add(this.point);
+    // this.scene.add(this.point);
     this.scene.add(this.goal);
+    this.scene.add(this.human[0]);
+    this.scene.add(this.human[1]);
 
     const directions = [
       new THREE.Vector3(1, 0, 0),
@@ -186,6 +190,24 @@ export class GradGraph {
     return mesh;
   }
 
+  static createHuman(color: number) {
+    const sphereGeometry = new THREE.SphereGeometry(8);
+    const sphereMaterial = new THREE.MeshBasicMaterial({
+      color,
+      side: THREE.DoubleSide,
+    });
+    const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+
+    const boxGeometry = new THREE.BoxGeometry(10, 25, 10);
+    const boxMaterial = new THREE.MeshBasicMaterial({
+      color,
+      side: THREE.DoubleSide,
+    });
+    const box = new THREE.Mesh(boxGeometry, boxMaterial);
+
+    return [sphere, box];
+  }
+
   static createTwoTriangles(
     vertices: THREE.Vector3[],
     color: number,
@@ -248,14 +270,28 @@ export class GradGraph {
     this.scene.add(mesh);
   }
 
-  updatePointPosition(position: number[]) {
-    [this.point.position.x, this.point.position.y, this.point.position.z] =
-      position;
-  }
+  // updatePointPosition(position: number[]) {
+  //   [this.point.position.x, this.point.position.y, this.point.position.z] =
+  //     position;
+  // }
 
   updateGoalPosition(position: number[]) {
     [this.goal.position.x, this.goal.position.y, this.goal.position.z] =
       position;
+  }
+
+  updateHumanPosition(position: number[]) {
+    [
+      this.human[0].position.x,
+      this.human[0].position.y,
+      this.human[0].position.z,
+    ] = position;
+    [
+      this.human[1].position.x,
+      this.human[1].position.y,
+      this.human[1].position.z,
+    ] = position;
+    this.human[0].position.y += 20;
   }
 
   controlsUpdate() {
@@ -272,14 +308,25 @@ export class GradGraph {
   }
 
   update(x: number, y: number, xAnswer: number, yAnswer: number) {
-    const point = [x, objectiveFunction(x, y, xAnswer, yAnswer) + 10, y];
-    this.updatePointPosition(point);
+    // const pointPosition = [
+    //   x,
+    //   objectiveFunction(x, y, xAnswer, yAnswer) + 10,
+    //   y,
+    // ];
+    // this.updatePointPosition(pointPosition);
 
-    const goal = [
+    const goalPosition = [
       xAnswer,
       objectiveFunction(xAnswer, yAnswer, xAnswer, yAnswer) + 10,
       yAnswer,
     ];
-    this.updateGoalPosition(goal);
+    this.updateGoalPosition(goalPosition);
+
+    const humanPosition = [
+      x,
+      objectiveFunction(x, y, xAnswer, yAnswer) + 10,
+      y,
+    ];
+    this.updateHumanPosition(humanPosition);
   }
 }

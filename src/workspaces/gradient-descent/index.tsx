@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
-import { Box, Grid, Text, Button } from "@chakra-ui/react";
+import { Box, Grid, Text, Button, Icon } from "@chakra-ui/react";
 import { useGetSet } from "react-use";
+import { RiRestartLine } from "react-icons/ri";
 import {
   useBlocklyInterpreter,
   BlocklyEditorMessage,
@@ -153,13 +154,16 @@ export function GradWorkspace(): JSX.Element {
         />
         <Text mt={2}>x: {getState().x}</Text>
         <Text mt={2}>y: {getState().y}</Text>
-        <GradRenderer
-          x={getState().x}
-          y={getState().y}
-          xAnswer={getState().xAnswer}
-          yAnswer={getState().yAnswer}
-        />
+        <Box mb={3}>
+          <GradRenderer
+            x={getState().x}
+            y={getState().y}
+            xAnswer={getState().xAnswer}
+            yAnswer={getState().yAnswer}
+          />
+        </Box>
         <Button
+          leftIcon={<Icon as={RiRestartLine} />}
           onClick={() => {
             setState({
               ...getState(),
@@ -168,7 +172,7 @@ export function GradWorkspace(): JSX.Element {
             });
           }}
         >
-          新しいグラフにする
+          新しい山にする
         </Button>
       </Box>
     </Grid>

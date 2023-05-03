@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
-import { Button } from "@chakra-ui/react";
+import { Box, Button, Icon } from "@chakra-ui/react";
+import { BsCameraReels } from "react-icons/bs";
 import { GradGraph } from "./graph";
 
 const width = 350;
@@ -44,8 +45,11 @@ export function GradRenderer(props: {
 
   return (
     <>
-      <canvas ref={canvasRef} />
+      <Box mb={3}>
+        <canvas ref={canvasRef} />
+      </Box>
       <Button
+        leftIcon={<Icon as={BsCameraReels} />}
         onClick={() => {
           graphRef.current?.resetCamera();
         }}
