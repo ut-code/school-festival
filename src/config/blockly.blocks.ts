@@ -137,3 +137,29 @@ javascriptGenerator[CUSTOM_COMMON_DO_UNTIL] = (block) => {
   );
   return `while(!(${expression})){${statements}}`;
 };
+
+export const CUSTOM_COMMON_TIMES = "custom_times";
+Blockly.Blocks[CUSTOM_COMMON_TIMES] = {
+  init(this: Blockly.Block) {
+    this.appendValueInput(CUSTOM_COMMON_FIELD_EXPRESSION).setCheck("Number");
+    this.appendDummyInput().appendField("回繰り返す");
+    this.appendStatementInput(CUSTOM_COMMON_FIELD_STATEMENTS).setCheck(null);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(120);
+    this.setTooltip("指定された回数、文を繰り返し実行します。");
+  },
+};
+let tempVariableIndex = 0;
+javascriptGenerator[CUSTOM_COMMON_TIMES] = (block) => {
+  const tempVariableName = `blocklyTempVariable${CUSTOM_COMMON_TIMES}${tempVariableIndex}`;
+  tempVariableIndex += 1;
+  const expression =
+    javascriptGenerator.valueToCode(block, CUSTOM_COMMON_FIELD_EXPRESSION, 0) ||
+    "0";
+  const statements = javascriptGenerator.statementToCode(
+    block,
+    CUSTOM_COMMON_FIELD_STATEMENTS
+  );
+  return `for (var ${tempVariableName} = 0; ${tempVariableName} < (${expression}); ${tempVariableName}++) {${statements}}`;
+};

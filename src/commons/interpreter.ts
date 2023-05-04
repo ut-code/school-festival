@@ -139,7 +139,7 @@ export function useBlocklyInterpreter({
           return;
         }
         loopTrap += 1;
-        if (loopTrap > 100) {
+        if (loopTrap > 10000) {
           throw new Error("無限ループに入ってしまったようです。");
         }
       }

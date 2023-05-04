@@ -20,4 +20,5 @@ npm run deploy
 ```
 
 ## ライセンス
-MIT
+
+特に指定のない限り MIT
