@@ -78,7 +78,7 @@ export function ExecutionManager(props: ExecutionManagerProps): JSX.Element {
           <Text>遅い</Text>
           <Box flexGrow={1} px={4}>
             <Slider
-              min={200}
+              min={100}
               max={2000}
               value={2000 - props.interval}
               onChange={(value) => {

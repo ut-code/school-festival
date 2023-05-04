@@ -4,12 +4,16 @@
 import nullthrows from "nullthrows";
 
 export type GAPlaceLabel = string & { __GAPlaceLabel: never };
-export const gaPlaceLabels = [..."ABCDEFGH"] as GAPlaceLabel[];
+export const gaPlaceLabels = [..."ABCDEFGHJK"] as GAPlaceLabel[];
 export const gaPlaceCountInRoute = gaPlaceLabels.length;
 export const gaInitialRouteCount = 5;
 
-export const gaMapSize = { width: (1 + Math.sqrt(5)) / 2, height: 1 };
-export const gaMinSpaceBetweenPlaces = 0.4;
+// 単位: m
+export const gaMapSize = {
+  width: 6200,
+  height: 4100,
+};
+export const gaMinSpaceBetweenPlaces = 1200;
 
 export type GARouteLabel = number & { __GARouteLabel: never };
 
