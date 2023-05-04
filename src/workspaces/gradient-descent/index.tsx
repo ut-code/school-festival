@@ -81,7 +81,7 @@ function createDefaultState() {
 }
 
 function isConvergence(state: GradWorkspaceState) {
-  const threshold = maxHeight - 1;
+  const threshold = maxHeight - 0.2;
   if (
     objectiveFunction(state.x, state.y, state.xAnswer, state.yAnswer) >
     threshold
@@ -103,7 +103,7 @@ export function GradWorkspace(): JSX.Element {
     },
     [CUSTOM_GRAD_SET_X]: (newX: number) => {
       const state = getState();
-      if (objectiveFunction(newX, state.y, state.xAnswer, state.yAnswer) < 0) {
+      if (objectiveFunction(newX, state.y, state.xAnswer, state.yAnswer) < 50) {
         throw new Error("山から下りてしまいました。");
       }
       setState({ ...state, x: newX });
@@ -111,7 +111,7 @@ export function GradWorkspace(): JSX.Element {
     },
     [CUSTOM_GRAD_SET_Y]: (newY: number) => {
       const state = getState();
-      if (objectiveFunction(state.x, newY, state.xAnswer, state.yAnswer) < 0) {
+      if (objectiveFunction(state.x, newY, state.xAnswer, state.yAnswer) < 50) {
         throw new Error("山から下りてしまいました。");
       }
       setState({ ...state, y: newY });
