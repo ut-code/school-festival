@@ -75,6 +75,7 @@ export function MazeRenderer(props: {
         fill="#ccc"
       />
       <circle
+        r={MAZE_CELL_SIZE * 0.25}
         transform={[
           "translate(",
           (props.location.x + 0.5) * MAZE_CELL_SIZE,
@@ -82,6 +83,7 @@ export function MazeRenderer(props: {
           (props.location.y + 0.5) * MAZE_CELL_SIZE,
           ")",
         ].join("")}
+        fill="#f00"
       />
     </svg>
   );

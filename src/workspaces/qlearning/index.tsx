@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
-import { Box, Grid } from "@chakra-ui/react";
+import { Box, Button, Grid, Icon } from "@chakra-ui/react";
 import { useGetSet } from "react-use";
+import { RiRestartLine } from "react-icons/ri";
 import { useBlocklyInterpreter } from "../../commons/interpreter";
 import {
   BlocklyToolboxDefinition,
@@ -17,8 +18,7 @@ import {
   CUSTOM_QL_PRESENT_ROW,
   CUSTOM_QL_QVALUE,
   CUSTOM_QL_QVALUE_UPDATE,
-  CUSTOM_QL_RANDOM_INT,
-  CUSTOM_TEMPLATE_INCREMENT,
+  CUSTOM_QL_PROBABLE,
 } from "./blocks";
 import { ExecutionManager } from "../../components/ExecutionManager";
 import {
@@ -33,7 +33,13 @@ import {
   CUSTOM_COMMON_DO_UNTIL,
 } from "../../config/blockly.blocks";
 import { MazeRenderer } from "./MazeRenderer";
-import { Maze, createMaze } from "../../commons/maze";
+import {
+  Maze,
+  MazeDirection,
+  createMaze,
+  moveInMaze,
+} from "../../commons/maze";
+import { randInt } from "../../commons/random";
 
 const toolboxDefinition: BlocklyToolboxDefinition = {
   type: "category",
@@ -43,7 +49,7 @@ const toolboxDefinition: BlocklyToolboxDefinition = {
       blockTypes: [
         BUILTIN_MATH_NUMBER,
         BUILTIN_MATH_ARITHMETIC,
-        CUSTOM_QL_RANDOM_INT,
+        CUSTOM_QL_PROBABLE,
         BUILTIN_LOGIC_COMPARE,
         BUILTIN_LOGIC_OPERATION,
         BUILTIN_LOGIC_NEGATE,
@@ -72,15 +78,24 @@ const toolboxDefinition: BlocklyToolboxDefinition = {
   enableVariables: true,
 };
 
+const mazeSize = 5;
+
 type MazeWorkspaceState = {
   maze: Maze;
   location: { x: number; y: number };
+  q_value: Record<MazeDirection, number>[];
 };
 
 function createDefaultState(): MazeWorkspaceState {
   return {
-    maze: createMaze(10, 10),
+    maze: createMaze(mazeSize, mazeSize),
     location: { x: 0, y: 0 },
+    q_value: Array(mazeSize * mazeSize).fill({
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+    }),
   };
 }
 
@@ -91,14 +106,93 @@ export function QlearningWorkspace(): JSX.Element {
 
   // javascriptGenerator により生成されたコードから呼ばれる関数を定義します
   const globalFunctions = useRef({
-    [CUSTOM_TEMPLATE_INCREMENT]: () => {
-      // const currentState = getState();
-      // const newState = currentState + value;
-      // setState(newState);
-      // // GlobalFunction 内で BlocklyEditorMessage オブジェクトをスローすると「情報」スナックバーが表示され、実行が停止されます
-      // if (newState >= 10) throw new BlocklyEditorMessage("10 になりました！");
-      // // GlobalFunction 内で Error オブジェクトをスローすると「エラー」スナックバーが表示され、実行が停止されます
-      // if (newState < 0) throw new Error("残念！ゼロを下回ってしまいました...");
+    [CUSTOM_QL_IS_WALL]: (direction: MazeDirection) => {
+      const state = getState();
+      const currentCell = state.maze[state.location.y][state.location.x];
+      return currentCell.walls[direction];
+    },
+    [CUSTOM_QL_PRESENT_ROW]: () => {
+      const state = getState();
+      return state.location.y;
+    },
+    [CUSTOM_QL_PRESENT_COL]: () => {
+      const state = getState();
+      return state.location.x;
+    },
+    [CUSTOM_QL_IS_GOAL]: () => {
+      const state = getState();
+      if (
+        state.location.x === mazeSize - 1 &&
+        state.location.y === mazeSize - 1
+      ) {
+        return true;
+      }
+      return false;
+    },
+    [CUSTOM_QL_PROBABLE]: (num: number) => {
+      const random = Math.random();
+      if (random < num) {
+        return true;
+      }
+      return false;
+    },
+    [CUSTOM_QL_MOVE]: (direction: MazeDirection) => {
+      const state = getState();
+      const currentCell = state.maze[state.location.y][state.location.x];
+      const nextCell = moveInMaze(state.maze, currentCell, direction);
+      if (!nextCell || currentCell.walls[direction])
+        throw new Error("壁があるため、進むことができません。");
+      setState({
+        ...state,
+        location: nextCell.location,
+      });
+    },
+    [CUSTOM_QL_MOVE_RANDOM]: () => {
+      const rand = randInt(4);
+      if (rand === 0) {
+        return "top";
+      }
+      if (rand === 1) {
+        return "bottom";
+      }
+      if (rand === 2) {
+        return "right";
+      }
+      return "left";
+    },
+    [CUSTOM_QL_MOVE_TO_START]: () => {
+      const state = getState();
+      setState({
+        ...state,
+        location: { x: 0, y: 0 },
+      });
+    },
+    [CUSTOM_QL_QVALUE]: (state: number, direction: MazeDirection) => {
+      const mazeState = getState();
+      if (state < 0 || state > mazeSize * mazeSize - 1)
+        throw new Error("状態は0から99までの範囲である必要があります");
+
+      return mazeState.q_value[state][direction];
+    },
+    [CUSTOM_QL_QVALUE_UPDATE]: (
+      state: number,
+      direction: MazeDirection,
+      update: number
+    ) => {
+      const mazeState = getState();
+      if (state < 0 || state > mazeSize * mazeSize - 1)
+        throw new Error("状態は0から99までの範囲である必要があります");
+      setState({
+        ...mazeState,
+        q_value: mazeState.q_value.map((value, i) =>
+          i === state
+            ? {
+                ...mazeState.q_value[state],
+                [direction]: update,
+              }
+            : value
+        ),
+      });
     },
   }).current;
 
@@ -121,13 +215,65 @@ export function QlearningWorkspace(): JSX.Element {
           interval={interval}
           setInterval={setInterval}
           onStart={() => {
+            console.log(getCode());
             interpreter.start(getCode());
           }}
           onReset={() => {
-            setState({ ...getState(), location: { x: 0, y: 0 } });
+            setState({
+              ...getState(),
+              location: { x: 0, y: 0 },
+              q_value: Array(mazeSize * mazeSize).fill({
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: 0,
+              }),
+            });
           }}
         />
         <MazeRenderer maze={getState().maze} location={getState().location} />
+        <Button
+          leftIcon={<Icon as={RiRestartLine} />}
+          onClick={() => {
+            setState(createDefaultState());
+          }}
+        >
+          新しい迷路にする
+        </Button>
+        <Box>
+          <Box>
+            上:
+            {
+              getState().q_value[
+                getState().location.y * mazeSize + getState().location.x
+              ].top
+            }
+          </Box>
+          <Box>
+            下:
+            {
+              getState().q_value[
+                getState().location.y * mazeSize + getState().location.x
+              ].bottom
+            }
+          </Box>
+          <Box>
+            右:
+            {
+              getState().q_value[
+                getState().location.y * mazeSize + getState().location.x
+              ].right
+            }
+          </Box>
+          <Box>
+            左:
+            {
+              getState().q_value[
+                getState().location.y * mazeSize + getState().location.x
+              ].left
+            }
+          </Box>
+        </Box>
       </Box>
     </Grid>
   );

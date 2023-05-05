@@ -36,8 +36,8 @@ Blockly.Blocks[CUSTOM_QL_DIRECTION] = {
       new Blockly.FieldDropdown([
         ["左", "left"],
         ["右", "right"],
-        ["下", "down"],
-        ["上", "up"],
+        ["下", "bottom"],
+        ["上", "top"],
       ]),
       "direction"
     );
@@ -48,16 +48,27 @@ Blockly.Blocks[CUSTOM_QL_DIRECTION] = {
   },
 };
 
+javascriptGenerator[CUSTOM_QL_DIRECTION] = (block) => [
+  `"${block.getFieldValue("direction")}"`,
+  0,
+];
+
 export const CUSTOM_QL_IS_WALL = "is_wall";
 Blockly.Blocks[CUSTOM_QL_IS_WALL] = {
   init(this: Blockly.Block) {
-    this.appendValueInput("NAME").setCheck("direction");
+    this.appendValueInput("direction").setCheck("direction");
     this.appendDummyInput().appendField("に壁がある");
     this.setOutput(true, "Boolean");
     this.setColour(230);
     this.setTooltip("");
     this.setHelpUrl("");
   },
+};
+
+javascriptGenerator[CUSTOM_QL_IS_WALL] = (block) => {
+  const arg =
+    javascriptGenerator.valueToCode(block, "direction", 0) || `"left"`;
+  return [`${CUSTOM_QL_IS_WALL}(${arg})`, 0];
 };
 
 export const CUSTOM_QL_PRESENT_ROW = "present_row";
@@ -71,6 +82,11 @@ Blockly.Blocks[CUSTOM_QL_PRESENT_ROW] = {
   },
 };
 
+javascriptGenerator[CUSTOM_QL_PRESENT_ROW] = () => [
+  `${CUSTOM_QL_PRESENT_ROW}()`,
+  0,
+];
+
 export const CUSTOM_QL_PRESENT_COL = "present_col";
 Blockly.Blocks[CUSTOM_QL_PRESENT_COL] = {
   init(this: Blockly.Block) {
@@ -81,6 +97,11 @@ Blockly.Blocks[CUSTOM_QL_PRESENT_COL] = {
     this.setHelpUrl("");
   },
 };
+
+javascriptGenerator[CUSTOM_QL_PRESENT_COL] = () => [
+  `${CUSTOM_QL_PRESENT_COL}()`,
+  0,
+];
 
 export const CUSTOM_QL_IS_GOAL = "is_goal";
 Blockly.Blocks[CUSTOM_QL_IS_GOAL] = {
@@ -93,10 +114,12 @@ Blockly.Blocks[CUSTOM_QL_IS_GOAL] = {
   },
 };
 
-export const CUSTOM_QL_RANDOM_INT = "is_goal";
-Blockly.Blocks[CUSTOM_QL_RANDOM_INT] = {
+javascriptGenerator[CUSTOM_QL_IS_GOAL] = () => [`${CUSTOM_QL_IS_GOAL}()`, 0];
+
+export const CUSTOM_QL_PROBABLE = "random_int";
+Blockly.Blocks[CUSTOM_QL_PROBABLE] = {
   init(this: Blockly.Block) {
-    this.appendValueInput("NAME").setCheck("Number");
+    this.appendValueInput("probability").setCheck("Number");
     this.appendDummyInput().appendField("の確率で当たった");
     this.setOutput(true, "Boolean");
     this.setColour(230);
@@ -105,10 +128,15 @@ Blockly.Blocks[CUSTOM_QL_RANDOM_INT] = {
   },
 };
 
+javascriptGenerator[CUSTOM_QL_PROBABLE] = (block) => {
+  const arg = javascriptGenerator.valueToCode(block, "probability", 0) || "0";
+  return [`${CUSTOM_QL_PROBABLE}(${arg})`, 0];
+};
+
 export const CUSTOM_QL_MOVE = "move";
 Blockly.Blocks[CUSTOM_QL_MOVE] = {
   init(this: Blockly.Block) {
-    this.appendValueInput("NAME").setCheck("direction");
+    this.appendValueInput("direction").setCheck("direction");
     this.appendDummyInput().appendField("に移動する");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
@@ -116,6 +144,12 @@ Blockly.Blocks[CUSTOM_QL_MOVE] = {
     this.setTooltip("");
     this.setHelpUrl("");
   },
+};
+
+javascriptGenerator[CUSTOM_QL_MOVE] = (block) => {
+  const arg =
+    javascriptGenerator.valueToCode(block, "direction", 0) || `"left"`;
+  return `${CUSTOM_QL_MOVE}(${arg});`;
 };
 
 export const CUSTOM_QL_MOVE_RANDOM = "move_random";
@@ -129,6 +163,11 @@ Blockly.Blocks[CUSTOM_QL_MOVE_RANDOM] = {
   },
 };
 
+javascriptGenerator[CUSTOM_QL_MOVE_RANDOM] = () => [
+  `${CUSTOM_QL_MOVE_RANDOM}()`,
+  0,
+];
+
 export const CUSTOM_QL_MOVE_TO_START = "move_to_start";
 Blockly.Blocks[CUSTOM_QL_MOVE_TO_START] = {
   init(this: Blockly.Block) {
@@ -140,6 +179,9 @@ Blockly.Blocks[CUSTOM_QL_MOVE_TO_START] = {
     this.setHelpUrl("");
   },
 };
+
+javascriptGenerator[CUSTOM_QL_MOVE_TO_START] = () =>
+  `${CUSTOM_QL_MOVE_TO_START}();`;
 
 export const CUSTOM_QL_QVALUE = "Q_value";
 Blockly.Blocks[CUSTOM_QL_QVALUE] = {
@@ -153,6 +195,13 @@ Blockly.Blocks[CUSTOM_QL_QVALUE] = {
     this.setTooltip("");
     this.setHelpUrl("");
   },
+};
+
+javascriptGenerator[CUSTOM_QL_QVALUE] = (block) => {
+  const arg1 = javascriptGenerator.valueToCode(block, "state", 0) || 0;
+  const arg2 =
+    javascriptGenerator.valueToCode(block, "direction", 0) || `"left"`;
+  return [`${CUSTOM_QL_QVALUE}(${arg1}, ${arg2})`, 0];
 };
 
 export const CUSTOM_QL_QVALUE_UPDATE = "Q_value_update";
@@ -170,4 +219,12 @@ Blockly.Blocks[CUSTOM_QL_QVALUE_UPDATE] = {
     this.setTooltip("");
     this.setHelpUrl("");
   },
+};
+
+javascriptGenerator[CUSTOM_QL_QVALUE_UPDATE] = (block) => {
+  const arg1 = javascriptGenerator.valueToCode(block, "state", 0) || 0;
+  const arg2 =
+    javascriptGenerator.valueToCode(block, "direction", 0) || `"left"`;
+  const arg3 = javascriptGenerator.valueToCode(block, "value", 0) || 0;
+  return `${CUSTOM_QL_QVALUE_UPDATE}(${arg1}, ${arg2}, ${arg3})`;
 };
