@@ -1,7 +1,6 @@
 import { useCallback, useRef, useState } from "react";
-import { Grid, Stack } from "@chakra-ui/react";
+import { Grid, Stack, Tag } from "@chakra-ui/react";
 import { useGetSet } from "react-use";
-import invariant from "tiny-invariant";
 import { useBlocklyInterpreter } from "../../commons/interpreter";
 import {
   BlocklyToolboxDefinition,
@@ -30,11 +29,26 @@ import {
   CUSTOM_GA_SWAP_ROUTES,
   CUSTOM_GA_ROUTE_COUNT,
   CUSTOM_GA_PLACE_COUNT,
+  CUSTOM_GA_NTH_PLACE,
+  CUSTOM_GA_PLACE_EXISTS_IN_ROUTE,
+  CUSTOM_GA_DISCARD_ROUTE,
 } from "./blocks";
 import { ExecutionManager } from "../../components/ExecutionManager";
 import GARenderer from "./GARenderer";
-import { createInitialGAState, createRouteReducer } from "./types";
+import { GAPlace, createInitialGAState, isGAPlace } from "./types";
 import VariableList from "../../components/VariableList";
+import {
+  addPlace,
+  createRoute,
+  discardRoute,
+  discardRoutesAfter,
+  duplicateRoute,
+  getDistance,
+  getPlaceInRoute,
+  getRoute,
+  swapPlaces,
+  swapRoutes,
+} from "./reducer";
 
 const toolboxDefinition: BlocklyToolboxDefinition = {
   type: "category",
@@ -62,16 +76,57 @@ const toolboxDefinition: BlocklyToolboxDefinition = {
         CUSTOM_GA_PLACE_COUNT,
         CUSTOM_GA_CREATE_ROUTE,
         CUSTOM_GA_DUPLICATE_ROUTE,
+        CUSTOM_GA_DISCARD_ROUTE,
         CUSTOM_GA_DISCARD_AFTER_NTH_ROUTE,
         CUSTOM_GA_SWAP_ROUTES,
         CUSTOM_GA_DISTANCE,
-        CUSTOM_GA_ADD_PLACE,
         CUSTOM_GA_SWAP_PLACE,
+        CUSTOM_GA_NTH_PLACE,
+        CUSTOM_GA_PLACE_EXISTS_IN_ROUTE,
+        CUSTOM_GA_ADD_PLACE,
       ],
     },
   ],
   enableVariables: true,
 };
+
+type TypeMap = {
+  int: number;
+  number: number;
+  string: string;
+  GAPlace: GAPlace;
+};
+const typeNameMap = {
+  int: "整数",
+  number: "数値",
+  string: "文字列",
+  GAPlace: "地点",
+};
+function assertType<K extends keyof TypeMap>(type: K, value: TypeMap[K]): void {
+  const valueInfo: { type: keyof TypeMap; stringRepresentation: string } =
+    (() => {
+      if (typeof value === "number") {
+        if (Number.isInteger(value))
+          return { type: "int", stringRepresentation: value.toString() };
+        return { type: "number", stringRepresentation: value.toString() };
+      }
+      if (typeof value === "string")
+        return { type: "string", stringRepresentation: value };
+      if (isGAPlace(value))
+        return {
+          type: "GAPlace",
+          stringRepresentation: `[地点 ${value.label}]`,
+        };
+      if (value === undefined) throw new Error("値がありません");
+      throw new Error(`不明な値です: ${value}`);
+    })();
+  if (type !== valueInfo.type)
+    throw new Error(
+      `${typeNameMap[type]} が必要ですが、${valueInfo.stringRepresentation} (${
+        typeNameMap[valueInfo.type]
+      }) が指定されました。`
+    );
+}
 
 export function GeneticAlgorithmWorkspace(): JSX.Element {
   const initialState = useState(createInitialGAState)[0];
@@ -82,135 +137,65 @@ export function GeneticAlgorithmWorkspace(): JSX.Element {
       return getState().routes.length;
     },
     [CUSTOM_GA_CREATE_ROUTE]: () => {
-      const [newState] = createRouteReducer(getState());
-      setState(newState);
+      setState(createRoute(getState()));
     },
-    [CUSTOM_GA_DISCARD_AFTER_NTH_ROUTE]: (i: number) => {
-      const currentState = getState();
-      setState({
-        ...currentState,
-        routes: currentState.routes.slice(0, i - 1),
-      });
+    [CUSTOM_GA_DUPLICATE_ROUTE]: (index: number) => {
+      assertType("int", index);
+      setState(duplicateRoute(getState(), index));
     },
-    [CUSTOM_GA_DUPLICATE_ROUTE]: (i: number) => {
-      const currentState = getState();
-      if (!currentState.routes[i - 1])
-        throw new Error(`${i} 番目の経路は存在しません。`);
-      const [newState, newRoute] = createRouteReducer(getState());
-      newRoute.placeLabels = currentState.routes[i - 1].placeLabels;
-      setState(newState);
+    [CUSTOM_GA_DISCARD_ROUTE]: (index: number) => {
+      assertType("int", index);
+      setState(discardRoute(getState(), index));
     },
-    [CUSTOM_GA_SWAP_ROUTES]: (a: number, b: number) => {
-      const currentState = getState();
-      if (!currentState.routes[a - 1] || !currentState.routes[b - 1])
-        throw new Error(`${a} 番目または ${b} 番目の経路は存在しません。`);
-      const newRoutes = [...currentState.routes];
-      [newRoutes[a - 1], newRoutes[b - 1]] = [
-        newRoutes[b - 1],
-        newRoutes[a - 1],
-      ];
-      setState({
-        ...currentState,
-        routes: newRoutes,
-      });
+    [CUSTOM_GA_DISCARD_AFTER_NTH_ROUTE]: (index: number) => {
+      assertType("int", index);
+      setState(discardRoutesAfter(getState(), index));
+    },
+    [CUSTOM_GA_SWAP_ROUTES]: (index1: number, index2: number) => {
+      assertType("int", index1);
+      assertType("int", index2);
+      setState(swapRoutes(getState(), index1, index2));
     },
     [CUSTOM_GA_DISTANCE]: (
       routeIndex: number,
       placeIndex1: number,
       placeIndex2: number
     ) => {
-      const currentState = getState();
-      const route = currentState.routes[routeIndex - 1];
-      if (!route) throw new Error(`${routeIndex} 番目の経路はありません。`);
-      const placeLabel1 = route.placeLabels[placeIndex1 - 1];
-      const placeLabel2 = route.placeLabels[placeIndex2 - 1];
-      if (!placeLabel1 || !placeLabel2) {
-        const unknownPlaceIndices: number[] = [];
-        if (!placeLabel1) unknownPlaceIndices.push(placeIndex1);
-        if (!placeLabel2) unknownPlaceIndices.push(placeIndex2);
-        throw new Error(
-          `${unknownPlaceIndices
-            .map((index) => `${index} 番目`)
-            .join("、")} 番目の地点は ${routeIndex} 番目の経路にありません。`
-        );
-      }
-      const place1 = currentState.places.find(
-        (place) => place.label === placeLabel1
-      );
-      const place2 = currentState.places.find(
-        (place) => place.label === placeLabel2
-      );
-      invariant(
-        place1 && place2,
-        `${placeLabel1} または ${placeLabel2} 地点は存在しません。`
-      );
-      return Math.sqrt((place1.x - place2.x) ** 2 + (place1.y - place2.y) ** 2);
+      assertType("int", routeIndex);
+      assertType("int", placeIndex1);
+      assertType("int", placeIndex2);
+      return getDistance(getState(), routeIndex, placeIndex1, placeIndex2);
     },
-    [CUSTOM_GA_ADD_PLACE]: (
-      routeIndexTo: number,
-      routeIndexFrom: number,
-      placeIndex: number
+    [CUSTOM_GA_SWAP_PLACE]: (
+      routeIndex: number,
+      placeIndex1: number,
+      placeIndex2: number
     ) => {
-      const currentState = getState();
-      const routeTo = currentState.routes[routeIndexTo - 1];
-      if (!routeTo) throw new Error(`${routeIndexTo} 番目の経路はありません。`);
-      const routeFrom = currentState.routes[routeIndexFrom - 1];
-      if (!routeFrom)
-        throw new Error(`${routeIndexFrom} 番目の経路はありません。`);
-      const newPlaceLabel = routeFrom.placeLabels[placeIndex - 1];
-      if (!newPlaceLabel)
-        throw new Error(
-          `${routeIndexFrom} 番目の経路に ${placeIndex} 番目の地点はありません。`
-        );
-      if (routeTo.placeLabels.includes(newPlaceLabel))
-        throw new Error(
-          `${routeIndexTo} 番目の経路では ${newPlaceLabel} 地点 (${routeIndexFrom} 番目の経路の ${placeIndex} 番目の地点) を既に訪れています。`
-        );
-      setState({
-        ...currentState,
-        routes: currentState.routes.map((route) =>
-          route.label === routeTo.label
-            ? {
-                ...route,
-                placeLabels: [...route.placeLabels, newPlaceLabel],
-              }
-            : route
-        ),
-      });
+      assertType("int", routeIndex);
+      assertType("int", placeIndex1);
+      assertType("int", placeIndex2);
+      setState(swapPlaces(getState(), routeIndex, placeIndex1, placeIndex2));
     },
-    [CUSTOM_GA_SWAP_PLACE]: (i: number, a: number, b: number) => {
-      const currentState = getState();
-      const targetRoute = currentState.routes[i - 1];
-      if (!targetRoute) throw new Error(`${i} 番目の経路はありません。`);
-      setState({
-        ...currentState,
-        routes: currentState.routes.map((route) =>
-          route.label === targetRoute.label
-            ? {
-                ...route,
-                placeLabels: route.placeLabels.map((label, k) => {
-                  if (k === a - 1) {
-                    const newLabel = route.placeLabels[b - 1];
-                    if (!newLabel)
-                      throw new Error(
-                        `${i} 番目の経路に ${b} 番目の地点はありません。`
-                      );
-                    return newLabel;
-                  }
-                  if (k === b - 1) {
-                    const newLabel = route.placeLabels[a - 1];
-                    if (!newLabel)
-                      throw new Error(
-                        `${i} 番目の経路に ${a} 番目の地点はありません。`
-                      );
-                    return newLabel;
-                  }
-                  return label;
-                }),
-              }
-            : route
-        ),
-      });
+    [CUSTOM_GA_NTH_PLACE]: (
+      routeIndex: number,
+      placeIndex: number
+    ): GAPlace => {
+      assertType("int", routeIndex);
+      assertType("int", placeIndex);
+      return getPlaceInRoute(getState(), routeIndex, placeIndex);
+    },
+    [CUSTOM_GA_PLACE_EXISTS_IN_ROUTE]: (
+      routeIndex: number,
+      place: GAPlace
+    ): boolean => {
+      assertType("int", routeIndex);
+      assertType("GAPlace", place);
+      return getRoute(getState(), routeIndex).placeLabels.includes(place.label);
+    },
+    [CUSTOM_GA_ADD_PLACE]: (routeIndex: number, place: GAPlace) => {
+      assertType("int", routeIndex);
+      assertType("GAPlace", place);
+      setState(addPlace(getState(), routeIndex, place));
     },
   }).current;
 
@@ -243,7 +228,14 @@ export function GeneticAlgorithmWorkspace(): JSX.Element {
             setState(initialState);
           }}
         />
-        <VariableList interpreter={interpreter} variableNames={variableNames} />
+        <VariableList
+          interpreter={interpreter}
+          variableNames={variableNames}
+          renderVariable={(value) => {
+            if (isGAPlace(value)) return <Tag>地点 {value.label}</Tag>;
+            return undefined;
+          }}
+        />
         <GARenderer state={getState()} />
       </Stack>
     </Grid>

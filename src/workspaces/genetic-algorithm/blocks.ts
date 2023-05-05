@@ -8,7 +8,7 @@ Blockly.Blocks[CUSTOM_GA_RANDOM_INT] = {
     this.appendValueInput("a").setCheck("Number");
     this.appendDummyInput().appendField("以上");
     this.appendValueInput("b").setCheck("Number");
-    this.appendDummyInput().appendField("以下の整数");
+    this.appendDummyInput().appendField("以下のランダムな整数");
     this.setOutput(true, "Number");
     this.setColour(180);
   },
@@ -72,6 +72,21 @@ javascriptGenerator[CUSTOM_GA_DUPLICATE_ROUTE] = (block) => {
   return `${CUSTOM_GA_DUPLICATE_ROUTE}(${i});`;
 };
 
+export const CUSTOM_GA_DISCARD_ROUTE = "custom_ga_discard_route";
+Blockly.Blocks[CUSTOM_GA_DISCARD_ROUTE] = {
+  init(this: Blockly.Block) {
+    this.appendValueInput("routeIndex").setCheck("Number");
+    this.appendDummyInput().appendField("番目の経路を削除する");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(0);
+  },
+};
+javascriptGenerator[CUSTOM_GA_DISCARD_ROUTE] = (block) => {
+  const routeIndex = javascriptGenerator.valueToCode(block, "routeIndex", 0);
+  return `${CUSTOM_GA_DISCARD_ROUTE}(${routeIndex});`;
+};
+
 export const CUSTOM_GA_DISCARD_AFTER_NTH_ROUTE =
   "custom_ga_discard_after_nth_route";
 Blockly.Blocks[CUSTOM_GA_DISCARD_AFTER_NTH_ROUTE] = {
@@ -92,9 +107,9 @@ javascriptGenerator[CUSTOM_GA_DISCARD_AFTER_NTH_ROUTE] = (block) => {
 export const CUSTOM_GA_SWAP_ROUTES = "custom_ga_swap_routes";
 Blockly.Blocks[CUSTOM_GA_SWAP_ROUTES] = {
   init(this: Blockly.Block) {
-    this.appendValueInput("a").setCheck("Number");
+    this.appendValueInput("routeIndex1").setCheck("Number");
     this.appendDummyInput().appendField("番目と");
-    this.appendValueInput("b").setCheck("Number");
+    this.appendValueInput("routeIndex2").setCheck("Number");
     this.appendDummyInput().appendField("番目の経路を入れ替える");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
@@ -103,9 +118,9 @@ Blockly.Blocks[CUSTOM_GA_SWAP_ROUTES] = {
   },
 };
 javascriptGenerator[CUSTOM_GA_SWAP_ROUTES] = (block) => {
-  const a = javascriptGenerator.valueToCode(block, "a", 0);
-  const b = javascriptGenerator.valueToCode(block, "b", 0);
-  return `${CUSTOM_GA_SWAP_ROUTES}(${a}, ${b});`;
+  const routeIndex1 = javascriptGenerator.valueToCode(block, "routeIndex1", 0);
+  const routeIndex2 = javascriptGenerator.valueToCode(block, "routeIndex2", 0);
+  return `${CUSTOM_GA_SWAP_ROUTES}(${routeIndex1}, ${routeIndex2});`;
 };
 
 export const CUSTOM_GA_DISTANCE = "custom_ga_distance";
@@ -132,53 +147,76 @@ javascriptGenerator[CUSTOM_GA_DISTANCE] = (block) => {
   ];
 };
 
+export const CUSTOM_GA_SWAP_PLACE = "custom_ga_swap_place";
+Blockly.Blocks[CUSTOM_GA_SWAP_PLACE] = {
+  init(this: Blockly.Block) {
+    this.appendValueInput("routeIndex").setCheck("Number");
+    this.appendDummyInput().appendField("番目の経路の");
+    this.appendValueInput("placeIndex1").setCheck("Number");
+    this.appendDummyInput().appendField("番目と");
+    this.appendValueInput("placeIndex2").setCheck("Number");
+    this.appendDummyInput().appendField("番目の地点を入れ替える");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(0);
+  },
+};
+javascriptGenerator[CUSTOM_GA_SWAP_PLACE] = (block) => {
+  const routeIndex = javascriptGenerator.valueToCode(block, "routeIndex", 0);
+  const placeIndex1 = javascriptGenerator.valueToCode(block, "placeIndex1", 0);
+  const placeIndex2 = javascriptGenerator.valueToCode(block, "placeIndex2", 0);
+  return `${CUSTOM_GA_SWAP_PLACE}(${routeIndex}, ${placeIndex1}, ${placeIndex2});`;
+};
+
+export const CUSTOM_GA_NTH_PLACE = "custom_ga_nth_place";
+Blockly.Blocks[CUSTOM_GA_NTH_PLACE] = {
+  init(this: Blockly.Block) {
+    this.appendValueInput("routeIndex").setCheck("Number");
+    this.appendDummyInput().appendField("番目の経路の");
+    this.appendValueInput("placeIndex").setCheck("Number");
+    this.appendDummyInput().appendField("番目の地点");
+    this.setOutput(true, "Place");
+    this.setColour(0);
+  },
+};
+javascriptGenerator[CUSTOM_GA_NTH_PLACE] = (block) => {
+  const routeIndex = javascriptGenerator.valueToCode(block, "routeIndex", 0);
+  const placeIndex = javascriptGenerator.valueToCode(block, "placeIndex", 0);
+  return [`${CUSTOM_GA_NTH_PLACE}(${routeIndex}, ${placeIndex})`, 0];
+};
+
+export const CUSTOM_GA_PLACE_EXISTS_IN_ROUTE =
+  "custom_ga_place_exists_in_route";
+Blockly.Blocks[CUSTOM_GA_PLACE_EXISTS_IN_ROUTE] = {
+  init(this: Blockly.Block) {
+    this.appendValueInput("routeIndex").setCheck("Number");
+    this.appendDummyInput().appendField("番目の経路に");
+    this.appendValueInput("place").setCheck("Place");
+    this.appendDummyInput().appendField("が含まれる");
+    this.setOutput(true, "Boolean");
+    this.setColour(0);
+  },
+};
+javascriptGenerator[CUSTOM_GA_PLACE_EXISTS_IN_ROUTE] = (block) => {
+  const routeIndex = javascriptGenerator.valueToCode(block, "routeIndex", 0);
+  const place = javascriptGenerator.valueToCode(block, "place", 0);
+  return [`${CUSTOM_GA_PLACE_EXISTS_IN_ROUTE}(${routeIndex}, ${place})`, 0];
+};
+
 export const CUSTOM_GA_ADD_PLACE = "custom_ga_add_place";
 Blockly.Blocks[CUSTOM_GA_ADD_PLACE] = {
   init(this: Blockly.Block) {
-    this.appendValueInput("routeIndexTo").setCheck("Number");
+    this.appendValueInput("routeIndex").setCheck("Number");
     this.appendDummyInput().appendField("番目の経路に");
-    this.appendValueInput("routeIndexFrom").setCheck("Number");
-    this.appendDummyInput().appendField("番目の経路の");
-    this.appendValueInput("placeIndex").setCheck("Number");
-    this.appendDummyInput().appendField("番目の地点を追加する");
+    this.appendValueInput("place").setCheck("Place");
+    this.appendDummyInput().appendField("を追加する");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(0);
   },
 };
 javascriptGenerator[CUSTOM_GA_ADD_PLACE] = (block) => {
-  const routeIndexTo = javascriptGenerator.valueToCode(
-    block,
-    "routeIndexTo",
-    0
-  );
-  const routeIndexFrom = javascriptGenerator.valueToCode(
-    block,
-    "routeIndexFrom",
-    0
-  );
-  const placeIndex = javascriptGenerator.valueToCode(block, "placeIndex", 0);
-  return `${CUSTOM_GA_ADD_PLACE}(${routeIndexTo}, ${routeIndexFrom}, ${placeIndex});`;
-};
-
-export const CUSTOM_GA_SWAP_PLACE = "custom_ga_swap_place";
-Blockly.Blocks[CUSTOM_GA_SWAP_PLACE] = {
-  init(this: Blockly.Block) {
-    this.appendValueInput("i").setCheck("Number");
-    this.appendDummyInput().appendField("番目の経路の");
-    this.appendValueInput("a").setCheck("Number");
-    this.appendDummyInput().appendField("番目と");
-    this.appendValueInput("b").setCheck("Number");
-    this.appendDummyInput().appendField("番目の地点を入れ替える");
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(0);
-    this.setTooltip("経路");
-  },
-};
-javascriptGenerator[CUSTOM_GA_SWAP_PLACE] = (block) => {
-  const i = javascriptGenerator.valueToCode(block, "i", 0);
-  const a = javascriptGenerator.valueToCode(block, "a", 0);
-  const b = javascriptGenerator.valueToCode(block, "b", 0);
-  return `${CUSTOM_GA_SWAP_PLACE}(${i}, ${a}, ${b});`;
+  const routeIndex = javascriptGenerator.valueToCode(block, "routeIndex", 0);
+  const place = javascriptGenerator.valueToCode(block, "place", 0);
+  return `${CUSTOM_GA_ADD_PLACE}(${routeIndex}, ${place});`;
 };

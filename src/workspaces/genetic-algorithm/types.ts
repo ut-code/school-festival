@@ -1,5 +1,4 @@
 // 遺伝的アルゴリズムの型定義。
-// ユーザーに露出するオブジェクトには __typename タグをつけることにより JSON シリアライズしても型情報が維持されるようする。
 
 import nullthrows from "nullthrows";
 
@@ -17,7 +16,7 @@ export const gaMinSpaceBetweenPlaces = 1200;
 
 export type GARouteLabel = number & { __GARouteLabel: never };
 
-/** 地点オブジェクト。GAState の初期化時に生成される。 */
+/** 地点オブジェクト。GAState の初期化時に生成される。このオブジェクトはユーザープログラムに露出するためタグをつけている。 */
 export type GAPlace = {
   __typename: "GAPlace";
   /** すべての地点でユニーク */
@@ -33,17 +32,11 @@ export function isGAPlace(obj: unknown): obj is GAPlace {
 
 /** 経路オブジェクト。「新しい経路を作成する」などのブロックで生成される。 */
 export type GARoute = {
-  __typename: "GARoute";
   /** すべての経路でユニーク。1 からの連番 */
   label: GARouteLabel;
   /** {@link gaPlaceCountInRoute}要素のタプル。index = 訪れる順番 */
   placeLabels: (GAPlaceLabel | null)[];
 };
-
-export function isGARoute(obj: unknown): obj is GAPlace {
-  // eslint-disable-next-line no-underscore-dangle
-  return Boolean(obj && (obj as GARoute).__typename === "GARoute");
-}
 
 export type GAState = {
   /** マップ中の経路 */
@@ -84,7 +77,6 @@ export function createInitialGAState(): GAState {
 
   while (routes.length < gaInitialRouteCount) {
     const newRoute: GARoute = {
-      __typename: "GARoute",
       label: (routes.length + 1) as GARouteLabel,
       placeLabels: gaPlaceLabels.slice().sort(() => Math.random() - 0.5),
     };
@@ -103,18 +95,4 @@ export function createInitialGAState(): GAState {
     nextRouteLabel: (gaInitialRouteCount + 1) as GARouteLabel,
     routes,
   };
-}
-
-export function createRouteReducer(state: GAState): [GAState, GARoute] {
-  const newRoute: GARoute = {
-    __typename: "GARoute",
-    label: state.nextRouteLabel,
-    placeLabels: [],
-  };
-  const newState: GAState = {
-    ...state,
-    nextRouteLabel: ((state.nextRouteLabel as number) + 1) as GARouteLabel,
-    routes: [...state.routes, newRoute],
-  };
-  return [newState, newRoute];
 }
