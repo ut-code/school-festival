@@ -36,8 +36,8 @@ Blockly.Blocks[CUSTOM_QL_DIRECTION] = {
       new Blockly.FieldDropdown([
         ["左", "left"],
         ["右", "right"],
-        ["下", "down"],
-        ["上", "up"],
+        ["下", "bottom"],
+        ["上", "top"],
       ]),
       "direction"
     );
@@ -149,7 +149,7 @@ Blockly.Blocks[CUSTOM_QL_MOVE] = {
 javascriptGenerator[CUSTOM_QL_MOVE] = (block) => {
   const arg =
     javascriptGenerator.valueToCode(block, "direction", 0) || `"left"`;
-  return `${CUSTOM_QL_MOVE}(${arg})`;
+  return `${CUSTOM_QL_MOVE}(${arg});`;
 };
 
 export const CUSTOM_QL_MOVE_RANDOM = "move_random";
@@ -181,7 +181,7 @@ Blockly.Blocks[CUSTOM_QL_MOVE_TO_START] = {
 };
 
 javascriptGenerator[CUSTOM_QL_MOVE_TO_START] = () =>
-  `${CUSTOM_QL_MOVE_TO_START}()`;
+  `${CUSTOM_QL_MOVE_TO_START}();`;
 
 export const CUSTOM_QL_QVALUE = "Q_value";
 Blockly.Blocks[CUSTOM_QL_QVALUE] = {
