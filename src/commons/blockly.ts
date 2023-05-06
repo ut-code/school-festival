@@ -93,12 +93,6 @@ export function useBlocklyWorkspace({
               (model: VariableModel) => model.name
             )
           );
-          // console.log(workspace.getAllVariableNames());
-          // console.log(
-          //   Blockly.Variables.allUsedVarModels(workspace).map(
-          //     (model: VariableModel) => model.name
-          //   )
-          // );
         }
       });
     }

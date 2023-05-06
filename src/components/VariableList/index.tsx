@@ -43,7 +43,10 @@ export default function VariableList({
       setVariables(
         variableNames.map((name) => ({
           name,
-          value: interpreter.getVariable(name),
+          value: interpreter.getVariable(
+            // 空白文字を _ に置き換えたあと encodeURIComponent で UTF-8 に変換し、さらに % を _ に置き換え
+            encodeURIComponent(name.replace(/\s+/g, "_")).replace(/%/g, "_")
+          ),
         }))
       );
     };
