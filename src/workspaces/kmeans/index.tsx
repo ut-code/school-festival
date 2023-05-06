@@ -1,6 +1,7 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Box, Grid, Text } from "@chakra-ui/react";
 import { useGetSet } from "react-use";
+import { Vector2D, Cluster } from "./types";
 import {
   // BlocklyEditorMessage,
   useBlocklyInterpreter,
@@ -21,9 +22,6 @@ import {
   BUILTIN_MATH_NUMBER,
 } from "../../config/blockly.blocks";
 import {
-  CONSOLE_LOG,
-  data,
-  cluster,
   CUSTOM_KM_CLUSTER_I,
   CUSTOM_KM_SET_CENTER_OF_CLUSTER,
   CUSTOM_KM_CENTER_OF_CLUSTER,
@@ -39,6 +37,7 @@ import {
 } from "./blocks";
 import { ExecutionManager } from "../../components/ExecutionManager";
 import { SimulatorRenderer } from "./SimulatorRenderer";
+import VariableList from "../../components/VariableList";
 
 const toolboxDefinition: BlocklyToolboxDefinition = {
   type: "category",
@@ -56,20 +55,24 @@ const toolboxDefinition: BlocklyToolboxDefinition = {
         BUILTIN_LOGIC_OPERATION,
         BUILTIN_MATH_ARITHMETIC,
         BUILTIN_MATH_NUMBER,
-        CONSOLE_LOG,
         // ワークスペースごとに定義したブロック
         CUSTOM_KM_CLUSTER_I,
-        CUSTOM_KM_SET_CENTER_OF_CLUSTER,
         CUSTOM_KM_CENTER_OF_CLUSTER,
-        CUSTOM_KM_CALCULATE_CENTER_OF_CLUSTER,
         CUSTOM_KM_ADD_DATA_TO_ARRAY,
         CUSTOM_KM_DELETE_DATA_FROM_ARRAY,
-        CUSTOM_KM_DISTANCE_BETWEEN_X_AND_Y,
+        CUSTOM_KM_DATA_IN_ARRAY,
+        CUSTOM_KM_LENGTH_OF_ARRAY,
+        CUSTOM_KM_SET_CENTER_OF_CLUSTER,
         CUSTOM_KM_X_OF_DATA_IN_ARRAY,
         CUSTOM_KM_Y_OF_DATA_IN_ARRAY,
         CUSTOM_KM_DATA_X_Y,
-        CUSTOM_KM_DATA_IN_ARRAY,
-        CUSTOM_KM_LENGTH_OF_ARRAY,
+      ],
+    },
+    {
+      name: "お助け",
+      blockTypes: [
+        CUSTOM_KM_CALCULATE_CENTER_OF_CLUSTER,
+        CUSTOM_KM_DISTANCE_BETWEEN_X_AND_Y,
       ],
     },
   ],
@@ -77,88 +80,100 @@ const toolboxDefinition: BlocklyToolboxDefinition = {
 };
 
 type KmeansWorkspaceState = {
-  listOfClusters: cluster[];
-  centerOfClusters: { datas: data[] };
+  clusterList: Cluster[];
+  centerList: { vectors: Vector2D[] };
+  distanceCalculated: { vector1: Vector2D; vector2: Vector2D }[];
 };
 
 export function KmeansWorkspace(): JSX.Element {
-  const N = 100;
-  const K = 3;
+  const DATA_COUNT = 50;
+  const CLUSTER_COUNT = 3;
 
-  const clusters: cluster[] = [];
-
-  for (let i = 0; i < K; i += 1) {
-    clusters.push({
-      datas: [],
-      n: i,
-    });
+  function normalDistribution() {
+    const value =
+      Math.sqrt(-2 * Math.log(1 - Math.random())) *
+      Math.cos(2 * Math.PI * Math.random());
+    return value;
   }
+
   function RandomDatas(n: number): KmeansWorkspaceState {
-    for (let i = 0; i < n; i += 1) {
-      const x: number = Math.random() * N;
-      const y: number = Math.random() * N;
-      const c: number = Math.floor(Math.random() * K);
-      clusters[c].datas.push({ x, y });
+    const clusters: Cluster[] = [];
+    for (let i = 0; i < CLUSTER_COUNT; i += 1) {
+      clusters.push({
+        vectors: [],
+        clusterNumber: i,
+      });
     }
-    const x: data = { x: 0, y: 0 };
+    const randomMean = [
+      [Math.random(), Math.random()],
+      [Math.random(), Math.random()],
+      [Math.random(), Math.random()],
+    ];
+    for (let i = 0; i < n; i += 1) {
+      const clusterNum: number = Math.floor(Math.random() * CLUSTER_COUNT);
+      const x = normalDistribution() * 20 + randomMean[clusterNum][0] * 100;
+      const y = normalDistribution() * 20 + randomMean[clusterNum][1] * 100;
+      clusters[clusterNum].vectors.push({ x, y });
+    }
+    const x: Vector2D = { x: 0, y: 0 };
     return {
-      listOfClusters: clusters,
-      centerOfClusters: { datas: [x, x, x] },
+      clusterList: clusters,
+      centerList: { vectors: [x, x, x] },
+      distanceCalculated: [],
     };
   }
 
   // interpreter に渡す関数は実行開始時に決定されるため、通常の state だと最新の情報が参照できません
   // このため、反則ですが内部的に ref を用いて状態管理をしている react-use の [useGetSet](https://github.com/streamich/react-use/blob/master/docs/useGetSet.md) を用いています。
-  const [getState, setState] = useGetSet(RandomDatas(N));
+  const [getState, setState] = useGetSet(RandomDatas(DATA_COUNT));
+  const [variableNames, setVariableNames] = useState<string[]>([]);
 
-  /* eslint-disable no-var */
-  /* eslint-disable vars-on-top */
   // javascriptGenerator により生成されたコードから呼ばれる関数を定義します
   const globalFunctions = useRef({
     [CUSTOM_KM_CLUSTER_I]: (i: number) => {
-      var currentState = getState();
-      return currentState.listOfClusters[i];
+      const currentState = getState();
+      return currentState.clusterList[i];
     },
-    [CUSTOM_KM_SET_CENTER_OF_CLUSTER]: (i: number, x: data) => {
-      var currentState = getState();
-      var newCenterOfClustersDatas = currentState.centerOfClusters.datas.map(
-        (data_, index) => (index === i ? x : data_)
+    [CUSTOM_KM_SET_CENTER_OF_CLUSTER]: (index_: number, x: Vector2D) => {
+      const currentState = getState();
+      const newCenterOfClustersDatas = currentState.centerList.vectors.map(
+        (vector_, index) => (index === index_ ? x : vector_)
       );
       setState({
         ...currentState,
-        centerOfClusters: { datas: newCenterOfClustersDatas },
+        centerList: { vectors: newCenterOfClustersDatas },
       });
     },
     [CUSTOM_KM_CALCULATE_CENTER_OF_CLUSTER]: () => {
-      var currentStateStart = getState();
+      const currentStateStart = getState();
       setState({
         ...currentStateStart,
-        centerOfClusters: { datas: [] },
+        centerList: { vectors: [] },
       });
-      for (let i = 0; i < K; i += 1) {
-        var currentState = getState();
-        var CLUSTER_X: number[] = currentState.listOfClusters[i].datas.map(
-          (data_) => data_.x
+      for (let i = 0; i < CLUSTER_COUNT; i += 1) {
+        const currentState = getState();
+        const xInCluster: number[] = currentState.clusterList[i].vectors.map(
+          (vector_) => vector_.x
         );
-        var CLUSTER_Y: number[] = currentState.listOfClusters[i].datas.map(
-          (data_) => data_.y
+        const yInCluster: number[] = currentState.clusterList[i].vectors.map(
+          (vector_) => vector_.y
         );
-        var avgX = 0;
-        var avgY = 0;
+        let avgX = 0;
+        let avgY = 0;
         for (
-          var j = 0;
-          j < currentState.listOfClusters[i].datas.length;
+          let j = 0;
+          j < currentState.clusterList[i].vectors.length;
           j += 1
         ) {
-          avgX += CLUSTER_X[j];
-          avgY += CLUSTER_Y[j];
+          avgX += xInCluster[j];
+          avgY += yInCluster[j];
         }
-        avgX /= currentState.listOfClusters[i].datas.length;
-        avgY /= currentState.listOfClusters[i].datas.length;
+        avgX /= currentState.clusterList[i].vectors.length;
+        avgY /= currentState.clusterList[i].vectors.length;
         setState({
           ...currentState,
-          centerOfClusters: {
-            datas: currentState.centerOfClusters.datas.concat({
+          centerList: {
+            vectors: currentState.centerList.vectors.concat({
               x: avgX,
               y: avgY,
             }),
@@ -166,62 +181,82 @@ export function KmeansWorkspace(): JSX.Element {
         });
       }
     },
-    [CUSTOM_KM_CENTER_OF_CLUSTER]: (cluster_: cluster) => {
-      var currentState = getState();
-      return currentState.centerOfClusters.datas[cluster_.n];
+    [CUSTOM_KM_CENTER_OF_CLUSTER]: (cluster_: Cluster) => {
+      const currentState = getState();
+      return currentState.centerList.vectors[cluster_.clusterNumber];
     },
-    [CUSTOM_KM_ADD_DATA_TO_ARRAY]: (a: cluster, x: data) => {
-      var currentState = getState();
-      var newListOfClusters = currentState.listOfClusters.map((cluster_) =>
-        cluster_.n === a.n
-          ? { datas: cluster_.datas.concat(x), n: cluster_.n }
-          : cluster_
-      );
-      setState({
-        ...currentState,
-        listOfClusters: newListOfClusters,
-      });
-    },
-    [CUSTOM_KM_DELETE_DATA_FROM_ARRAY]: (a: cluster, i: number) => {
-      var currentState = getState();
-      var newListOfClusters = currentState.listOfClusters.map((cluster_) =>
-        cluster_.n === a.n
+    [CUSTOM_KM_ADD_DATA_TO_ARRAY]: (array: Cluster, vector_: Vector2D) => {
+      const currentState = getState();
+      const newListOfClusters = currentState.clusterList.map((cluster_) =>
+        cluster_.clusterNumber === array.clusterNumber
           ? {
-              datas: cluster_.datas
-                .slice(0, i)
-                .concat(cluster_.datas.slice(i + 1)),
-              n: cluster_.n,
+              vectors: cluster_.vectors.concat(vector_),
+              clusterNumber: cluster_.clusterNumber,
             }
           : cluster_
       );
       setState({
         ...currentState,
-        listOfClusters: newListOfClusters,
+        clusterList: newListOfClusters,
       });
     },
-    [CUSTOM_KM_DATA_IN_ARRAY]: (a: cluster, i: number) => {
-      return a.datas[i];
+    [CUSTOM_KM_DELETE_DATA_FROM_ARRAY]: (array: Cluster, index_: number) => {
+      const currentState = getState();
+      const newListOfClusters = currentState.clusterList.map((cluster_) =>
+        cluster_.clusterNumber === array.clusterNumber
+          ? {
+              vectors: cluster_.vectors
+                .slice(0, index_)
+                .concat(cluster_.vectors.slice(index_ + 1)),
+              clusterNumber: cluster_.clusterNumber,
+            }
+          : cluster_
+      );
+      setState({
+        ...currentState,
+        clusterList: newListOfClusters,
+      });
     },
-    [CUSTOM_KM_DISTANCE_BETWEEN_X_AND_Y]: (data1: data, data2: data) => {
-      return Math.sqrt((data1.x - data2.x) ** 2 + (data1.y - data2.y) ** 2);
+    [CUSTOM_KM_DATA_IN_ARRAY]: (array: Cluster, i: number) => {
+      return array.vectors[i];
     },
-    [CUSTOM_KM_X_OF_DATA_IN_ARRAY]: (a: cluster, i: number) => {
-      return a.datas[i].x;
+    [CUSTOM_KM_DISTANCE_BETWEEN_X_AND_Y]: (
+      vector1: Vector2D,
+      vector2: Vector2D
+    ) => {
+      const currentState = getState();
+      const newDistanceCalculated = currentState.distanceCalculated.concat({
+        vector1,
+        vector2,
+      });
+      setState({
+        ...currentState,
+        distanceCalculated: newDistanceCalculated,
+      });
+      return Math.sqrt(
+        (vector1.x - vector2.x) ** 2 + (vector1.y - vector2.y) ** 2
+      );
     },
-    [CUSTOM_KM_Y_OF_DATA_IN_ARRAY]: (a: cluster, i: number) => {
-      return a.datas[i].y;
+    [CUSTOM_KM_X_OF_DATA_IN_ARRAY]: (array: Cluster, i: number) => {
+      return array.vectors[i].x;
+    },
+    [CUSTOM_KM_Y_OF_DATA_IN_ARRAY]: (array: Cluster, i: number) => {
+      return array.vectors[i].y;
     },
     [CUSTOM_KM_DATA_X_Y]: (x: number, y: number) => {
       return { x, y };
     },
-    [CUSTOM_KM_LENGTH_OF_ARRAY]: (a: cluster) => {
-      return a.datas.length;
+    [CUSTOM_KM_LENGTH_OF_ARRAY]: (array: Cluster) => {
+      return array.vectors.length;
     },
   }).current;
 
   const [interval, setInterval] = useState(500);
   const { workspaceAreaRef, highlightBlock, getCode } = useBlocklyWorkspace({
     toolboxDefinition,
+    onCodeChange: useCallback((_: unknown, newVariableNames: string[]) => {
+      setVariableNames(newVariableNames);
+    }, []),
   });
   const interpreter = useBlocklyInterpreter({
     globalFunctions,
@@ -241,53 +276,64 @@ export function KmeansWorkspace(): JSX.Element {
             interpreter.start(getCode());
           }}
           onReset={() => {
-            setState(RandomDatas(N));
+            setState(RandomDatas(DATA_COUNT));
           }}
         />
         <button
           type="button"
           onClick={() => {
-            setState(RandomDatas(N));
+            setState(RandomDatas(DATA_COUNT));
           }}
         >
           (再配置)
         </button>
-        <SimulatorRenderer clusters={getState().listOfClusters} />
+        <VariableList
+          interpreter={interpreter}
+          variableNames={variableNames}
+          renderVariable={() => {
+            return undefined;
+          }}
+        />
+        <SimulatorRenderer
+          clusters={getState().clusterList}
+          lines={getState().distanceCalculated}
+          centers={getState().centerList}
+        />
 
         <Text>
           0x{" "}
-          {getState().centerOfClusters.datas[0]
-            ? getState().centerOfClusters.datas[0].x
+          {getState().centerList.vectors[0]
+            ? getState().centerList.vectors[0].x
             : 0}
         </Text>
         <Text>
           0y{" "}
-          {getState().centerOfClusters.datas[0]
-            ? getState().centerOfClusters.datas[0].y
+          {getState().centerList.vectors[0]
+            ? getState().centerList.vectors[0].y
             : 0}
         </Text>
         <Text>
           1x{" "}
-          {getState().centerOfClusters.datas[1]
-            ? getState().centerOfClusters.datas[1].x
+          {getState().centerList.vectors[1]
+            ? getState().centerList.vectors[1].x
             : 0}
         </Text>
         <Text>
           1y{" "}
-          {getState().centerOfClusters.datas[1]
-            ? getState().centerOfClusters.datas[1].y
+          {getState().centerList.vectors[1]
+            ? getState().centerList.vectors[1].y
             : 0}
         </Text>
         <Text>
           2x{" "}
-          {getState().centerOfClusters.datas[2]
-            ? getState().centerOfClusters.datas[2].x
+          {getState().centerList.vectors[2]
+            ? getState().centerList.vectors[2].x
             : 0}
         </Text>
         <Text>
           2y{" "}
-          {getState().centerOfClusters.datas[2]
-            ? getState().centerOfClusters.datas[2].y
+          {getState().centerList.vectors[2]
+            ? getState().centerList.vectors[2].y
             : 0}
         </Text>
       </Box>
