@@ -1,4 +1,4 @@
-import { Button, Container, VStack, Text } from "@chakra-ui/react";
+import { Button, Container, Text, SimpleGrid } from "@chakra-ui/react";
 import { Link, useLocation } from "react-router-dom";
 import { routes } from "../../routes";
 
@@ -10,7 +10,7 @@ export function TopPage(): JSX.Element {
       <Text mb={8}>
         取り組む課題を選択してください。右上のボタンからいつでも切り替えることができます。
       </Text>
-      <VStack align="stretch" spacing={4}>
+      <SimpleGrid columns={2} spacing={4}>
         {routes.map((route) => (
           <Button
             as={Link}
@@ -28,7 +28,7 @@ export function TopPage(): JSX.Element {
             <Text fontWeight="normal">{route.description}</Text>
           </Button>
         ))}
-      </VStack>
+      </SimpleGrid>
     </Container>
   );
 }
