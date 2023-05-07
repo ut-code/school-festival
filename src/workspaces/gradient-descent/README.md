@@ -1,0 +1,1 @@
+[./components/GradRenderer/images.tsx](./components/GradRenderer/images.tsx)は、KIIRA による[Sky Box - Sunny Day](https://opengameart.org/content/sky-box-sunny-day)を、[OGY-BA 3.0](http://static.opengameart.org/OGA-BY-3.0.txt)による許諾の下で改変して用いています。

@@ -1,8 +1,10 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { objectiveFunction } from "../../objective";
+import { imageDataURLs } from "./images";
 
 const maxes = [500, 500, 500];
+
 export class GradGraph {
   camera: THREE.PerspectiveCamera;
 
@@ -39,12 +41,13 @@ export class GradGraph {
       60,
       props.width / props.height,
       1,
-      10000
+      15000
     );
     this.camera.position.set(500, 500, 500);
     this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
     this.controls = new OrbitControls(this.camera, props.canvas);
+    this.controls.maxDistance = 5000;
 
     this.scene = new THREE.Scene();
 
@@ -69,128 +72,10 @@ export class GradGraph {
       this.scene.add(axis);
     }
 
-    // const sky = new Sky();
-    // sky.scale.setScalar(450000);
-    // this.scene.add(sky);
-    // const skyUniforms = sky.material.uniforms;
-    // skyUniforms.turbidity.value = 10;
-    // skyUniforms.rayleigh.value = 2;
-    // // skyUniforms.luminance.value = 1;
-    // skyUniforms.mieCoefficient.value = 0.005;
-    // skyUniforms.mieDirectionalG.value = 0.8;
-    // const paths = [
-    //   "./assets/purplenebula_up.png",
-    //   "./assets/purplenebula_dn.png",
-    //   "./assets/purplenebula_lf.png",
-    //   "./assets/purplenebula_rt.png",
-    //   "./assets/purplenebula_ft.png",
-    //   "./assets/purplenebula_bk.png",
-    // ];
-    // const loader = new THREE.CubeTextureLoader();
-    // const textureCube = loader.load(paths);
-
-    // // 反射マッピングの設定
-    // textureCube.mapping = THREE.CubeReflectionMapping;
-
-    // const geometry = new THREE.SphereGeometry(1000, 64, 64);
-    // const material = new THREE.MeshPhongMaterial({
-    //   envMap: textureCube,
-    //   reflectivity: 1.0,
-    // });
-    // console.log(textureCube);
-    // const sphere = new THREE.Mesh(geometry, material);
-    // this.scene.add(sphere);
-    // const loadManager = new THREE.LoadingManager();
-    // const loader = new THREE.TextureLoader(loadManager);
-    // const materialArray: THREE.MeshBasicMaterial[] = [];
-    // for (let i = 0; i < 6; i += 1) {
-    //   const texture = loader.load(paths[i], () => {
-    //     const material = new THREE.MeshBasicMaterial({
-    //       map: texture,
-    //       side: THREE.BackSide,
-    //     });
-    //     materialArray.push(material);
-    //   });
-    // }
-    // const materialArray = paths.map((path) => {
-    //   const texture = loader.load(path);
-    //   const material = new THREE.MeshBasicMaterial({
-    //     map: texture,
-    //     side: THREE.BackSide,
-    //   });
-    //   return material;
-    // });
-
-    // loadManager.onLoad = () => {
-    //   console.log(materialArray);
-    //   const skyboxGeometry = new THREE.BoxGeometry(10000, 10000, 10000);
-    //   const skybox = new THREE.Mesh(skyboxGeometry, materialArray);
-    //   this.scene.add(skybox);
-    // };
-
-    // for (let i = 0; i < 6; i += 1) {
-    //   const texture = new THREE.TextureLoader().load(paths[i], () => {
-    //     const material = new THREE.MeshBasicMaterial({
-    //       map: texture,
-    //       side: THREE.BackSide,
-    //     });
-    //     const skyboxGeometry = new THREE.BoxGeometry(10000, 10000, 10000);
-    //     const skybox = new THREE.Mesh(skyboxGeometry, material);
-    //   });
-    // }
-    const skyboxMaterialArray = GradGraph.createNebulaMaterialArray();
+    const skyboxMaterialArray = GradGraph.createSkyMaterialArray();
     const skyboxGeometry = new THREE.BoxGeometry(10000, 10000, 10000);
     const skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterialArray);
     this.scene.add(skybox);
-
-    // // 球体を作成
-    // const geometry = new THREE.SphereGeometry(300, 30, 30);
-    // // 画像を読み込む
-    // const manager = new THREE.LoadingManager();
-    // const loader = new THREE.TextureLoader(manager);
-    // const texture = loader.load("imgs/purplenebula_ft.png");
-    // manager.onLoad = () => {
-    //   console.log(texture);
-    //   // マテリアルにテクスチャーを設定
-    //   const material = new THREE.MeshStandardMaterial({
-    //     map: texture,
-    //   });
-    //   // メッシュを作成
-    //   const mesh = new THREE.Mesh(geometry, material);
-    //   // 3D空間にメッシュを追加
-    //   this.scene.add(mesh);
-    // };
-
-    // const path = "sky_";
-    // const urls = [
-    //   `${path}right.png`, // 右
-    //   `${path}left.png`, // 左
-    //   `${path}top.png`, // 上
-    //   `${path}bottom.png`, // 下
-    //   `${path}front.png`, // 前
-    //   `${path}back.png`, // 後
-    // ];
-
-    // const cubeTextureLoader = new THREE.CubeTextureLoader();
-    // const textureCube = cubeTextureLoader.load(urls);
-
-    // const shader = THREE.ShaderLib.cube;
-    // shader.uniforms.tCube.value = textureCube;
-
-    // const material = new THREE.ShaderMaterial({
-    //   fragmentShader: shader.fragmentShader,
-    //   vertexShader: shader.vertexShader,
-    //   uniforms: shader.uniforms,
-    //   depthWrite: false,
-    //   side: THREE.BackSide,
-    // });
-
-    // const cubeMesh = new THREE.Mesh(
-    //   new THREE.BoxGeometry(10000, 10000, 10000),
-    //   material
-    // );
-    // console.log(cubeMesh);
-    // this.scene.add(cubeMesh);
 
     // this.scene.add(
     //   GradGraph.createPlane(0x00ff00, 3 * maxes[0], 3 * maxes[2], 64, 64, 0)
@@ -210,13 +95,7 @@ export class GradGraph {
   }
 
   static createSkyPathStrings() {
-    const basePath = "./assets/sky";
-    const fileType = ".png";
-    const sides = ["ft", "bk", "up", "dn", "rt", "lf"];
-    const pathStrings = sides.map((side) => {
-      return `${basePath}_${side}${fileType}`;
-    });
-    return pathStrings;
+    return imageDataURLs;
   }
 
   static createSkyMaterialArray() {
@@ -233,9 +112,8 @@ export class GradGraph {
   }
 
   static createNebulaPathStrings() {
-    // const basePath =
-    //   "https://raw.githubusercontent.com/codypearce/some-skyboxes/master/skyboxes/purplenebula/purplenebula";
-    const basePath = "./imgs/purplenebula";
+    const basePath =
+      "https://raw.githubusercontent.com/codypearce/some-skyboxes/master/skyboxes/purplenebula/purplenebula";
     const fileType = ".png";
     const sides = ["ft", "bk", "up", "dn", "rt", "lf"];
     const pathStrings = sides.map((side) => {
@@ -248,6 +126,7 @@ export class GradGraph {
     const skyboxImagePaths = GradGraph.createNebulaPathStrings();
     const materialArray = skyboxImagePaths.map((image) => {
       const texture = new THREE.TextureLoader().load(image);
+      texture.needsUpdate = true;
       const material = new THREE.MeshBasicMaterial({
         map: texture,
         side: THREE.BackSide,
