@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { objectiveFunction } from "../../objective";
-import { imageDataURLs } from "./images";
 
 const maxes = [500, 500, 500];
 
@@ -95,7 +94,15 @@ export class GradGraph {
   }
 
   static createSkyPathStrings() {
-    return imageDataURLs;
+    const imageURLs = [
+      new URL("../../images/sky_ft.png", import.meta.url).toString(),
+      new URL("../../images/sky_bk.png", import.meta.url).toString(),
+      new URL("../../images/sky_up.png", import.meta.url).toString(),
+      new URL("../../images/sky_dn.png", import.meta.url).toString(),
+      new URL("../../images/sky_lf.png", import.meta.url).toString(),
+      new URL("../../images/sky_rt.png", import.meta.url).toString(),
+    ];
+    return imageURLs;
   }
 
   static createSkyMaterialArray() {
