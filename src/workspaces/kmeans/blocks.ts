@@ -28,7 +28,7 @@ export const CUSTOM_KM_NUMBER_Y = "custom_km_number_y";
 Blockly.Blocks[CUSTOM_KM_CLUSTER_I] = {
   init() {
     this.appendValueInput(CUSTOM_KM_NUMBER).setCheck("Number").appendField("");
-    this.appendDummyInput().appendField("番目のクラスター");
+    this.appendDummyInput().appendField("番目のグループ");
     this.setInputsInline(true);
     this.setOutput(true, "Cluster");
     this.setColour(0);
@@ -47,7 +47,7 @@ javascriptGenerator[CUSTOM_KM_CLUSTER_I] = (block: Blockly.Block) => [
 Blockly.Blocks[CUSTOM_KM_SET_CENTER_OF_CLUSTER] = {
   init() {
     this.appendValueInput(CUSTOM_KM_NUMBER).setCheck("Number").appendField("");
-    this.appendDummyInput().appendField("番目のクラスターの中心を");
+    this.appendDummyInput().appendField("番目のグループの中心を");
     this.appendValueInput(CUSTOM_KM_DATA).setCheck("Vector").appendField("");
     this.appendDummyInput().appendField("とする");
     this.setInputsInline(true);
@@ -67,8 +67,8 @@ Blockly.Blocks[CUSTOM_KM_CENTER_OF_CLUSTER] = {
   init() {
     this.appendValueInput(CUSTOM_KM_CLUSTER)
       .setCheck("Cluster")
-      .appendField("クラスター");
-    this.appendDummyInput().appendField("の中心");
+      .appendField("");
+    this.appendDummyInput().appendField("(グループ)の中心");
     this.setInputsInline(true);
     this.setOutput(true, "Vector");
     this.setColour(0);
@@ -86,7 +86,7 @@ javascriptGenerator[CUSTOM_KM_CENTER_OF_CLUSTER] = (block: Blockly.Block) => [
 
 Blockly.Blocks[CUSTOM_KM_CALCULATE_CENTER_OF_CLUSTER] = {
   init() {
-    this.appendDummyInput().appendField("クラスターの中心を計算する");
+    this.appendDummyInput().appendField("グループの中心を計算する");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(60);
@@ -99,7 +99,7 @@ javascriptGenerator[CUSTOM_KM_CALCULATE_CENTER_OF_CLUSTER] = () =>
 Blockly.Blocks[CUSTOM_KM_ADD_DATA_TO_ARRAY] = {
   init() {
     this.appendValueInput(CUSTOM_KM_CLUSTER).setCheck("Cluster");
-    this.appendDummyInput().appendField("（配列）に");
+    this.appendDummyInput().appendField("（グループ）に");
     this.appendValueInput(CUSTOM_KM_DATA).setCheck("Vector");
     this.appendDummyInput().appendField("（点）を加える");
     this.setInputsInline(true);
@@ -118,9 +118,9 @@ javascriptGenerator[CUSTOM_KM_ADD_DATA_TO_ARRAY] = (block) =>
 Blockly.Blocks[CUSTOM_KM_DELETE_DATA_FROM_ARRAY] = {
   init() {
     this.appendValueInput(CUSTOM_KM_CLUSTER).setCheck("Cluster");
-    this.appendDummyInput().appendField("（配列）から");
+    this.appendDummyInput().appendField("（グループ）から");
     this.appendValueInput(CUSTOM_KM_NUMBER).setCheck("Number");
-    this.appendDummyInput().appendField("番目の要素を削除する");
+    this.appendDummyInput().appendField("番目の点を削除する");
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
@@ -161,9 +161,9 @@ javascriptGenerator[CUSTOM_KM_DISTANCE_BETWEEN_X_AND_Y] = (block) => [
 Blockly.Blocks[CUSTOM_KM_X_OF_DATA_IN_ARRAY] = {
   init() {
     this.appendValueInput(CUSTOM_KM_CLUSTER).setCheck("Cluster");
-    this.appendDummyInput().appendField("（配列）の");
+    this.appendDummyInput().appendField("（グループ）の");
     this.appendValueInput(CUSTOM_KM_NUMBER).setCheck("Number");
-    this.appendDummyInput().appendField("番目の要素のx座標");
+    this.appendDummyInput().appendField("番目の点のx座標");
     this.setInputsInline(true);
     this.setOutput(true, "Number");
     this.setColour(230);
@@ -181,9 +181,9 @@ javascriptGenerator[CUSTOM_KM_X_OF_DATA_IN_ARRAY] = (block) => [
 Blockly.Blocks[CUSTOM_KM_Y_OF_DATA_IN_ARRAY] = {
   init() {
     this.appendValueInput(CUSTOM_KM_CLUSTER).setCheck("Cluster");
-    this.appendDummyInput().appendField("（配列）の");
+    this.appendDummyInput().appendField("（グループ）の");
     this.appendValueInput(CUSTOM_KM_NUMBER).setCheck("Number");
-    this.appendDummyInput().appendField("番目の要素のy座標");
+    this.appendDummyInput().appendField("番目の点のy座標");
     this.setInputsInline(true);
     this.setOutput(true, "Number");
     this.setColour(230);
@@ -222,9 +222,9 @@ javascriptGenerator[CUSTOM_KM_DATA_X_Y] = (block) => [
 Blockly.Blocks[CUSTOM_KM_DATA_IN_ARRAY] = {
   init() {
     this.appendValueInput(CUSTOM_KM_CLUSTER).setCheck("Cluster");
-    this.appendDummyInput().appendField("（配列）の");
+    this.appendDummyInput().appendField("（グループ）の");
     this.appendValueInput(CUSTOM_KM_NUMBER).setCheck("Number");
-    this.appendDummyInput().appendField("番目のデータ");
+    this.appendDummyInput().appendField("番目の点");
     this.setInputsInline(true);
     this.setOutput(true, "Vector");
     this.setColour(0);
@@ -242,7 +242,7 @@ javascriptGenerator[CUSTOM_KM_DATA_IN_ARRAY] = (block) => [
 Blockly.Blocks[CUSTOM_KM_LENGTH_OF_ARRAY] = {
   init() {
     this.appendValueInput(CUSTOM_KM_CLUSTER).setCheck("Cluster");
-    this.appendDummyInput().appendField("（配列）の要素数");
+    this.appendDummyInput().appendField("（グループ）の点数");
     this.setInputsInline(true);
     this.setOutput(true, "Number");
     this.setColour(0);
