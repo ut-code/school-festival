@@ -111,30 +111,30 @@ export class GradGraph {
     return materialArray;
   }
 
-  static createNebulaPathStrings() {
-    const basePath =
-      "https://raw.githubusercontent.com/codypearce/some-skyboxes/master/skyboxes/purplenebula/purplenebula";
-    const fileType = ".png";
-    const sides = ["ft", "bk", "up", "dn", "rt", "lf"];
-    const pathStrings = sides.map((side) => {
-      return `${basePath}_${side}${fileType}`;
-    });
-    return pathStrings;
-  }
+  // static createNebulaPathStrings() {
+  //   const basePath =
+  //     "https://raw.githubusercontent.com/codypearce/some-skyboxes/master/skyboxes/purplenebula/purplenebula";
+  //   const fileType = ".png";
+  //   const sides = ["ft", "bk", "up", "dn", "rt", "lf"];
+  //   const pathStrings = sides.map((side) => {
+  //     return `${basePath}_${side}${fileType}`;
+  //   });
+  //   return pathStrings;
+  // }
 
-  static createNebulaMaterialArray() {
-    const skyboxImagePaths = GradGraph.createNebulaPathStrings();
-    const materialArray = skyboxImagePaths.map((image) => {
-      const texture = new THREE.TextureLoader().load(image);
-      texture.needsUpdate = true;
-      const material = new THREE.MeshBasicMaterial({
-        map: texture,
-        side: THREE.BackSide,
-      });
-      return material;
-    });
-    return materialArray;
-  }
+  // static createNebulaMaterialArray() {
+  //   const skyboxImagePaths = GradGraph.createNebulaPathStrings();
+  //   const materialArray = skyboxImagePaths.map((image) => {
+  //     const texture = new THREE.TextureLoader().load(image);
+  //     texture.needsUpdate = true;
+  //     const material = new THREE.MeshBasicMaterial({
+  //       map: texture,
+  //       side: THREE.BackSide,
+  //     });
+  //     return material;
+  //   });
+  //   return materialArray;
+  // }
 
   static createAxis(max: number, direction: THREE.Vector3, color: number) {
     const axisLength = max * 2;
