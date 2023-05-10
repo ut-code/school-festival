@@ -19,7 +19,7 @@ export function SimulatorRenderer(props: {
 }): JSX.Element {
   return (
     <AspectRatio ratio={1}>
-      <svg width="100%" height="100%" viewBox="-55 -55 210 210">
+      <svg width="100%" height="100%" viewBox="50 -55 210 210">
         {props.clusters.map((cluster_, index1) =>
           cluster_.vectors.map((vector_) => (
             <chakra.circle

@@ -102,6 +102,12 @@ type KmeansWorkspaceState = {
   distanceCalculated: { vector1: Vector2D; vector2: Vector2D }[];
 };
 
+function checkUndefined(value: number | Cluster | Vector2D) {
+  if (value === undefined) {
+    throw new Error(`値が定義されたブロックを当てはめてください。`);
+  }
+}
+
 export function KmeansWorkspace(): JSX.Element {
   const DATA_COUNT = 50;
   const CLUSTER_COUNT = 3;
@@ -122,9 +128,9 @@ export function KmeansWorkspace(): JSX.Element {
       });
     }
     const randomMean = [
-      [Math.random(), Math.random()],
-      [Math.random(), Math.random()],
-      [Math.random(), Math.random()],
+      [Math.random() + 1, Math.random()],
+      [Math.random() + 1, Math.random()],
+      [Math.random() + 1, Math.random()],
     ];
     for (let i = 0; i < n; i += 1) {
       const clusterNum: number = Math.floor(Math.random() * CLUSTER_COUNT);
@@ -148,6 +154,7 @@ export function KmeansWorkspace(): JSX.Element {
   // javascriptGenerator により生成されたコードから呼ばれる関数を定義します
   const globalFunctions = useRef({
     [CUSTOM_KM_CLUSTER_I]: (i: number) => {
+      checkUndefined(i);
       const currentState = getState();
       if (i >= CLUSTER_COUNT) {
         throw new Error(`${i}番目のグループは存在しません。`);
@@ -156,6 +163,8 @@ export function KmeansWorkspace(): JSX.Element {
       }
     },
     [CUSTOM_KM_SET_CENTER_OF_CLUSTER]: (index_: number, x: Vector2D) => {
+      checkUndefined(index_);
+      checkUndefined(x);
       const currentState = getState();
       if (index_ >= CLUSTER_COUNT) {
         throw new Error(`${index_}番目のグループは存在しません。`);
@@ -207,10 +216,13 @@ export function KmeansWorkspace(): JSX.Element {
       }
     },
     [CUSTOM_KM_CENTER_OF_CLUSTER]: (cluster_: Cluster) => {
+      checkUndefined(cluster_);
       const currentState = getState();
       return currentState.centerList.vectors[cluster_.clusterNumber];
     },
     [CUSTOM_KM_ADD_DATA_TO_ARRAY]: (array: Cluster, vector_: Vector2D) => {
+      checkUndefined(array);
+      checkUndefined(vector_);
       const currentState = getState();
       const newListOfClusters = currentState.clusterList.map((cluster_) =>
         cluster_.clusterNumber === array.clusterNumber
@@ -226,6 +238,8 @@ export function KmeansWorkspace(): JSX.Element {
       });
     },
     [CUSTOM_KM_DELETE_DATA_FROM_ARRAY]: (array: Cluster, index_: number) => {
+      checkUndefined(array);
+      checkUndefined(index_);
       const currentState = getState();
       if (index_ >= array.vectors.length) {
         throw new Error(
@@ -249,6 +263,8 @@ export function KmeansWorkspace(): JSX.Element {
       }
     },
     [CUSTOM_KM_DATA_IN_ARRAY]: (array: Cluster, i: number) => {
+      checkUndefined(array);
+      checkUndefined(i);
       if (i >= array.vectors.length) {
         throw new Error(
           `${array.clusterNumber}番目のグループには${array.vectors.length}個の要素しかありません。`
@@ -261,6 +277,8 @@ export function KmeansWorkspace(): JSX.Element {
       vector1: Vector2D,
       vector2: Vector2D
     ) => {
+      checkUndefined(vector1);
+      checkUndefined(vector2);
       const currentState = getState();
       const newDistanceCalculated = currentState.distanceCalculated.concat({
         vector1,
@@ -275,6 +293,8 @@ export function KmeansWorkspace(): JSX.Element {
       );
     },
     [CUSTOM_KM_X_OF_DATA_IN_ARRAY]: (array: Cluster, i: number) => {
+      checkUndefined(array);
+      checkUndefined(i);
       if (i >= array.vectors.length) {
         throw new Error(
           `${array.clusterNumber}番目のグループには${array.vectors.length}個の要素しかありません。`
@@ -284,6 +304,8 @@ export function KmeansWorkspace(): JSX.Element {
       }
     },
     [CUSTOM_KM_Y_OF_DATA_IN_ARRAY]: (array: Cluster, i: number) => {
+      checkUndefined(array);
+      checkUndefined(i);
       if (i >= array.vectors.length) {
         throw new Error(
           `${array.clusterNumber}番目のグループには${array.vectors.length}個の要素しかありません。`
@@ -293,9 +315,12 @@ export function KmeansWorkspace(): JSX.Element {
       }
     },
     [CUSTOM_KM_DATA_X_Y]: (x: number, y: number) => {
+      checkUndefined(x);
+      checkUndefined(y);
       return { x, y };
     },
     [CUSTOM_KM_LENGTH_OF_ARRAY]: (array: Cluster) => {
+      checkUndefined(array);
       return array.vectors.length;
     },
   }).current;

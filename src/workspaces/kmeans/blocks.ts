@@ -86,7 +86,7 @@ javascriptGenerator[CUSTOM_KM_CENTER_OF_CLUSTER] = (block: Blockly.Block) => [
 
 Blockly.Blocks[CUSTOM_KM_CALCULATE_CENTER_OF_CLUSTER] = {
   init() {
-    this.appendDummyInput().appendField("グループの中心を計算する");
+    this.appendDummyInput().appendField("各グループの中心を計算する");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(60);
@@ -242,7 +242,7 @@ javascriptGenerator[CUSTOM_KM_DATA_IN_ARRAY] = (block) => [
 Blockly.Blocks[CUSTOM_KM_LENGTH_OF_ARRAY] = {
   init() {
     this.appendValueInput(CUSTOM_KM_CLUSTER).setCheck("Cluster");
-    this.appendDummyInput().appendField("（グループ）の点数");
+    this.appendDummyInput().appendField("（グループ）の点の数");
     this.setInputsInline(true);
     this.setOutput(true, "Number");
     this.setColour(0);
