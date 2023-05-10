@@ -23,6 +23,8 @@ import {
   CUSTOM_GRAD_OBJECTIVE,
   CUSTOM_GRAD_SET_X,
   CUSTOM_GRAD_SET_Y,
+  CUSTOM_GRAD_UPDATE_X,
+  CUSTOM_GRAD_UPDATE_Y,
   CUSTOM_GRAD_X_VALUE,
   CUSTOM_GRAD_Y_VALUE,
 } from "./blocks";
@@ -54,6 +56,8 @@ const toolboxDefinition: BlocklyToolboxDefinition = {
         CUSTOM_GRAD_OBJECTIVE,
         CUSTOM_GRAD_SET_X,
         CUSTOM_GRAD_SET_Y,
+        CUSTOM_GRAD_UPDATE_X,
+        CUSTOM_GRAD_UPDATE_Y,
       ],
     },
   ],
@@ -162,12 +166,42 @@ export function GradWorkspace(): JSX.Element {
       setState({ ...state, x: newX });
       isConvergence(getState());
     },
+    [CUSTOM_GRAD_UPDATE_X]: (deltaX: number) => {
+      const state = getState();
+      if (
+        objectiveFunction(
+          state.x + deltaX,
+          state.y,
+          state.xAnswer,
+          state.yAnswer
+        ) < 50
+      ) {
+        throw new Error("山から下りてしまいました。");
+      }
+      setState({ ...state, x: state.x + deltaX });
+      isConvergence(getState());
+    },
     [CUSTOM_GRAD_SET_Y]: (newY: number) => {
       const state = getState();
       if (objectiveFunction(state.x, newY, state.xAnswer, state.yAnswer) < 50) {
         throw new Error("山から下りてしまいました。");
       }
       setState({ ...state, y: newY });
+      isConvergence(getState());
+    },
+    [CUSTOM_GRAD_UPDATE_Y]: (deltaY: number) => {
+      const state = getState();
+      if (
+        objectiveFunction(
+          state.x,
+          state.y + deltaY,
+          state.xAnswer,
+          state.yAnswer
+        ) < 50
+      ) {
+        throw new Error("山から下りてしまいました。");
+      }
+      setState({ ...state, y: state.y + deltaY });
       isConvergence(getState());
     },
     [CUSTOM_GRAD_X_VALUE]: () => {
