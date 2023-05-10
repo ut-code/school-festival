@@ -57,12 +57,12 @@ export class GradGraph {
 
     const directions = [
       new THREE.Vector3(1, 0, 0),
-      new THREE.Vector3(0, 1, 0),
+      // new THREE.Vector3(0, 1, 0),
       new THREE.Vector3(0, 0, 1),
     ];
-    const axesColors = [0xff0000, 0x00ff00, 0x0000ff];
+    const axesColors = [0xff0000, 0x0000ff];
 
-    for (let i = 0; i < 3; i += 1) {
+    for (let i = 0; i < 2; i += 1) {
       const axis = GradGraph.createAxis(
         1.3 * maxes[i],
         directions[i],

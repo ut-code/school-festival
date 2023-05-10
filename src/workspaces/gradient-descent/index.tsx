@@ -205,8 +205,6 @@ export function GradWorkspace(): JSX.Element {
             setState({ ...getState(), x: initialX, y: initialY });
           }}
         />
-        {/* <Text mt={2}>x: {getState().x}</Text> */}
-        {/* <Text mt={2}>y: {getState().y}</Text> */}
         <Text fontSize="xl" mt={2}>
           現在位置
         </Text>
@@ -221,15 +219,17 @@ export function GradWorkspace(): JSX.Element {
                 <ThY>y</ThY>
                 <Td>{getState().y}</Td>
               </Tr>
-              <ThZ>高さ</ThZ>
-              <Td>
-                {objectiveFunction(
-                  getState().x,
-                  getState().y,
-                  getState().xAnswer,
-                  getState().yAnswer
-                )}
-              </Td>
+              <Tr>
+                <ThZ>高さ</ThZ>
+                <Td>
+                  {objectiveFunction(
+                    getState().x,
+                    getState().y,
+                    getState().xAnswer,
+                    getState().yAnswer
+                  )}
+                </Td>
+              </Tr>
             </Tbody>
           </Table>
         </Stack>
