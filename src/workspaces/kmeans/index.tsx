@@ -292,27 +292,13 @@ export function KmeansWorkspace(): JSX.Element {
         (vector1.x - vector2.x) ** 2 + (vector1.y - vector2.y) ** 2
       );
     },
-    [CUSTOM_KM_X_OF_DATA_IN_ARRAY]: (array: Cluster, i: number) => {
-      checkUndefined(array);
-      checkUndefined(i);
-      if (i >= array.vectors.length) {
-        throw new Error(
-          `${array.clusterNumber}番目のグループには${array.vectors.length}個の要素しかありません。`
-        );
-      } else {
-        return array.vectors[i].x;
-      }
+    [CUSTOM_KM_X_OF_DATA_IN_ARRAY]: (vector_: Vector2D) => {
+      checkUndefined(vector_);
+      return vector_.x;
     },
-    [CUSTOM_KM_Y_OF_DATA_IN_ARRAY]: (array: Cluster, i: number) => {
-      checkUndefined(array);
-      checkUndefined(i);
-      if (i >= array.vectors.length) {
-        throw new Error(
-          `${array.clusterNumber}番目のグループには${array.vectors.length}個の要素しかありません。`
-        );
-      } else {
-        return array.vectors[i].y;
-      }
+    [CUSTOM_KM_Y_OF_DATA_IN_ARRAY]: (vector_: Vector2D) => {
+      checkUndefined(vector_);
+      return vector_.y;
     },
     [CUSTOM_KM_DATA_X_Y]: (x: number, y: number) => {
       checkUndefined(x);

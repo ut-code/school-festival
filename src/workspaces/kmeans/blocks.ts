@@ -160,10 +160,8 @@ javascriptGenerator[CUSTOM_KM_DISTANCE_BETWEEN_X_AND_Y] = (block) => [
 
 Blockly.Blocks[CUSTOM_KM_X_OF_DATA_IN_ARRAY] = {
   init() {
-    this.appendValueInput(CUSTOM_KM_CLUSTER).setCheck("Cluster");
-    this.appendDummyInput().appendField("（グループ）の");
-    this.appendValueInput(CUSTOM_KM_NUMBER).setCheck("Number");
-    this.appendDummyInput().appendField("番目の点のx座標");
+    this.appendValueInput(CUSTOM_KM_DATA).setCheck("Vector");
+    this.appendDummyInput().appendField("(点)のx座標");
     this.setInputsInline(true);
     this.setOutput(true, "Number");
     this.setColour(230);
@@ -172,18 +170,15 @@ Blockly.Blocks[CUSTOM_KM_X_OF_DATA_IN_ARRAY] = {
 };
 javascriptGenerator[CUSTOM_KM_X_OF_DATA_IN_ARRAY] = (block) => [
   `${CUSTOM_KM_X_OF_DATA_IN_ARRAY}(
-        ${javascriptGenerator.valueToCode(block, CUSTOM_KM_CLUSTER, 0)},
-        ${javascriptGenerator.valueToCode(block, CUSTOM_KM_NUMBER, 0)}
+        ${javascriptGenerator.valueToCode(block, CUSTOM_KM_DATA, 0)}
         )`,
   0,
 ];
 
 Blockly.Blocks[CUSTOM_KM_Y_OF_DATA_IN_ARRAY] = {
   init() {
-    this.appendValueInput(CUSTOM_KM_CLUSTER).setCheck("Cluster");
-    this.appendDummyInput().appendField("（グループ）の");
-    this.appendValueInput(CUSTOM_KM_NUMBER).setCheck("Number");
-    this.appendDummyInput().appendField("番目の点のy座標");
+    this.appendValueInput(CUSTOM_KM_DATA).setCheck("Vector");
+    this.appendDummyInput().appendField("(点)のy座標");
     this.setInputsInline(true);
     this.setOutput(true, "Number");
     this.setColour(230);
@@ -192,8 +187,7 @@ Blockly.Blocks[CUSTOM_KM_Y_OF_DATA_IN_ARRAY] = {
 };
 javascriptGenerator[CUSTOM_KM_Y_OF_DATA_IN_ARRAY] = (block) => [
   `${CUSTOM_KM_Y_OF_DATA_IN_ARRAY}(
-        ${javascriptGenerator.valueToCode(block, CUSTOM_KM_CLUSTER, 0)},
-        ${javascriptGenerator.valueToCode(block, CUSTOM_KM_NUMBER, 0)}
+        ${javascriptGenerator.valueToCode(block, CUSTOM_KM_DATA, 0)}
         )`,
   0,
 ];
