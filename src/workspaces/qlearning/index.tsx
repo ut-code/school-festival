@@ -171,7 +171,9 @@ export function QlearningWorkspace(): JSX.Element {
     [CUSTOM_QL_QVALUE]: (state: number, direction: MazeDirection) => {
       const mazeState = getState();
       if (state < 0 || state > mazeSize * mazeSize - 1)
-        throw new Error("状態は0から99までの範囲である必要があります");
+        throw new Error(
+          `状態は0から${mazeSize * mazeSize - 1}までの範囲である必要があります`
+        );
 
       return mazeState.q_value[state][direction];
     },
@@ -182,7 +184,9 @@ export function QlearningWorkspace(): JSX.Element {
     ) => {
       const mazeState = getState();
       if (state < 0 || state > mazeSize * mazeSize - 1)
-        throw new Error("状態は0から99までの範囲である必要があります");
+        throw new Error(
+          `状態は0から${mazeSize * mazeSize - 1}までの範囲である必要があります`
+        );
       setState({
         ...mazeState,
         q_value: mazeState.q_value.map((value, i) =>
