@@ -40,6 +40,7 @@ import {
   moveInMaze,
 } from "../../commons/maze";
 import { randInt } from "../../commons/random";
+import { QValueShow } from "./qvalueShow";
 
 const toolboxDefinition: BlocklyToolboxDefinition = {
   type: "category",
@@ -240,40 +241,13 @@ export function QlearningWorkspace(): JSX.Element {
         >
           新しい迷路にする
         </Button>
-        <Box>
-          <Box>
-            上:
-            {
-              getState().q_value[
-                getState().location.y * mazeSize + getState().location.x
-              ].top
-            }
-          </Box>
-          <Box>
-            下:
-            {
-              getState().q_value[
-                getState().location.y * mazeSize + getState().location.x
-              ].bottom
-            }
-          </Box>
-          <Box>
-            右:
-            {
-              getState().q_value[
-                getState().location.y * mazeSize + getState().location.x
-              ].right
-            }
-          </Box>
-          <Box>
-            左:
-            {
-              getState().q_value[
-                getState().location.y * mazeSize + getState().location.x
-              ].left
-            }
-          </Box>
-        </Box>
+        <QValueShow
+          props={
+            getState().q_value[
+              getState().location.y * mazeSize + getState().location.x
+            ]
+          }
+        />
       </Box>
     </Grid>
   );
