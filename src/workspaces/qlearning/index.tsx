@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Box, Button, Grid, Icon } from "@chakra-ui/react";
 import { useGetSet } from "react-use";
 import { RiRestartLine } from "react-icons/ri";
@@ -40,6 +40,8 @@ import {
   moveInMaze,
 } from "../../commons/maze";
 import { randInt } from "../../commons/random";
+import { QValueShow } from "./qvalueShow";
+import VariableList from "../../components/VariableList";
 
 const toolboxDefinition: BlocklyToolboxDefinition = {
   type: "category",
@@ -170,7 +172,9 @@ export function QlearningWorkspace(): JSX.Element {
     [CUSTOM_QL_QVALUE]: (state: number, direction: MazeDirection) => {
       const mazeState = getState();
       if (state < 0 || state > mazeSize * mazeSize - 1)
-        throw new Error("状態は0から99までの範囲である必要があります");
+        throw new Error(
+          `状態は0から${mazeSize * mazeSize - 1}までの範囲である必要があります`
+        );
 
       return mazeState.q_value[state][direction];
     },
@@ -181,7 +185,9 @@ export function QlearningWorkspace(): JSX.Element {
     ) => {
       const mazeState = getState();
       if (state < 0 || state > mazeSize * mazeSize - 1)
-        throw new Error("状態は0から99までの範囲である必要があります");
+        throw new Error(
+          `状態は0から${mazeSize * mazeSize - 1}までの範囲である必要があります`
+        );
       setState({
         ...mazeState,
         q_value: mazeState.q_value.map((value, i) =>
@@ -197,8 +203,12 @@ export function QlearningWorkspace(): JSX.Element {
   }).current;
 
   const [interval, setInterval] = useState(500);
+  const [variableNames, setVariableNames] = useState<string[]>([]);
   const { workspaceAreaRef, highlightBlock, getCode } = useBlocklyWorkspace({
     toolboxDefinition,
+    onCodeChange: useCallback((_: unknown, newVariableNames: string[]) => {
+      setVariableNames(newVariableNames);
+    }, []),
   });
   const interpreter = useBlocklyInterpreter({
     globalFunctions,
@@ -215,7 +225,6 @@ export function QlearningWorkspace(): JSX.Element {
           interval={interval}
           setInterval={setInterval}
           onStart={() => {
-            console.log(getCode());
             interpreter.start(getCode());
           }}
           onReset={() => {
@@ -231,6 +240,14 @@ export function QlearningWorkspace(): JSX.Element {
             });
           }}
         />
+        <VariableList
+          interpreter={interpreter}
+          variableNames={variableNames}
+          renderVariable={(value) => {
+            console.log(value);
+            return undefined;
+          }}
+        />
         <MazeRenderer maze={getState().maze} location={getState().location} />
         <Button
           leftIcon={<Icon as={RiRestartLine} />}
@@ -240,40 +257,13 @@ export function QlearningWorkspace(): JSX.Element {
         >
           新しい迷路にする
         </Button>
-        <Box>
-          <Box>
-            上:
-            {
-              getState().q_value[
-                getState().location.y * mazeSize + getState().location.x
-              ].top
-            }
-          </Box>
-          <Box>
-            下:
-            {
-              getState().q_value[
-                getState().location.y * mazeSize + getState().location.x
-              ].bottom
-            }
-          </Box>
-          <Box>
-            右:
-            {
-              getState().q_value[
-                getState().location.y * mazeSize + getState().location.x
-              ].right
-            }
-          </Box>
-          <Box>
-            左:
-            {
-              getState().q_value[
-                getState().location.y * mazeSize + getState().location.x
-              ].left
-            }
-          </Box>
-        </Box>
+        <QValueShow
+          props={
+            getState().q_value[
+              getState().location.y * mazeSize + getState().location.x
+            ]
+          }
+        />
       </Box>
     </Grid>
   );
