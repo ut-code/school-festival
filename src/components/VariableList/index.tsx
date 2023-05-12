@@ -41,7 +41,6 @@ export default function VariableList({
   }> | null>(null);
 
   useEffect(() => {
-    // ((javascriptGenerator as any)._nameDB as Names).getName(name, Names.NameType.VARIABLE)
     const onStep = () => {
       setVariables(
         variableNames.map((name) => ({
