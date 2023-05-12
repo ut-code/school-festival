@@ -1,6 +1,18 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { Box, Flex, chakra, Icon, Link } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  chakra,
+  Icon,
+  Link,
+  SimpleGrid,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
+} from "@chakra-ui/react";
 import { RiQuestionFill, RiGithubFill } from "react-icons/ri";
 import { Logo } from "./components/Logo";
 import { HelpDialog } from "./components/HelpDialog";
@@ -34,21 +46,6 @@ export function App(): JSX.Element {
             はじめてのプログラミング
           </Box>
           <Box display="flex" alignItems="stretch">
-            {routes.map((route) => (
-              <ChakraLink
-                key={route.path}
-                px={4}
-                py={3}
-                transition="color 0.2s"
-                _hover={{ color: "blue.300" }}
-                backgroundColor={
-                  location.pathname === route.path ? "blue.100" : "transparent"
-                }
-                to={route.path + location.search}
-              >
-                {route.label}
-              </ChakraLink>
-            ))}
             {!isRoot && (
               <chakra.button
                 px={4}
@@ -87,6 +84,37 @@ export function App(): JSX.Element {
             </Link>
           </Box>
         </Flex>
+        <Accordion allowToggle>
+          <AccordionItem>
+            <AccordionButton>
+              <Box as="span" flex="1" textAlign="right">
+                課題を選択
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
+            <AccordionPanel>
+              <SimpleGrid columns={4} spacing={4}>
+                {routes.map((route) => (
+                  <ChakraLink
+                    key={route.path}
+                    px={4}
+                    py={3}
+                    transition="color 0.2s"
+                    _hover={{ color: "blue.300" }}
+                    backgroundColor={
+                      location.pathname === route.path ? "blue.100" : "blue.50"
+                    }
+                    to={route.path + location.search}
+                    borderWidth="0px 0px 0px 0px"
+                    borderRadius="10px"
+                  >
+                    {route.label}
+                  </ChakraLink>
+                ))}
+              </SimpleGrid>
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
         <Box position="relative" flexGrow={1}>
           {[...routes, { path: "/", Component: TopPage }].map((route) => (
             <Box
