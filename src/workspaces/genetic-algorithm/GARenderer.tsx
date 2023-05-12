@@ -96,7 +96,7 @@ function Map({ places, route }: { places: GAPlace[]; route: GARoute }) {
 export default function GARenderer({ state }: { state: GAState }) {
   return (
     <div>
-      <Text fontSize="xl">経路</Text>
+      <Text fontSize="xl">ルート</Text>
       <List mt={1} spacing={4}>
         {state.routes.map((route, i) => {
           const totalDistance = Array.from(

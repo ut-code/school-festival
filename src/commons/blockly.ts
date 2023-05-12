@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
-import Blockly from "blockly";
+import Blockly, { VariableModel } from "blockly";
 import { javascriptGenerator } from "../config/blockly";
 
 /** ブロックの数が少ない場合 */
@@ -86,7 +86,13 @@ export function useBlocklyWorkspace({
         const latestCode = getCode();
         if (previousCode !== latestCode) {
           previousCode = latestCode;
-          onCodeChange(latestCode, workspace.getAllVariableNames());
+          // onCodeChange(latestCode, workspace.getAllVariableNames());
+          onCodeChange(
+            latestCode,
+            Blockly.Variables.allUsedVarModels(workspace).map(
+              (model: VariableModel) => model.name
+            )
+          );
         }
       });
     }

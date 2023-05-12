@@ -5,7 +5,7 @@ import nullthrows from "nullthrows";
 export type GAPlaceLabel = string & { __GAPlaceLabel: never };
 export const gaPlaceLabels = [..."ABCDEFGHJK"] as GAPlaceLabel[];
 export const gaPlaceCountInRoute = gaPlaceLabels.length;
-export const gaInitialRouteCount = 5;
+export const gaInitialRouteCount = 10;
 
 // 単位: m
 export const gaMapSize = {
@@ -30,20 +30,20 @@ export function isGAPlace(obj: unknown): obj is GAPlace {
   return Boolean(obj && (obj as GAPlace).__typename === "GAPlace");
 }
 
-/** 経路オブジェクト。「新しい経路を作成する」などのブロックで生成される。 */
+/** ルートオブジェクト。「新しいルートを作成する」などのブロックで生成される。 */
 export type GARoute = {
-  /** すべての経路でユニーク。1 からの連番 */
+  /** すべてのルートでユニーク。1 からの連番 */
   label: GARouteLabel;
   /** {@link gaPlaceCountInRoute}要素のタプル。index = 訪れる順番 */
   placeLabels: (GAPlaceLabel | null)[];
 };
 
 export type GAState = {
-  /** マップ中の経路 */
+  /** マップ中のルート */
   places: GAPlace[];
-  /** 最後に作成された経路の番号 */
+  /** 最後に作成されたルートの番号 */
   nextRouteLabel: GARouteLabel;
-  /** ユーザーが作成している経路一覧 */
+  /** ユーザーが作成しているルート一覧 */
   routes: GARoute[];
 };
 
@@ -81,7 +81,7 @@ export function createInitialGAState(): GAState {
       placeLabels: gaPlaceLabels.slice().sort(() => Math.random() - 0.5),
     };
 
-    // 重複する経路は追加しない
+    // 重複するルートは追加しない
     if (
       routes.every(
         (route) => route.placeLabels.join() !== newRoute.placeLabels.join()

@@ -47,6 +47,27 @@ javascriptGenerator[CUSTOM_GRAD_SET_X] = (block) =>
     0
   )});`;
 
+export const CUSTOM_GRAD_UPDATE_X = "custom_grad_update_x";
+export const CUSTOM_GRAD_DELTA_X = "custom_grad_delta_x";
+Blockly.Blocks[CUSTOM_GRAD_UPDATE_X] = {
+  init(this: Blockly.Block) {
+    this.appendDummyInput().appendField("x 軸方向に");
+    this.appendValueInput(CUSTOM_GRAD_DELTA_X).setCheck("Number");
+    this.appendDummyInput().appendField("だけ動く");
+    this.setColour(350);
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.setTooltip("x 軸方向に動きます。");
+  },
+};
+
+javascriptGenerator[CUSTOM_GRAD_UPDATE_X] = (block) =>
+  `${CUSTOM_GRAD_UPDATE_X}(${javascriptGenerator.valueToCode(
+    block,
+    CUSTOM_GRAD_DELTA_X,
+    0
+  )});`;
+
 export const CUSTOM_GRAD_SET_Y = "custom_grad_set_y";
 export const CUSTOM_GRAD_NEW_Y = "custom_grad_new_y";
 Blockly.Blocks[CUSTOM_GRAD_SET_Y] = {
@@ -65,6 +86,27 @@ javascriptGenerator[CUSTOM_GRAD_SET_Y] = (block) =>
   `${CUSTOM_GRAD_SET_Y}(${javascriptGenerator.valueToCode(
     block,
     CUSTOM_GRAD_NEW_Y,
+    0
+  )});`;
+
+export const CUSTOM_GRAD_UPDATE_Y = "custom_grad_update_y";
+export const CUSTOM_GRAD_DELTA_Y = "custom_grad_delta_y";
+Blockly.Blocks[CUSTOM_GRAD_UPDATE_Y] = {
+  init(this: Blockly.Block) {
+    this.appendDummyInput().appendField("y 軸方向に");
+    this.appendValueInput(CUSTOM_GRAD_DELTA_Y).setCheck("Number");
+    this.appendDummyInput().appendField("だけ動く");
+    this.setColour(350);
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.setTooltip("y 軸方向に動きます。");
+  },
+};
+
+javascriptGenerator[CUSTOM_GRAD_UPDATE_Y] = (block) =>
+  `${CUSTOM_GRAD_UPDATE_Y}(${javascriptGenerator.valueToCode(
+    block,
+    CUSTOM_GRAD_DELTA_Y,
     0
   )});`;
 
