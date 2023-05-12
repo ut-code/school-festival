@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Box, Button, Grid, Icon } from "@chakra-ui/react";
 import { useGetSet } from "react-use";
 import { RiRestartLine } from "react-icons/ri";
@@ -41,6 +41,7 @@ import {
 } from "../../commons/maze";
 import { randInt } from "../../commons/random";
 import { QValueShow } from "./qvalueShow";
+import VariableList from "../../components/VariableList";
 
 const toolboxDefinition: BlocklyToolboxDefinition = {
   type: "category",
@@ -202,8 +203,12 @@ export function QlearningWorkspace(): JSX.Element {
   }).current;
 
   const [interval, setInterval] = useState(500);
+  const [variableNames, setVariableNames] = useState<string[]>([]);
   const { workspaceAreaRef, highlightBlock, getCode } = useBlocklyWorkspace({
     toolboxDefinition,
+    onCodeChange: useCallback((_: unknown, newVariableNames: string[]) => {
+      setVariableNames(newVariableNames);
+    }, []),
   });
   const interpreter = useBlocklyInterpreter({
     globalFunctions,
@@ -220,7 +225,6 @@ export function QlearningWorkspace(): JSX.Element {
           interval={interval}
           setInterval={setInterval}
           onStart={() => {
-            console.log(getCode());
             interpreter.start(getCode());
           }}
           onReset={() => {
@@ -234,6 +238,14 @@ export function QlearningWorkspace(): JSX.Element {
                 right: 0,
               }),
             });
+          }}
+        />
+        <VariableList
+          interpreter={interpreter}
+          variableNames={variableNames}
+          renderVariable={(value) => {
+            console.log(value);
+            return undefined;
           }}
         />
         <MazeRenderer maze={getState().maze} location={getState().location} />
