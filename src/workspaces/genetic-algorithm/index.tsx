@@ -70,7 +70,7 @@ const toolboxDefinition: BlocklyToolboxDefinition = {
       ],
     },
     {
-      name: "経路",
+      name: "ルート",
       blockTypes: [
         CUSTOM_GA_ROUTE_COUNT,
         CUSTOM_GA_PLACE_COUNT,

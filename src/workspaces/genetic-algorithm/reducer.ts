@@ -4,7 +4,7 @@ import { GAPlace, GARoute, GARouteLabel, GAState } from "./types";
 // Selectors
 export function getRoute(state: GAState, index: number): GARoute {
   const route = state.routes[index - 1];
-  if (!route) throw new Error(`${index} 番目の経路は存在しません。`);
+  if (!route) throw new Error(`${index} 番目のルートは存在しません。`);
   return route;
 }
 
@@ -17,7 +17,7 @@ export function getPlaceInRoute(
   const placeLabel = route.placeLabels[placeIndex - 1];
   if (!placeLabel)
     throw new Error(
-      `${placeIndex} 番目の地点は ${routeIndex} 番目の経路にありません。`
+      `${placeIndex} 番目の地点は ${routeIndex} 番目のルートにありません。`
     );
   const place = state.places.find(({ label }) => label === placeLabel);
   invariant(place, `${placeLabel} は存在しません。`);

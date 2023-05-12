@@ -22,7 +22,7 @@ javascriptGenerator[CUSTOM_GA_RANDOM_INT] = (block) => {
 export const CUSTOM_GA_ROUTE_COUNT = "custom_ga_route_count";
 Blockly.Blocks[CUSTOM_GA_ROUTE_COUNT] = {
   init(this: Blockly.Block) {
-    this.appendDummyInput().appendField("現在の経路の数");
+    this.appendDummyInput().appendField("現在のルートの数");
     this.setOutput(true, "Number");
     this.setColour(0);
   },
@@ -46,11 +46,10 @@ javascriptGenerator[CUSTOM_GA_PLACE_COUNT] = () => {
 export const CUSTOM_GA_CREATE_ROUTE = "custom_ga_create_route";
 Blockly.Blocks[CUSTOM_GA_CREATE_ROUTE] = {
   init(this: Blockly.Block) {
-    this.appendDummyInput().appendField("新しい経路を作成する");
+    this.appendDummyInput().appendField("新しいルートを作成する");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(0);
-    this.setTooltip("経路");
   },
 };
 javascriptGenerator[CUSTOM_GA_CREATE_ROUTE] = () =>
@@ -60,11 +59,10 @@ export const CUSTOM_GA_DUPLICATE_ROUTE = "custom_ga_duplicate_route";
 Blockly.Blocks[CUSTOM_GA_DUPLICATE_ROUTE] = {
   init(this: Blockly.Block) {
     this.appendValueInput("i").setCheck("Number");
-    this.appendDummyInput().appendField("番目の経路をコピーする");
+    this.appendDummyInput().appendField("番目のルートをコピーする");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(0);
-    this.setTooltip("経路");
   },
 };
 javascriptGenerator[CUSTOM_GA_DUPLICATE_ROUTE] = (block) => {
@@ -76,7 +74,7 @@ export const CUSTOM_GA_DISCARD_ROUTE = "custom_ga_discard_route";
 Blockly.Blocks[CUSTOM_GA_DISCARD_ROUTE] = {
   init(this: Blockly.Block) {
     this.appendValueInput("routeIndex").setCheck("Number");
-    this.appendDummyInput().appendField("番目の経路を削除する");
+    this.appendDummyInput().appendField("番目のルートを削除する");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(0);
@@ -92,11 +90,10 @@ export const CUSTOM_GA_DISCARD_AFTER_NTH_ROUTE =
 Blockly.Blocks[CUSTOM_GA_DISCARD_AFTER_NTH_ROUTE] = {
   init(this: Blockly.Block) {
     this.appendValueInput("i").setCheck("Number");
-    this.appendDummyInput().appendField("番目以降の経路を削除する");
+    this.appendDummyInput().appendField("番目以降のルートを削除する");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(0);
-    this.setTooltip("経路");
   },
 };
 javascriptGenerator[CUSTOM_GA_DISCARD_AFTER_NTH_ROUTE] = (block) => {
@@ -110,11 +107,10 @@ Blockly.Blocks[CUSTOM_GA_SWAP_ROUTES] = {
     this.appendValueInput("routeIndex1").setCheck("Number");
     this.appendDummyInput().appendField("番目と");
     this.appendValueInput("routeIndex2").setCheck("Number");
-    this.appendDummyInput().appendField("番目の経路を入れ替える");
+    this.appendDummyInput().appendField("番目のルートを入れ替える");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(0);
-    this.setTooltip("経路");
   },
 };
 javascriptGenerator[CUSTOM_GA_SWAP_ROUTES] = (block) => {
@@ -127,14 +123,13 @@ export const CUSTOM_GA_DISTANCE = "custom_ga_distance";
 Blockly.Blocks[CUSTOM_GA_DISTANCE] = {
   init(this: Blockly.Block) {
     this.appendValueInput("routeIndex").setCheck("Number");
-    this.appendDummyInput().appendField("番目の経路の");
+    this.appendDummyInput().appendField("番目のルートの");
     this.appendValueInput("placeIndex1").setCheck("Number");
     this.appendDummyInput().appendField("番目と");
     this.appendValueInput("placeIndex2").setCheck("Number");
     this.appendDummyInput().appendField("番目の地点間の距離");
     this.setOutput(true, "Number");
     this.setColour(0);
-    this.setTooltip("経路");
   },
 };
 javascriptGenerator[CUSTOM_GA_DISTANCE] = (block) => {
@@ -151,7 +146,7 @@ export const CUSTOM_GA_SWAP_PLACE = "custom_ga_swap_place";
 Blockly.Blocks[CUSTOM_GA_SWAP_PLACE] = {
   init(this: Blockly.Block) {
     this.appendValueInput("routeIndex").setCheck("Number");
-    this.appendDummyInput().appendField("番目の経路の");
+    this.appendDummyInput().appendField("番目のルートの");
     this.appendValueInput("placeIndex1").setCheck("Number");
     this.appendDummyInput().appendField("番目と");
     this.appendValueInput("placeIndex2").setCheck("Number");
@@ -172,7 +167,7 @@ export const CUSTOM_GA_NTH_PLACE = "custom_ga_nth_place";
 Blockly.Blocks[CUSTOM_GA_NTH_PLACE] = {
   init(this: Blockly.Block) {
     this.appendValueInput("routeIndex").setCheck("Number");
-    this.appendDummyInput().appendField("番目の経路の");
+    this.appendDummyInput().appendField("番目のルートの");
     this.appendValueInput("placeIndex").setCheck("Number");
     this.appendDummyInput().appendField("番目の地点");
     this.setOutput(true, "Place");
@@ -190,7 +185,7 @@ export const CUSTOM_GA_PLACE_EXISTS_IN_ROUTE =
 Blockly.Blocks[CUSTOM_GA_PLACE_EXISTS_IN_ROUTE] = {
   init(this: Blockly.Block) {
     this.appendValueInput("routeIndex").setCheck("Number");
-    this.appendDummyInput().appendField("番目の経路に");
+    this.appendDummyInput().appendField("番目のルートに");
     this.appendValueInput("place").setCheck("Place");
     this.appendDummyInput().appendField("が含まれる");
     this.setOutput(true, "Boolean");
@@ -207,7 +202,7 @@ export const CUSTOM_GA_ADD_PLACE = "custom_ga_add_place";
 Blockly.Blocks[CUSTOM_GA_ADD_PLACE] = {
   init(this: Blockly.Block) {
     this.appendValueInput("routeIndex").setCheck("Number");
-    this.appendDummyInput().appendField("番目の経路に");
+    this.appendDummyInput().appendField("番目のルートに");
     this.appendValueInput("place").setCheck("Place");
     this.appendDummyInput().appendField("を追加する");
     this.setPreviousStatement(true, null);
