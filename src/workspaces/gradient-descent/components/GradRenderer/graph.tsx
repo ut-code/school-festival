@@ -48,6 +48,7 @@ export class GradGraph {
     this.controls = new OrbitControls(this.camera, props.canvas);
     this.controls.maxDistance = 2500;
     this.controls.maxPolarAngle = Math.PI / 2 - 0.1;
+    this.controls.enablePan = false;
 
     this.scene = new THREE.Scene();
 
