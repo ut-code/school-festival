@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Box, Grid, Text, Button, Icon } from "@chakra-ui/react";
+import { Box, Grid, Text, Button, Icon, chakra, Stack } from "@chakra-ui/react";
 import { useGetSet } from "react-use";
 import { RiRestartLine } from "react-icons/ri";
 import {
@@ -23,6 +23,8 @@ import {
   CUSTOM_GRAD_OBJECTIVE,
   CUSTOM_GRAD_SET_X,
   CUSTOM_GRAD_SET_Y,
+  CUSTOM_GRAD_UPDATE_X,
+  CUSTOM_GRAD_UPDATE_Y,
   CUSTOM_GRAD_X_VALUE,
   CUSTOM_GRAD_Y_VALUE,
 } from "./blocks";
@@ -54,11 +56,66 @@ const toolboxDefinition: BlocklyToolboxDefinition = {
         CUSTOM_GRAD_OBJECTIVE,
         CUSTOM_GRAD_SET_X,
         CUSTOM_GRAD_SET_Y,
+        CUSTOM_GRAD_UPDATE_X,
+        CUSTOM_GRAD_UPDATE_Y,
       ],
     },
   ],
   enableVariables: true,
 };
+
+const Table = chakra("table", {
+  baseStyle: {
+    tableLayout: "fixed",
+  },
+});
+const Tbody = chakra("tbody", { baseStyle: {} });
+const Tr = chakra("tr", { baseStyle: {} });
+const ThX = chakra("th", {
+  baseStyle: {
+    border: "1px solid",
+    borderColor: "gray.500",
+    px: 2,
+    py: 1,
+    width: "50px",
+    background: "gray.100",
+    fontWeight: "normal",
+    color: "#ff0000",
+  },
+});
+const ThY = chakra("th", {
+  baseStyle: {
+    border: "1px solid",
+    borderColor: "gray.500",
+    px: 2,
+    py: 1,
+    width: "50px",
+    background: "gray.100",
+    fontWeight: "normal",
+    color: "#0000ff",
+  },
+});
+const ThZ = chakra("th", {
+  baseStyle: {
+    border: "1px solid",
+    borderColor: "gray.500",
+    px: 2,
+    py: 1,
+    width: "50px",
+    background: "gray.100",
+    fontWeight: "normal",
+    color: "#00a000",
+  },
+});
+const Td = chakra("td", {
+  baseStyle: {
+    border: "1px solid",
+    borderColor: "gray.500",
+    px: 2,
+    py: 1,
+    width: "50px",
+  },
+});
 
 export type GradWorkspaceState = {
   x: number;
@@ -109,12 +166,42 @@ export function GradWorkspace(): JSX.Element {
       setState({ ...state, x: newX });
       isConvergence(getState());
     },
+    [CUSTOM_GRAD_UPDATE_X]: (deltaX: number) => {
+      const state = getState();
+      if (
+        objectiveFunction(
+          state.x + deltaX,
+          state.y,
+          state.xAnswer,
+          state.yAnswer
+        ) < 50
+      ) {
+        throw new Error("山から下りてしまいました。");
+      }
+      setState({ ...state, x: state.x + deltaX });
+      isConvergence(getState());
+    },
     [CUSTOM_GRAD_SET_Y]: (newY: number) => {
       const state = getState();
       if (objectiveFunction(state.x, newY, state.xAnswer, state.yAnswer) < 50) {
         throw new Error("山から下りてしまいました。");
       }
       setState({ ...state, y: newY });
+      isConvergence(getState());
+    },
+    [CUSTOM_GRAD_UPDATE_Y]: (deltaY: number) => {
+      const state = getState();
+      if (
+        objectiveFunction(
+          state.x,
+          state.y + deltaY,
+          state.xAnswer,
+          state.yAnswer
+        ) < 50
+      ) {
+        throw new Error("山から下りてしまいました。");
+      }
+      setState({ ...state, y: state.y + deltaY });
       isConvergence(getState());
     },
     [CUSTOM_GRAD_X_VALUE]: () => {
@@ -140,7 +227,7 @@ export function GradWorkspace(): JSX.Element {
   return (
     <Grid h="100%" templateColumns="1fr 25rem">
       <div ref={workspaceAreaRef} />
-      <Box p={4}>
+      <Box p={4} overflow="auto">
         <ExecutionManager
           interpreter={interpreter}
           interval={interval}
@@ -152,9 +239,35 @@ export function GradWorkspace(): JSX.Element {
             setState({ ...getState(), x: initialX, y: initialY });
           }}
         />
-        <Text mt={2}>x: {getState().x}</Text>
-        <Text mt={2}>y: {getState().y}</Text>
-        <Box mb={3}>
+        <Text fontSize="xl" mt={2}>
+          現在位置
+        </Text>
+        <Stack direction="row">
+          <Table mt={1}>
+            <Tbody>
+              <Tr>
+                <ThX>x</ThX>
+                <Td>{getState().x}</Td>
+              </Tr>
+              <Tr>
+                <ThY>y</ThY>
+                <Td>{getState().y}</Td>
+              </Tr>
+              <Tr>
+                <ThZ>高さ</ThZ>
+                <Td>
+                  {objectiveFunction(
+                    getState().x,
+                    getState().y,
+                    getState().xAnswer,
+                    getState().yAnswer
+                  )}
+                </Td>
+              </Tr>
+            </Tbody>
+          </Table>
+        </Stack>
+        <Box mb={3} mt={2}>
           <GradRenderer
             x={getState().x}
             y={getState().y}

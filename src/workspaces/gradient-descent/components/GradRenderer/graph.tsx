@@ -19,7 +19,7 @@ export class GradGraph {
 
   goal = GradGraph.createMeshOfPoints(0xff0000, 30, [0, 0, 0], false, 1.0);
 
-  human = GradGraph.createHuman(0x00ffff);
+  human = GradGraph.createHuman(0xffff00);
 
   constructor(props: {
     xAnswer: number;
@@ -36,11 +36,19 @@ export class GradGraph {
     this.renderer.setSize(props.width, props.height);
     this.renderer.localClippingEnabled = true;
 
-    this.camera = new THREE.PerspectiveCamera(60, props.width / props.height);
+    this.camera = new THREE.PerspectiveCamera(
+      60,
+      props.width / props.height,
+      1,
+      10000
+    );
     this.camera.position.set(500, 500, 500);
     this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
     this.controls = new OrbitControls(this.camera, props.canvas);
+    this.controls.maxDistance = 2500;
+    this.controls.maxPolarAngle = Math.PI / 2 - 0.1;
+    this.controls.enablePan = false;
 
     this.scene = new THREE.Scene();
 
@@ -51,23 +59,26 @@ export class GradGraph {
 
     const directions = [
       new THREE.Vector3(1, 0, 0),
-      new THREE.Vector3(0, 1, 0),
+      // new THREE.Vector3(0, 1, 0),
       new THREE.Vector3(0, 0, 1),
     ];
-    const axesColors = [0xff0000, 0x00ff00, 0x0000ff];
+    const axesColors = [0xff0000, 0x0000ff];
 
-    for (let i = 0; i < 3; i += 1) {
+    for (let i = 0; i < 2; i += 1) {
       const axis = GradGraph.createAxis(
-        1.3 * maxes[i],
+        3 * maxes[i],
         directions[i],
         axesColors[i]
       );
       this.scene.add(axis);
     }
 
-    // this.scene.add(
-    //   GradGraph.createPlane(0x00ff00, 3 * maxes[0], 3 * maxes[2], 64, 64, 0)
-    // );
+    const skyboxMaterialArray = GradGraph.createSkyMaterialArray();
+    const skyboxGeometry = new THREE.BoxGeometry(5000, 5000, 5000);
+    const skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterialArray);
+    this.scene.add(skybox);
+
+    this.scene.add(GradGraph.createPlane(0x00ff00, 10000, 10000, 64, 64, 0));
 
     // this.scene.add(
     //   GradGraph.createCube(0x00ff00, 3.0 * maxes[0], 100, 3.0 * maxes[2], -50)
@@ -81,6 +92,56 @@ export class GradGraph {
     this.directionalLight.position.z = 0;
     this.scene.add(this.directionalLight);
   }
+
+  static createSkyPathStrings() {
+    const imageURLs = [
+      new URL("../../images/sky_ft.png", import.meta.url).toString(),
+      new URL("../../images/sky_bk.png", import.meta.url).toString(),
+      new URL("../../images/sky_up.png", import.meta.url).toString(),
+      new URL("../../images/sky_dn.png", import.meta.url).toString(),
+      new URL("../../images/sky_lf.png", import.meta.url).toString(),
+      new URL("../../images/sky_rt.png", import.meta.url).toString(),
+    ];
+    return imageURLs;
+  }
+
+  static createSkyMaterialArray() {
+    const skyboxImagePaths = GradGraph.createSkyPathStrings();
+    const materialArray = skyboxImagePaths.map((image) => {
+      const texture = new THREE.TextureLoader().load(image);
+      const material = new THREE.MeshBasicMaterial({
+        map: texture,
+        side: THREE.BackSide,
+      });
+      return material;
+    });
+    return materialArray;
+  }
+
+  // static createNebulaPathStrings() {
+  //   const basePath =
+  //     "https://raw.githubusercontent.com/codypearce/some-skyboxes/master/skyboxes/purplenebula/purplenebula";
+  //   const fileType = ".png";
+  //   const sides = ["ft", "bk", "up", "dn", "rt", "lf"];
+  //   const pathStrings = sides.map((side) => {
+  //     return `${basePath}_${side}${fileType}`;
+  //   });
+  //   return pathStrings;
+  // }
+
+  // static createNebulaMaterialArray() {
+  //   const skyboxImagePaths = GradGraph.createNebulaPathStrings();
+  //   const materialArray = skyboxImagePaths.map((image) => {
+  //     const texture = new THREE.TextureLoader().load(image);
+  //     texture.needsUpdate = true;
+  //     const material = new THREE.MeshBasicMaterial({
+  //       map: texture,
+  //       side: THREE.BackSide,
+  //     });
+  //     return material;
+  //   });
+  //   return materialArray;
+  // }
 
   static createAxis(max: number, direction: THREE.Vector3, color: number) {
     const axisLength = max * 2;
@@ -102,36 +163,36 @@ export class GradGraph {
     return axis;
   }
 
-  // static createPlane(
-  //   color: number,
-  //   width: number,
-  //   height: number,
-  //   widthSegments: number,
-  //   heightSegments: number,
-  //   positionY: number
-  // ) {
-  //   const geometry = new THREE.PlaneGeometry(
-  //     width,
-  //     height,
-  //     widthSegments,
-  //     heightSegments
-  //   );
-  //   const positionAttribute = geometry.attributes
-  //     .position as THREE.BufferAttribute;
-  //   for (let i = 0; i < positionAttribute.count; i += 1) {
-  //     positionAttribute.setZ(i, Math.random() * 10);
-  //   }
-  //   positionAttribute.needsUpdate = true;
-  //   geometry.computeVertexNormals();
-  //   const material = new THREE.MeshStandardMaterial({
-  //     color,
-  //     side: THREE.DoubleSide,
-  //   });
-  //   const plane = new THREE.Mesh(geometry, material);
-  //   plane.rotation.set(Math.PI / 2, 0, 0);
-  //   plane.position.set(0, positionY, 0);
-  //   return plane;
-  // }
+  static createPlane(
+    color: number,
+    width: number,
+    height: number,
+    widthSegments: number,
+    heightSegments: number,
+    positionY: number
+  ) {
+    const geometry = new THREE.PlaneGeometry(
+      width,
+      height,
+      widthSegments,
+      heightSegments
+    );
+    // const positionAttribute = geometry.attributes
+    //   .position as THREE.BufferAttribute;
+    // for (let i = 0; i < positionAttribute.count; i += 1) {
+    //   positionAttribute.setZ(i, Math.random() * 10);
+    // }
+    // positionAttribute.needsUpdate = true;
+    // geometry.computeVertexNormals();
+    const material = new THREE.MeshStandardMaterial({
+      color,
+      side: THREE.DoubleSide,
+    });
+    const plane = new THREE.Mesh(geometry, material);
+    plane.rotation.set(Math.PI / 2, 0, 0);
+    plane.position.set(0, positionY, 0);
+    return plane;
+  }
 
   // static createCube(
   //   color: number,
@@ -217,8 +278,8 @@ export class GradGraph {
   createGraph(xAnswer: number, yAnswer: number) {
     // const clippingPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 1);
     const interval = 30.0;
-    for (let x = -1.5 * maxes[0]; x <= 1.5 * maxes[0]; x += interval) {
-      for (let z = -1.5 * maxes[2]; z <= 1.5 * maxes[2]; z += interval) {
+    for (let x = -2.0 * maxes[0]; x <= 2.0 * maxes[0]; x += interval) {
+      for (let z = -2.0 * maxes[2]; z <= 2.0 * maxes[2]; z += interval) {
         const vertices = [];
         const y0 = objectiveFunction(x, z, xAnswer, yAnswer);
         const y1 = objectiveFunction(x + interval, z, xAnswer, yAnswer);

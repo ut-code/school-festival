@@ -1,6 +1,8 @@
 import { ReactNode, useEffect, useState } from "react";
 import { Text, chakra } from "@chakra-ui/react";
+import { Names } from "blockly";
 import { BlocklyInterpreter } from "../../commons/interpreter";
+import { javascriptGenerator } from "../../config/blockly";
 
 const Table = chakra("table", {
   baseStyle: { width: "100%", tableLayout: "fixed" },
@@ -39,11 +41,19 @@ export default function VariableList({
   }> | null>(null);
 
   useEffect(() => {
+    // ((javascriptGenerator as any)._nameDB as Names).getName(name, Names.NameType.VARIABLE)
     const onStep = () => {
       setVariables(
         variableNames.map((name) => ({
           name,
-          value: interpreter.getVariable(name),
+          value: interpreter.getVariable(
+            ((javascriptGenerator as any).nameDB_ as Names).getName( // eslint-disable-line
+              name,
+              Names.NameType.VARIABLE
+            )
+            // 空白文字を _ に置き換えたあと encodeURIComponent で UTF-8 に変換し、さらに % を _ に置き換え
+            // encodeURIComponent(name.replace(/\s+/g, "_")).replace(/%/g, "_")
+          ),
         }))
       );
     };
