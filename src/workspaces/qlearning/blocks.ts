@@ -226,5 +226,5 @@ javascriptGenerator[CUSTOM_QL_QVALUE_UPDATE] = (block) => {
   const arg2 =
     javascriptGenerator.valueToCode(block, "direction", 0) || `"left"`;
   const arg3 = javascriptGenerator.valueToCode(block, "value", 0) || 0;
-  return `${CUSTOM_QL_QVALUE_UPDATE}(${arg1}, ${arg2}, ${arg3})`;
+  return `${CUSTOM_QL_QVALUE_UPDATE}(${arg1}, ${arg2}, ${arg3});`;
 };
