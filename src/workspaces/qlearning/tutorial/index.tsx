@@ -39,7 +39,7 @@ export const QlearningTutorialSteps: TutorialDialogPropsStep[] = [
           alt="現在位置の行・列"
         />
         <Box>
-          ２つ目の引数には方向が入ります。方向は、変数に代入して使うことも出来ます。
+          ２つ目の引数には移動する方向が入ります。方向は、変数に代入して使うことも出来ます。
         </Box>
         <img
           src={new URL(
@@ -76,7 +76,7 @@ export const QlearningTutorialSteps: TutorialDialogPropsStep[] = [
         </Box>
         <img
           src={new URL(
-            "./2023-05-12-175611_787x141_scrot.png",
+            "./2023-05-13-133136_815x123_scrot.png",
             import.meta.url
           ).toString()}
           alt="移動方向"
