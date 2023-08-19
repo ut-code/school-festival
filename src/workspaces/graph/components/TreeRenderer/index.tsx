@@ -1,21 +1,21 @@
 import { Box, Flex, HStack, Text } from "@chakra-ui/react";
 
-type TNode = {
+type Node = {
   id: string;
   value: string;
-  leftChild: TNode | null;
-  rightChild: TNode | null;
+  leftChild: Node | null;
+  rightChild: Node | null;
   visited: boolean;
 };
 
 type TreeRendererProps = {
-  rootTNode: TNode;
-  currentTNode: TNode;
+  rootNode: Node;
+  currentNode: Node;
 };
 
-export function TreeRenderer({ rootTNode, currentTNode }: TreeRendererProps) {
+export function TreeRenderer({ rootNode, currentNode }: TreeRendererProps) {
   let colour;
-  if (rootTNode.visited) {
+  if (rootNode.visited) {
     colour = "blue.400";
   } else {
     colour = "gray.400";
@@ -25,26 +25,26 @@ export function TreeRenderer({ rootTNode, currentTNode }: TreeRendererProps) {
       <Box>
         <HStack>
           <Box w="15px" h="15px" borderRadius="50%" bg={colour} />
-          {rootTNode.id === currentTNode.id && (
-            <Text textDecoration="underline">{rootTNode.value}</Text>
+          {rootNode.id === currentNode.id && (
+            <Text textDecoration="underline">{rootNode.value}</Text>
           )}
-          {rootTNode.id !== currentTNode.id && <Text>{rootTNode.value}</Text>}{" "}
+          {rootNode.id !== currentNode.id && <Text>{rootNode.value}</Text>}{" "}
           {/* <Text>{colour}</Text> */}
         </HStack>
       </Box>
       <HStack>
-        {rootTNode.leftChild && (
+        {rootNode.leftChild && (
           <TreeRenderer
-            key={rootTNode.leftChild.value}
-            rootTNode={rootTNode.leftChild}
-            currentTNode={currentTNode}
+            key={rootNode.leftChild.value}
+            rootNode={rootNode.leftChild}
+            currentNode={currentNode}
           />
         )}
-        {rootTNode.rightChild && (
+        {rootNode.rightChild && (
           <TreeRenderer
-            key={rootTNode.rightChild.value}
-            rootTNode={rootTNode.rightChild}
-            currentTNode={currentTNode}
+            key={rootNode.rightChild.value}
+            rootNode={rootNode.rightChild}
+            currentNode={currentNode}
           />
         )}
       </HStack>

@@ -44,21 +44,21 @@ const toolboxDefinition: BlocklyToolboxDefinition = {
 };
 
 export function GraphWorkspace(): JSX.Element {
-  type TNode = {
+  type Node = {
     id: string;
     value: string;
-    leftChild: TNode | null;
-    rightChild: TNode | null;
+    leftChild: Node | null;
+    rightChild: Node | null;
     visited: boolean;
   };
 
   type AllState = {
-    rootTNode: TNode;
-    currentTNode: TNode;
-    stack: TNode[];
+    rootNode: Node;
+    currentNode: Node;
+    stack: Node[];
   };
 
-  const TNode7: TNode = {
+  const Node7: Node = {
     id: "7",
     value: "seven",
     leftChild: null,
@@ -66,7 +66,7 @@ export function GraphWorkspace(): JSX.Element {
     visited: false,
   };
 
-  const TNode6: TNode = {
+  const Node6: Node = {
     id: "6",
     value: "six",
     leftChild: null,
@@ -74,7 +74,7 @@ export function GraphWorkspace(): JSX.Element {
     visited: false,
   };
 
-  const TNode5: TNode = {
+  const Node5: Node = {
     id: "5",
     value: "five",
     leftChild: null,
@@ -82,7 +82,7 @@ export function GraphWorkspace(): JSX.Element {
     visited: false,
   };
 
-  const TNode4: TNode = {
+  const Node4: Node = {
     id: "4",
     value: "four",
     leftChild: null,
@@ -90,38 +90,38 @@ export function GraphWorkspace(): JSX.Element {
     visited: false,
   };
 
-  const TNode3: TNode = {
+  const Node3: Node = {
     id: "3",
     value: "three",
-    leftChild: TNode6,
-    rightChild: TNode7,
+    leftChild: Node6,
+    rightChild: Node7,
     visited: false,
   };
 
-  const TNode2: TNode = {
+  const Node2: Node = {
     id: "2",
     value: "two",
-    leftChild: TNode4,
-    rightChild: TNode5,
+    leftChild: Node4,
+    rightChild: Node5,
     visited: false,
   };
 
-  const TNode1: TNode = {
+  const Node1: Node = {
     id: "1",
     value: "one",
-    leftChild: TNode2,
-    rightChild: TNode3,
+    leftChild: Node2,
+    rightChild: Node3,
     visited: false,
   };
 
   // interpreter に渡す関数は実行開始時に決定されるため、通常の state だと最新の情報が参照できません
   // このため、反則ですが内部的に ref を用いて状態管理をしている react-use の [useGetSet](https://github.com/streamich/react-use/blob/master/docs/useGetSet.md) を用いています。
   const [getState, setState] = useGetSet<AllState>({
-    rootTNode: TNode1,
-    currentTNode: TNode1,
-    stack: [TNode1],
+    rootNode: Node1,
+    currentNode: Node1,
+    stack: [Node1],
   });
-  // setState(TNode1);
+  // setState(Node1);
 
   // javascriptGenerator により生成されたコードから呼ばれる関数を定義します
   const globalFunctions = useRef({
@@ -135,9 +135,9 @@ export function GraphWorkspace(): JSX.Element {
     //   if (newState < 0) throw new Error("残念！ゼロを下回ってしまいました...");
     // },
     [CUSTOM_GRAPH_COLOUR_CHANGE]: () => {
-      const { currentTNode } = getState();
-      currentTNode.visited = true;
-      const newState = { ...getState(), currentTNode };
+      const { currentNode } = getState();
+      currentNode.visited = true;
+      const newState = { ...getState(), currentNode };
       setState(newState);
       // // GlobalFunction 内で BlocklyEditorMessage オブジェクトをスローすると「情報」スナックバーが表示され、実行が停止されます
       // if (newState >= 10) throw new BlocklyEditorMessage("10 になりました！");
@@ -145,10 +145,10 @@ export function GraphWorkspace(): JSX.Element {
       // if (newState < 0) throw new Error("残念！ゼロを下回ってしまいました...");
     },
     [CUSTOM_GRAPH_STACK_PUSH]: (direction: "left" | "right") => {
-      const { stack, currentTNode } = getState();
+      const { stack, currentNode } = getState();
       if (direction === "left") {
-        if (currentTNode.leftChild) {
-          stack.push(currentTNode.leftChild);
+        if (currentNode.leftChild) {
+          stack.push(currentNode.leftChild);
           const newState = {
             ...getState(),
             stack,
@@ -156,8 +156,8 @@ export function GraphWorkspace(): JSX.Element {
           setState(newState);
         }
       } else if (direction === "right") {
-        if (currentTNode.rightChild) {
-          stack.push(currentTNode.rightChild);
+        if (currentNode.rightChild) {
+          stack.push(currentNode.rightChild);
           const newState = {
             ...getState(),
             stack,
@@ -168,21 +168,21 @@ export function GraphWorkspace(): JSX.Element {
     },
     [CUSTOM_GRAPH_STACK_POP]: () => {
       const { stack } = getState();
-      const currentTNode = stack.pop();
-      if (!currentTNode)
+      const currentNode = stack.pop();
+      if (!currentNode)
         throw new BlocklyEditorMessage("すべての探索をクリアしました！");
 
       const newState: AllState = {
         ...getState(),
         stack,
-        currentTNode,
+        currentNode,
       };
       setState(newState);
     },
     [CUSTOM_GRAPH_STACK_INITIALIZE]: () => {
       const newState: AllState = {
         ...getState(),
-        stack: [getState().rootTNode],
+        stack: [getState().rootNode],
       };
       setState(newState);
     },
@@ -214,9 +214,9 @@ export function GraphWorkspace(): JSX.Element {
           }}
         />
         <TreeRenderer
-          key={TNode1.id}
-          rootTNode={getState().rootTNode}
-          currentTNode={getState().currentTNode}
+          key={Node1.id}
+          rootNode={getState().rootNode}
+          currentNode={getState().currentNode}
         />
         <StackRenderer stack={getState().stack} />
       </Box>
