@@ -9,11 +9,18 @@ import {
   BlocklyToolboxDefinition,
   useBlocklyWorkspace,
 } from "../../commons/blockly";
-import { CUSTOM_COMMON_WHILE_TRUE } from "../../config/blockly.blocks";
+import {
+  CUSTOM_COMMON_IF,
+  CUSTOM_COMMON_IF_ELSE,
+  CUSTOM_COMMON_WHILE,
+  CUSTOM_COMMON_WHILE_TRUE,
+} from "../../config/blockly.blocks";
 import {
   CUSTOM_GRAPH_COLOUR_CHANGE,
-  CUSTOM_GRAPH_DIRECTION_POP,
-  CUSTOM_GRAPH_DIRECTION_PUSH,
+  CUSTOM_GRAPH_STACK_PUSH,
+  CUSTOM_GRAPH_STACK_POP,
+  CUSTOM_GRAPH_NODE_CHILD_EXISTS,
+  CUSTOM_GRAPH_STACK_INITIALIZE,
 } from "./blocks";
 import { ExecutionManager } from "../../components/ExecutionManager";
 import { TreeRenderer } from "./components/TreeRenderer";
@@ -24,10 +31,15 @@ const toolboxDefinition: BlocklyToolboxDefinition = {
   blockTypes: [
     // 共有のブロック
     CUSTOM_COMMON_WHILE_TRUE,
+    CUSTOM_COMMON_WHILE,
+    CUSTOM_COMMON_IF,
+    CUSTOM_COMMON_IF_ELSE,
     // ワークスペースごとに定義したブロック
     CUSTOM_GRAPH_COLOUR_CHANGE,
-    CUSTOM_GRAPH_DIRECTION_PUSH,
-    CUSTOM_GRAPH_DIRECTION_POP,
+    CUSTOM_GRAPH_STACK_PUSH,
+    CUSTOM_GRAPH_STACK_POP,
+    CUSTOM_GRAPH_NODE_CHILD_EXISTS,
+    CUSTOM_GRAPH_STACK_INITIALIZE,
   ],
 };
 
@@ -132,7 +144,7 @@ export function GraphWorkspace(): JSX.Element {
       // // GlobalFunction 内で Error オブジェクトをスローすると「エラー」スナックバーが表示され、実行が停止されます
       // if (newState < 0) throw new Error("残念！ゼロを下回ってしまいました...");
     },
-    [CUSTOM_GRAPH_DIRECTION_PUSH]: (direction: "left" | "right") => {
+    [CUSTOM_GRAPH_STACK_PUSH]: (direction: "left" | "right") => {
       const { stack, currentTNode } = getState();
       if (direction === "left") {
         if (currentTNode.leftChild) {
@@ -154,7 +166,7 @@ export function GraphWorkspace(): JSX.Element {
         }
       }
     },
-    [CUSTOM_GRAPH_DIRECTION_POP]: () => {
+    [CUSTOM_GRAPH_STACK_POP]: () => {
       const { stack } = getState();
       const currentTNode = stack.pop();
       if (!currentTNode)
@@ -164,6 +176,13 @@ export function GraphWorkspace(): JSX.Element {
         ...getState(),
         stack,
         currentTNode,
+      };
+      setState(newState);
+    },
+    [CUSTOM_GRAPH_STACK_INITIALIZE]: () => {
+      const newState: AllState = {
+        ...getState(),
+        stack: [getState().rootTNode],
       };
       setState(newState);
     },
