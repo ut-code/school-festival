@@ -97,7 +97,10 @@ export function MazeWorkspace(): JSX.Element {
         ...state,
         self: { ...state.self, location: nextCell.location },
       });
-      if (nextCell.location.x === 9 && nextCell.location.y === 9) {
+      if (
+        nextCell.location.x === state.maze[0].length - 1 &&
+        nextCell.location.y === state.maze.length - 1
+      ) {
         throw new BlocklyEditorMessage("迷路をクリアしました！");
       }
     },
