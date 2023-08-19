@@ -213,12 +213,12 @@ export function GraphWorkspace(): JSX.Element {
             setState({ ...getState() });
           }}
         />
-        <StackRenderer stack={getState().stack} />
         <TreeRenderer
           key={TNode1.id}
           rootTNode={getState().rootTNode}
           currentTNode={getState().currentTNode}
         />
+        <StackRenderer stack={getState().stack} />
       </Box>
     </Grid>
   );

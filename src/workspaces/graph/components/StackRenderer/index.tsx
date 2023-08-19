@@ -17,19 +17,19 @@ export function StackRenderer({ stack }: StackRendererProps) {
     <Stack
       maxW="100px"
       spacing="0"
-      borderWidth="4px"
-      borderRadius="md"
-      overflow="hidden"
+      borderBottomRadius="md"
       borderTopWidth="0"
+      marginX={10}
+      marginY={10}
     >
       {reversedStack.map((tNode, index) => (
         <Box
           borderWidth="1px"
-          borderColor="gray.200"
-          px="3"
+          borderColor="gray.500"
+          textAlign="center"
           py="2"
           borderBottomWidth={index === reversedStack.length - 1 ? "1px" : "0"}
-          bg={index % 2 === 0 ? "gray.50" : "white"}
+          bg="gray.100"
           _last={{ borderBottomRadius: "md" }}
         >
           {tNode.value}
