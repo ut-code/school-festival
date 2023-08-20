@@ -1,6 +1,8 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Box, Grid } from "@chakra-ui/react";
 import { useGetSet } from "react-use";
+import Draggable from "react-draggable";
+import * as _ from "lodash";
 import {
   BlocklyEditorMessage,
   useBlocklyInterpreter,
@@ -23,8 +25,8 @@ import {
   CUSTOM_GRAPH_STACK_INITIALIZE,
 } from "./blocks";
 import { ExecutionManager } from "../../components/ExecutionManager";
-import { TreeRenderer } from "./components/TreeRenderer";
 import { StackRenderer } from "./components/StackRenderer";
+import { TreeRenderer } from "./components/TreeRenderer";
 
 const toolboxDefinition: BlocklyToolboxDefinition = {
   type: "flyout",
@@ -47,81 +49,126 @@ export function GraphWorkspace(): JSX.Element {
   type Node = {
     id: string;
     value: string;
+    parent: Node | null;
     leftChild: Node | null;
     rightChild: Node | null;
     visited: boolean;
+    current: boolean;
   };
 
   type AllState = {
     rootNode: Node;
     currentNode: Node;
     stack: Node[];
+    index: number;
+  };
+
+  const Node8: Node = {
+    id: "8",
+    value: "4",
+    parent: null,
+    leftChild: null,
+    rightChild: null,
+    visited: false,
+    current: false,
   };
 
   const Node7: Node = {
     id: "7",
-    value: "seven",
+    value: "8",
+    parent: null,
     leftChild: null,
     rightChild: null,
     visited: false,
+    current: false,
   };
 
   const Node6: Node = {
     id: "6",
-    value: "six",
+    value: "7",
+    parent: null,
     leftChild: null,
     rightChild: null,
     visited: false,
+    current: false,
   };
 
   const Node5: Node = {
     id: "5",
-    value: "five",
+    value: "5",
+    parent: null,
     leftChild: null,
     rightChild: null,
     visited: false,
+    current: false,
   };
 
   const Node4: Node = {
     id: "4",
-    value: "four",
+    value: "3",
+    parent: null,
     leftChild: null,
     rightChild: null,
     visited: false,
+    current: false,
   };
 
   const Node3: Node = {
     id: "3",
-    value: "three",
-    leftChild: Node6,
-    rightChild: Node7,
+    value: "6",
+    parent: null,
+    leftChild: null,
+    rightChild: null,
     visited: false,
+    current: false,
   };
 
   const Node2: Node = {
     id: "2",
-    value: "two",
-    leftChild: Node4,
-    rightChild: Node5,
+    value: "2",
+    parent: null,
+    leftChild: null,
+    rightChild: null,
     visited: false,
+    current: false,
   };
 
   const Node1: Node = {
     id: "1",
-    value: "one",
-    leftChild: Node2,
-    rightChild: Node3,
+    value: "1",
+    parent: null,
+    leftChild: null,
+    rightChild: null,
     visited: false,
+    current: false,
   };
+
+  Node2.parent = Node1;
+  Node3.parent = Node1;
+  Node4.parent = Node2;
+  Node5.parent = Node2;
+  Node6.parent = Node3;
+  Node7.parent = Node3;
+  Node8.parent = Node4;
+
+  Node1.leftChild = Node2;
+  Node1.rightChild = Node3;
+  Node2.leftChild = Node4;
+  Node2.rightChild = Node5;
+  Node3.leftChild = Node6;
+  Node3.rightChild = Node7;
+  Node4.leftChild = Node8;
+
+  const clonedRootNode = _.cloneDeep(Node1);
 
   // interpreter に渡す関数は実行開始時に決定されるため、通常の state だと最新の情報が参照できません
   // このため、反則ですが内部的に ref を用いて状態管理をしている react-use の [useGetSet](https://github.com/streamich/react-use/blob/master/docs/useGetSet.md) を用いています。
   const [getState, setState] = useGetSet<AllState>({
-    rootNode: Node1,
-    currentNode: Node1,
-    stack: [Node1],
+    rootNode: clonedRootNode,
+    currentNode: clonedRootNode,
+    stack: [clonedRootNode],
+    index: 1,
   });
-  // setState(Node1);
 
   // javascriptGenerator により生成されたコードから呼ばれる関数を定義します
   const globalFunctions = useRef({
@@ -167,24 +214,32 @@ export function GraphWorkspace(): JSX.Element {
       }
     },
     [CUSTOM_GRAPH_STACK_POP]: () => {
-      const { stack } = getState();
+      const { stack, index } = getState();
       const currentNode = stack.pop();
       if (!currentNode)
         throw new BlocklyEditorMessage("すべての探索をクリアしました！");
+      currentNode.current = true;
+      currentNode.value = index.toString();
 
       const newState: AllState = {
         ...getState(),
         stack,
         currentNode,
+        index: index + 1,
       };
       setState(newState);
     },
     [CUSTOM_GRAPH_STACK_INITIALIZE]: () => {
+      const newClonedRootNode = _.cloneDeep(clonedRootNode);
       const newState: AllState = {
         ...getState(),
-        stack: [getState().rootNode],
+        rootNode: newClonedRootNode,
+        stack: [newClonedRootNode],
+        currentNode: newClonedRootNode,
+        index: 1,
       };
       setState(newState);
+      // initializeNode({ node: getState().rootNode });
     },
   }).current;
 
@@ -198,10 +253,36 @@ export function GraphWorkspace(): JSX.Element {
     onStep: highlightBlock,
   });
 
+  const parentRef = useRef<HTMLDivElement>(null);
+  const [coordinates, setCoordinates] = useState<{
+    x: number | null;
+    y: number | null;
+  }>({
+    x: null,
+    y: null,
+  });
+
+  useEffect(() => {
+    function updateCoordinates() {
+      if (parentRef.current) {
+        const rect = parentRef.current.getBoundingClientRect();
+        setCoordinates({ x: rect.x, y: rect.y });
+      }
+    }
+    // 初期の座標を設定
+    updateCoordinates();
+    // resizeイベントのリスナーを設定
+    // window.addEventListener("resize", updateCoordinates);
+    // コンポーネントのアンマウント時にリスナーを削除
+    // return () => {
+    //   window.removeEventListener("resize", updateCoordinates);
+    // };
+  }, []);
+
   return (
     <Grid h="100%" templateColumns="1fr 25rem">
       <div ref={workspaceAreaRef} />
-      <Box p={4}>
+      <Box p={4} ref={parentRef}>
         <ExecutionManager
           interpreter={interpreter}
           interval={interval}
@@ -213,12 +294,18 @@ export function GraphWorkspace(): JSX.Element {
             setState({ ...getState() });
           }}
         />
-        <TreeRenderer
-          key={Node1.id}
-          rootNode={getState().rootNode}
-          currentNode={getState().currentNode}
-        />
-        <StackRenderer stack={getState().stack} />
+        {coordinates.x && coordinates.y && (
+          <TreeRenderer
+            coordinateX={coordinates.x}
+            coordinateY={coordinates.y}
+            rootNode={getState().rootNode}
+          />
+        )}
+        <Draggable>
+          <div>
+            <StackRenderer stack={getState().stack} />
+          </div>
+        </Draggable>
       </Box>
     </Grid>
   );

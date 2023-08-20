@@ -87,11 +87,11 @@ javascriptGenerator[CUSTOM_GRAPH_NODE_CHILD_EXISTS] = (block) => [
 
 Blockly.Blocks[CUSTOM_GRAPH_STACK_INITIALIZE] = {
   init(this: Blockly.Block) {
-    this.appendDummyInput().appendField("stackを初期化する");
+    this.appendDummyInput().appendField("状態を初期化する");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour("white");
-    this.setTooltip("stackを初期化します");
+    this.setTooltip("状態を初期化します");
   },
 };
 

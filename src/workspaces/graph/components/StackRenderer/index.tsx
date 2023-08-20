@@ -1,10 +1,11 @@
-import { Box, Stack } from "@chakra-ui/react";
+import { Box, Stack, VStack } from "@chakra-ui/react";
 
 type Node = {
   value: string;
   leftChild: Node | null;
   rightChild: Node | null;
-  colour?: string;
+  visited: boolean;
+  current: boolean;
 };
 
 type StackRendererProps = {
@@ -12,29 +13,37 @@ type StackRendererProps = {
 };
 
 export function StackRenderer({ stack }: StackRendererProps) {
-  const reversedStack = stack.slice().reverse();
   return (
-    <Stack
-      maxW="100px"
-      spacing="0"
-      borderBottomRadius="md"
-      borderTopWidth="0"
-      marginX={10}
-      marginY={10}
-    >
-      {reversedStack.map((Node, index) => (
-        <Box
-          borderWidth="1px"
-          borderColor="gray.500"
-          textAlign="center"
-          py="2"
-          borderBottomWidth={index === reversedStack.length - 1 ? "1px" : "0"}
-          bg="gray.100"
-          _last={{ borderBottomRadius: "md" }}
-        >
-          {Node.value}
-        </Box>
-      ))}
-    </Stack>
+    <VStack marginLeft={10} marginTop={400} spacing={4} alignItems="center">
+      <Stack
+        width="100px"
+        maxW="100px"
+        spacing="0"
+        borderBottomRadius="md"
+        borderTopWidth="0"
+        height="300px"
+        display="flex"
+        flexDirection="column-reverse"
+        overflowY="auto"
+        border="1px solid black"
+      >
+        {stack.map((Node) => (
+          <Box
+            height="40px"
+            borderWidth="0px"
+            borderTop="1px"
+            borderColor="gray.500"
+            textAlign="center"
+            py="1"
+            bg="gray.100"
+          >
+            {Node.value}
+          </Box>
+        ))}
+      </Stack>
+      <Box textAlign="center" fontWeight="500">
+        Stack
+      </Box>
+    </VStack>
   );
 }
