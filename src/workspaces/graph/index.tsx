@@ -25,7 +25,7 @@ import { StackRenderer } from "./components/StackRenderer";
 import { TreeRenderer } from "./components/TreeRenderer";
 import { type Node } from "./components/common/types";
 import { QueueRenderer } from "./components/QueueRenderer";
-import { numberOfNodes } from "./components/common/utils";
+import { allNodeIsVisited } from "./components/common/utils";
 import dfsPreorderTraversalNode from "./components/common/DfsPreorderTraversalTree";
 import bfsTraversalNode from "./components/common/BfsTraversalTree";
 
@@ -60,8 +60,6 @@ export function GraphWorkspace(): JSX.Element {
   const initialDfsPreorderTraversalNode = _.cloneDeep(dfsPreorderTraversalNode);
 
   const clonedBfsTraversalRootNode = _.cloneDeep(initialBfsTraversalNode);
-
-  const numberOfNodeInTree = numberOfNodes(clonedBfsTraversalRootNode);
 
   // interpreter に渡す関数は実行開始時に決定されるため、通常の state だと最新の情報が参照できません
   // このため、反則ですが内部的に ref を用いて状態管理をしている react-use の [useGetSet](https://github.com/streamich/react-use/blob/master/docs/useGetSet.md) を用いています。
@@ -126,9 +124,9 @@ export function GraphWorkspace(): JSX.Element {
       }
     },
     [CUSTOM_GRAPH_STACK_POP]: () => {
-      const { stack, index } = getState();
+      const { rootNode, stack, index } = getState();
       const currentNode = stack.pop();
-      if (numberOfNodeInTree === index - 1)
+      if (allNodeIsVisited({ node: rootNode }))
         throw new BlocklyEditorMessage("すべての探索をクリアしました！");
       if (!currentNode) {
         throw new BlocklyEditorMessage("Stackが空になりました！");
@@ -168,9 +166,9 @@ export function GraphWorkspace(): JSX.Element {
       }
     },
     [CUSTOM_GRAPH_QUEUE_DEQUE]: () => {
-      const { queue, index } = getState();
+      const { rootNode, queue, index } = getState();
       const currentNode = queue.shift();
-      if (numberOfNodeInTree === index - 1)
+      if (allNodeIsVisited({ node: rootNode }))
         throw new BlocklyEditorMessage("すべての探索をクリアしました！");
       if (!currentNode) {
         throw new BlocklyEditorMessage("Queueが空になりました！");
