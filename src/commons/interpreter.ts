@@ -1,6 +1,7 @@
 import { useToast } from "@chakra-ui/react";
 import JSInterpreter from "js-interpreter";
 import { useCallback, useEffect, useRef, useState } from "react";
+import nullthrows from "nullthrows";
 import { STATEMENT_PREFIX_FUNCTION } from "../config/blockly";
 
 export class BlocklyEditorMessage {
@@ -31,6 +32,9 @@ export type BlocklyInterpreter = {
   pause(): void;
   resume(): void;
   stop(): void;
+  getVariable: (name: string) => unknown;
+  addListener(type: "step", listener: () => void): void;
+  removeListener(type: "step", listener: () => void): void;
 };
 
 export function useBlocklyInterpreter({
@@ -40,6 +44,11 @@ export function useBlocklyInterpreter({
 }: UseBlocklyInterpreterProps): BlocklyInterpreter {
   const toast = useToast();
   const jsInterpreterRef = useRef<JSInterpreter>();
+
+  /**
+   * Blockly から {@link STATEMENT_PREFIX_FUNCTION} 関数の呼び出しが各ステートメントの前に挿入される。
+   * このときのブロック ID を格納する。
+   */
   const highlightedBlockIdRef = useRef<string>();
 
   const [executionState, setExecutionState] =
@@ -96,6 +105,20 @@ export function useBlocklyInterpreter({
     highlightedBlockIdRef.current = undefined;
     setExecutionState("stopped");
   }, [onStep]);
+  const getVariable = useCallback((name: string) => {
+    const jsInterpreter = nullthrows(jsInterpreterRef.current);
+    return jsInterpreter.getValueFromScope(name);
+  }, []);
+
+  const listenersRef = useRef<Record<"step", Set<() => void>>>({
+    step: new Set(),
+  });
+  const addListener = useCallback((type: "step", listener: () => void) => {
+    listenersRef.current[type].add(listener);
+  }, []);
+  const removeListener = useCallback((type: "step", listener: () => void) => {
+    listenersRef.current[type].delete(listener);
+  }, []);
 
   const stepExecution = useCallback(() => {
     const jsInterpreter = jsInterpreterRef.current;
@@ -108,13 +131,15 @@ export function useBlocklyInterpreter({
           finishExecution();
           return;
         }
+        // ステップが正常に終了すれば highlightedBlockIdRef.current にはブロック ID が格納されている。
         if (highlightedBlockIdRef.current) {
           highlightedBlockIdRef.current = undefined;
           loopTrap = 0;
+          listenersRef.current.step.forEach((listener) => listener());
           return;
         }
         loopTrap += 1;
-        if (loopTrap > 100) {
+        if (loopTrap > 10000) {
           throw new Error("無限ループに入ってしまったようです。");
         }
       }
@@ -165,5 +190,8 @@ export function useBlocklyInterpreter({
     pause: pauseExecution,
     resume: resumeExecution,
     stop: stopExecution,
+    getVariable,
+    addListener,
+    removeListener,
   };
 }

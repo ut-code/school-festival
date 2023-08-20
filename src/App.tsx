@@ -1,6 +1,22 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { Box, Flex, chakra, Icon, Link } from "@chakra-ui/react";
+import {
+  Text,
+  Box,
+  Flex,
+  chakra,
+  Icon,
+  Link,
+  Button,
+  SimpleGrid,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  Spacer,
+} from "@chakra-ui/react";
 import { RiQuestionFill, RiGithubFill } from "react-icons/ri";
 import { Logo } from "./components/Logo";
 import { HelpDialog } from "./components/HelpDialog";
@@ -18,6 +34,7 @@ export function App(): JSX.Element {
     useState(new Set<string>());
   const [isTutorialDialogOpenedByUser, setIsTutorialDialogOpenedByUser] =
     useState(false);
+  const [isTaskChangeDialogOpen, setIsTaskChangeDialogOpen] = useState(false);
 
   return (
     <>
@@ -33,22 +50,19 @@ export function App(): JSX.Element {
           <Box display={{ base: "none", lg: "block" }} fontSize="xl">
             はじめてのプログラミング
           </Box>
+          <Spacer />
+          <Button
+            colorScheme="blue"
+            variant="outline"
+            onClick={() => setIsTaskChangeDialogOpen(true)}
+            px={3}
+            py={2}
+            m={3}
+          >
+            課題を選択
+          </Button>
+
           <Box display="flex" alignItems="stretch">
-            {routes.map((route) => (
-              <ChakraLink
-                key={route.path}
-                px={4}
-                py={3}
-                transition="color 0.2s"
-                _hover={{ color: "blue.300" }}
-                backgroundColor={
-                  location.pathname === route.path ? "blue.100" : "transparent"
-                }
-                to={route.path + location.search}
-              >
-                {route.label}
-              </ChakraLink>
-            ))}
             {!isRoot && (
               <chakra.button
                 px={4}
@@ -127,6 +141,44 @@ export function App(): JSX.Element {
             steps={currentRoute.tutorialSteps}
           />
         )}
+      <Modal
+        isOpen={isTaskChangeDialogOpen}
+        onClose={() => setIsTaskChangeDialogOpen(false)}
+        size="4xl"
+      >
+        <ModalOverlay>
+          <ModalContent>
+            <ModalHeader>課題を選択</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <SimpleGrid columns={2} spacing={4}>
+                {routes.map((route) => (
+                  <ChakraLink
+                    key={route.path}
+                    px={4}
+                    py={3}
+                    transition="color 0.2s"
+                    _hover={{ color: "blue.300" }}
+                    backgroundColor={
+                      location.pathname === route.path ? "blue.100" : "white"
+                    }
+                    to={route.path + location.search}
+                    borderWidth="1px"
+                    borderRadius="10px"
+                    borderColor="blue.500"
+                    onClick={() => setIsTaskChangeDialogOpen(false)}
+                  >
+                    {route.label}
+                    <Text fontSize="xs" color="gray">
+                      {route.description}
+                    </Text>
+                  </ChakraLink>
+                ))}
+              </SimpleGrid>
+            </ModalBody>
+          </ModalContent>
+        </ModalOverlay>
+      </Modal>
     </>
   );
 }

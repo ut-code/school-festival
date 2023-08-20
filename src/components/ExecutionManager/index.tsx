@@ -78,11 +78,14 @@ export function ExecutionManager(props: ExecutionManagerProps): JSX.Element {
           <Text>遅い</Text>
           <Box flexGrow={1} px={4}>
             <Slider
-              min={200}
-              max={2000}
-              value={2000 - props.interval}
+              min={0}
+              max={1000}
+              value={
+                1000 -
+                (Math.log((props.interval + 100) / 100) / Math.log(20)) * 1000
+              }
               onChange={(value) => {
-                props.setInterval(2000 - value);
+                props.setInterval(20 ** ((1000 - value) / 1000) * 100 - 100);
               }}
             >
               <SliderTrack>

@@ -59,7 +59,7 @@ const defaultSelf: MazeWorkspaceStateSelf = {
 
 function createDefaultState(): MazeWorkspaceState {
   return {
-    maze: createMaze(10, 10),
+    maze: createMaze(5, 5),
     self: defaultSelf,
   };
 }
@@ -97,7 +97,7 @@ export function MazeWorkspace(): JSX.Element {
         ...state,
         self: { ...state.self, location: nextCell.location },
       });
-      if (nextCell.location.x === 9 && nextCell.location.y === 9) {
+      if (nextCell.location.x === 4 && nextCell.location.y === 4) {
         throw new BlocklyEditorMessage("迷路をクリアしました！");
       }
     },

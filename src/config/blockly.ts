@@ -14,8 +14,8 @@ export const javascriptGenerator: CodeGenerator & {
   [key: string]: (this: Block, block: Block) => string | [string, number];
 } = originalJavascriptGenerator;
 
+// https://developers.google.com/blockly/reference/js/blockly.codegenerator_class.statement_prefix_property.md
 export const STATEMENT_PREFIX_FUNCTION = "beforeStatement";
-
 javascriptGenerator.STATEMENT_PREFIX = `typeof ${STATEMENT_PREFIX_FUNCTION} === "function" && ${STATEMENT_PREFIX_FUNCTION}(%1);\n`;
 javascriptGenerator.addReservedWords(STATEMENT_PREFIX_FUNCTION);
 
