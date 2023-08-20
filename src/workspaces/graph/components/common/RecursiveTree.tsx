@@ -4,6 +4,7 @@ import { DrawArrow } from "./DrawArrow";
 import { DrawCircle } from "./DrawCircle";
 import { distanceToRoot } from "./utils";
 import { TreeContext } from "../TreeRenderer";
+import { type Node } from "./types";
 
 const X_DISTANCE = 160;
 const Y_DISTANCE = 70;

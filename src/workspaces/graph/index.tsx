@@ -27,6 +27,8 @@ import {
 import { ExecutionManager } from "../../components/ExecutionManager";
 import { StackRenderer } from "./components/StackRenderer";
 import { TreeRenderer } from "./components/TreeRenderer";
+import { type Node } from "./components/common/types";
+import { QueueRenderer } from "./components/QueueRenderer";
 
 const toolboxDefinition: BlocklyToolboxDefinition = {
   type: "flyout",

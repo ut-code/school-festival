@@ -1,18 +1,4 @@
-type Coordinate = {
-  absoluteX: number;
-  absoluteY: number;
-};
-
-type Node = {
-  id: string;
-  value: string;
-  parent: Node | null;
-  leftChild: Node | null;
-  rightChild: Node | null;
-  coordinate?: Coordinate;
-  visited: boolean;
-  current: boolean;
-};
+import { type Node } from "./types";
 
 export function distanceToLeaf(node: Node | null): number {
   if (!node) {

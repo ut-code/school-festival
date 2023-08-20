@@ -3,6 +3,7 @@ import { Box } from "@chakra-ui/react";
 import { DrawArrow } from "../common/DrawArrow";
 import { DrawCircle } from "../common/DrawCircle";
 import { distanceToRoot } from "../common/utils";
+import { type Node } from "../common/types";
 
 const X_DISTANCE = 160;
 const Y_DISTANCE = 70;

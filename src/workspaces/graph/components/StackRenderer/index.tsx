@@ -1,12 +1,5 @@
 import { Box, Stack, VStack } from "@chakra-ui/react";
-
-type Node = {
-  value: string;
-  leftChild: Node | null;
-  rightChild: Node | null;
-  visited: boolean;
-  current: boolean;
-};
+import { type Node } from "../common/types";
 
 type StackRendererProps = {
   stack: Node[];

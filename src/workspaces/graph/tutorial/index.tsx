@@ -3,7 +3,7 @@ import { TutorialDialogPropsStep } from "../../../components/TutorialDialog";
 export const graphTutorialSteps: TutorialDialogPropsStep[] = [
   {
     title: "ページ 1",
-    content: <>ページ 1 の内容</>,
+    content: <>木構造を探索しましょう。</>,
   },
   {
     title: "ページ 2",
