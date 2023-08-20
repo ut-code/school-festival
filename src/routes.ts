@@ -14,6 +14,8 @@ import { QlearningTutorialSteps } from "./workspaces/qlearning/tutorial";
 
 import { GradWorkspace } from "./workspaces/gradient-descent";
 import { gradTutorialSteps } from "./workspaces/gradient-descent/tutorial";
+import { GraphWorkspace } from "./workspaces/graph";
+import { graphTutorialSteps } from "./workspaces/graph/tutorial";
 
 // テンプレートがどのように動作するのか確認したい場合はコメントアウトを外してください。
 // import { TemplateWorkspace } from "./workspaces/template";
@@ -68,6 +70,13 @@ export const routes = [
     description: "勾配降下法のシミュレーション",
     Component: GradWorkspace,
     tutorialSteps: gradTutorialSteps,
+  },
+  {
+    path: "/graph",
+    label: "グラフ",
+    description: "グラフの探索",
+    Component: GraphWorkspace,
+    tutorialSteps: graphTutorialSteps,
   },
   // {
   //   path: "/template",
