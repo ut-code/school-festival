@@ -25,14 +25,8 @@ export function DrawCircle(props: DrawCircleProps) {
       zIndex={2}
     >
       <div>
-        {props.value.split("\n").map((line, idx) => (
-          <>
-            <div style={{ marginBottom: "0.5px" }}>
-              {/* ここの marginBottom の値を調整してください */}
-              {line}
-            </div>
-            {/* {idx !== props.value.split("\n").length - 1 && <br />} */}
-          </>
+        {props.value.split("\n").map((line) => (
+          <div style={{ marginBottom: "0.5px" }}>{line}</div>
         ))}
       </div>
     </Box>

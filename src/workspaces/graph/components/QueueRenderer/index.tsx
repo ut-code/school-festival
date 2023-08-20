@@ -1,11 +1,11 @@
 import { Box, Stack, VStack } from "@chakra-ui/react";
 import { type Node } from "../common/types";
 
-type StackRendererProps = {
-  stack: Node[];
+type QueueRendererProps = {
+  queue: Node[];
 };
 
-export function StackRenderer({ stack }: StackRendererProps) {
+export function QueueRenderer({ queue }: QueueRendererProps) {
   return (
     <VStack spacing={4} alignItems="center">
       <Stack
@@ -20,7 +20,7 @@ export function StackRenderer({ stack }: StackRendererProps) {
         overflowY="auto"
         border="1px solid black"
       >
-        {stack.map((Node) => (
+        {queue.map((Node) => (
           <Box
             height="40px"
             borderWidth="0px"
@@ -35,7 +35,7 @@ export function StackRenderer({ stack }: StackRendererProps) {
         ))}
       </Stack>
       <Box textAlign="center" fontWeight="500">
-        Stack
+        Queue
       </Box>
     </VStack>
   );

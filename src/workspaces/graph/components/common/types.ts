@@ -11,5 +11,4 @@ export type Node = {
   rightChild: Node | null;
   coordinate?: Coordinate;
   visited: boolean;
-  current: boolean;
 };

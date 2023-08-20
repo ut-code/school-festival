@@ -9,21 +9,6 @@ import { type Node } from "./types";
 const X_DISTANCE = 160;
 const Y_DISTANCE = 70;
 
-type Coordinate = {
-  absoluteX: number;
-  absoluteY: number;
-};
-
-type Node = {
-  id: string;
-  value: string;
-  parent: Node | null;
-  leftChild: Node | null;
-  rightChild: Node | null;
-  coordinate?: Coordinate;
-  visited: boolean;
-};
-
 type TreeProps = {
   node: Node | null;
 };

@@ -8,22 +8,6 @@ import { type Node } from "../common/types";
 const X_DISTANCE = 160;
 const Y_DISTANCE = 70;
 
-type Coordinate = {
-  absoluteX: number;
-  absoluteY: number;
-};
-
-type Node = {
-  id: string;
-  value: string;
-  parent: Node | null;
-  leftChild: Node | null;
-  rightChild: Node | null;
-  coordinate?: Coordinate;
-  visited: boolean;
-  current: boolean;
-};
-
 type TreeProps = {
   node: Node | null;
 };
@@ -32,22 +16,23 @@ type TreeRendererProps = {
   rootNode: Node;
   coordinateX: number;
   coordinateY: number;
+  currentNodeId: string;
 };
 
 type TreeContextType = {
-  rootNode: Node | null;
+  currentNodeId: string;
 };
 
 const defaultTreeContext: TreeContextType = {
-  rootNode: null,
+  currentNodeId: "_",
 };
 
 export const TreeContext = createContext<TreeContextType>(defaultTreeContext);
 
 function RecursiveTree(props: TreeProps) {
-  const { rootNode } = useContext(TreeContext);
+  const { currentNodeId } = useContext(TreeContext);
   const { node } = props;
-  if (!node || !rootNode) {
+  if (!node) {
     return <Box />;
   }
   const absoluteX = node.coordinate?.absoluteX || 0;
@@ -72,8 +57,9 @@ function RecursiveTree(props: TreeProps) {
 
   let color;
   if (node.visited) {
+    // color = "lightblue";
     color = "lightblue";
-  } else if (node.current) {
+  } else if (node.id === currentNodeId) {
     color = "orange";
   } else {
     color = "white";
@@ -115,16 +101,16 @@ function RecursiveTree(props: TreeProps) {
 }
 
 export function TreeRenderer(props: TreeRendererProps) {
-  const { rootNode, coordinateX, coordinateY } = props;
+  const { rootNode, coordinateX, coordinateY, currentNodeId } = props;
   const contextValue = useMemo(() => {
     return {
-      rootNode: props.rootNode,
+      currentNodeId,
     };
-  }, [props.rootNode]);
+  }, [currentNodeId]);
 
   rootNode.coordinate = {
     absoluteX: coordinateX + 200,
-    absoluteY: coordinateY + 200,
+    absoluteY: coordinateY + 170,
   };
 
   return (
