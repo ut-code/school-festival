@@ -35,3 +35,15 @@ export function initializeNode(props: { node: Node | null }) {
   initializeNode({ node: node.leftChild });
   initializeNode({ node: node.rightChild });
 }
+
+export function allNodeIsVisited(props: { node: Node | null }): boolean {
+  const { node } = props;
+  if (!node) {
+    return true;
+  }
+  return (
+    node.visited &&
+    allNodeIsVisited({ node: node.leftChild }) &&
+    allNodeIsVisited({ node: node.rightChild })
+  );
+}

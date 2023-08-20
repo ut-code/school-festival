@@ -25,7 +25,7 @@ import { StackRenderer } from "./components/StackRenderer";
 import { TreeRenderer } from "./components/TreeRenderer";
 import { type Node } from "./components/common/types";
 import { QueueRenderer } from "./components/QueueRenderer";
-import { numberOfNodes } from "./components/common/utils";
+import { allNodeIsVisited, numberOfNodes } from "./components/common/utils";
 import dfsPreorderTraversalNode from "./components/common/DfsPreorderTraversalTree";
 import bfsTraversalNode from "./components/common/BfsTraversalTree";
 
@@ -126,9 +126,9 @@ export function GraphWorkspace(): JSX.Element {
       }
     },
     [CUSTOM_GRAPH_STACK_POP]: () => {
-      const { stack, index } = getState();
+      const { rootNode, stack, index } = getState();
       const currentNode = stack.pop();
-      if (numberOfNodeInTree === index - 1)
+      if (allNodeIsVisited({ node: rootNode }))
         throw new BlocklyEditorMessage("すべての探索をクリアしました！");
       if (!currentNode) {
         throw new BlocklyEditorMessage("Stackが空になりました！");
@@ -168,9 +168,9 @@ export function GraphWorkspace(): JSX.Element {
       }
     },
     [CUSTOM_GRAPH_QUEUE_DEQUE]: () => {
-      const { queue, index } = getState();
+      const { rootNode, queue, index } = getState();
       const currentNode = queue.shift();
-      if (numberOfNodeInTree === index - 1)
+      if (allNodeIsVisited({ node: rootNode }))
         throw new BlocklyEditorMessage("すべての探索をクリアしました！");
       if (!currentNode) {
         throw new BlocklyEditorMessage("Queueが空になりました！");
