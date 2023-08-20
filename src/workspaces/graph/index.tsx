@@ -205,7 +205,6 @@ export function GraphWorkspace(): JSX.Element {
           queue: [clonedRootNode],
           currentNode: null,
           index: 1,
-          index: 1,
         };
         setState(newState);
       }
