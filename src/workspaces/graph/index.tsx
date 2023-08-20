@@ -193,7 +193,7 @@ export function GraphWorkspace(): JSX.Element {
           rootNode: clonedRootNode,
           stack: [clonedRootNode],
           queue: [clonedRootNode],
-          currentNode: clonedRootNode,
+          currentNode: null,
           index: 1,
         };
         setState(newState);
@@ -203,7 +203,7 @@ export function GraphWorkspace(): JSX.Element {
           rootNode: clonedRootNode,
           stack: [clonedRootNode],
           queue: [clonedRootNode],
-          currentNode: clonedRootNode,
+          currentNode: null,
           index: 1,
         };
         setState(newState);
