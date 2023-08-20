@@ -32,7 +32,6 @@ export function initializeNode(props: { node: Node | null }) {
     return;
   }
   node.visited = false;
-  node.current = false;
   initializeNode({ node: node.leftChild });
   initializeNode({ node: node.rightChild });
 }
