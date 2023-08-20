@@ -7,7 +7,6 @@ const Node8: Node = {
   leftChild: null,
   rightChild: null,
   visited: false,
-  current: false,
 };
 
 const Node7: Node = {
@@ -17,7 +16,6 @@ const Node7: Node = {
   leftChild: null,
   rightChild: null,
   visited: false,
-  current: false,
 };
 
 const Node6: Node = {
@@ -27,7 +25,6 @@ const Node6: Node = {
   leftChild: null,
   rightChild: null,
   visited: false,
-  current: false,
 };
 
 const Node5: Node = {
@@ -37,7 +34,6 @@ const Node5: Node = {
   leftChild: null,
   rightChild: null,
   visited: false,
-  current: false,
 };
 
 const Node4: Node = {
@@ -47,7 +43,6 @@ const Node4: Node = {
   leftChild: null,
   rightChild: null,
   visited: false,
-  current: false,
 };
 
 const Node3: Node = {
@@ -57,7 +52,6 @@ const Node3: Node = {
   leftChild: null,
   rightChild: null,
   visited: false,
-  current: false,
 };
 
 const Node2: Node = {
@@ -67,7 +61,6 @@ const Node2: Node = {
   leftChild: null,
   rightChild: null,
   visited: false,
-  current: false,
 };
 
 const Node1: Node = {
@@ -77,7 +70,6 @@ const Node1: Node = {
   leftChild: null,
   rightChild: null,
   visited: false,
-  current: false,
 };
 
 Node2.parent = Node1;
