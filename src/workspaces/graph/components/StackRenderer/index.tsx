@@ -32,10 +32,10 @@ export function StackRenderer({ stack }: StackRendererProps) {
             height="40px"
             borderWidth="0px"
             borderTop="1px"
-            borderColor="gray.500"
+            borderColor="black"
             textAlign="center"
             py="1"
-            bg="gray.100"
+            bg="#f0f0f0f0"
           >
             {Node.value}
           </Box>

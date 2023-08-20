@@ -17,7 +17,7 @@ Blockly.Blocks[CUSTOM_GRAPH_COLOUR_CHANGE] = {
     this.appendDummyInput().appendField("青色にする");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour("C0DEFF");
+    this.setColour("#add8e6");
     this.setTooltip("色を変えます");
   },
 };
@@ -39,7 +39,7 @@ Blockly.Blocks[CUSTOM_GRAPH_STACK_PUSH] = {
       .appendField("のnodeをstackにpushする");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour("B7B7B7");
+    this.setColour("#d3d3d3");
     this.setTooltip("stackに追加するnodeを決めます");
   },
 };
@@ -52,7 +52,7 @@ Blockly.Blocks[CUSTOM_GRAPH_STACK_POP] = {
     this.appendDummyInput().appendField("nodeをstackからpopする");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour("#B7B7B7");
+    this.setColour("#FFA500");
     this.setTooltip("stackからnodeをpopします");
   },
 };
