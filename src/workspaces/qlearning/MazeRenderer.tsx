@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { Maze, MazeDirectionMap } from "../../commons/maze";
 
 const MAZE_CELL_SIZE = 5;
@@ -22,9 +23,8 @@ export function MazeRenderer(props: {
     >
       {props.maze.map((row, y) =>
         row.map((cell, x) => (
-          <>
+          <Fragment key={`${cell.location.x},${cell.location.y}`}>
             <g
-              key={`${cell.location.x},${cell.location.y}`}
               stroke="#000"
               strokeWidth={0.3}
               strokeLinecap="round"
@@ -63,7 +63,7 @@ export function MazeRenderer(props: {
             >
               {y * MAZE_CELL_SIZE + x}
             </text>
-          </>
+          </Fragment>
         ))
       )}
       <path
